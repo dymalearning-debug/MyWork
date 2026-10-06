@@ -29,13 +29,34 @@ Le profil public est le fil conducteur du produit : c'est lui qui relie les modu
 - **Monolithe modulaire** : une seule application, avec des modules bien isolés dans le code (pas de microservices).
 - **RGPD** : hébergement dans l'UE, export et suppression du compte, prise en compte des données de tiers (par exemple les clients qui réservent un rendez-vous).
 
+## Stack technique
+
+Le porteur du projet n'est pas développeur : le code est écrit par des agents IA. D'où ces critères : technologies très répandues (bien maîtrisées par l'IA), un seul langage typé, aucun serveur à administrer, données consultables sans coder, tests automatiques comme filet de sécurité.
+
+| Besoin | Choix |
+|---|---|
+| Langage | **TypeScript** (mode strict) |
+| Application : pages publiques et espace privé | **Next.js** (React) |
+| Interface | **Tailwind CSS** + **shadcn/ui** |
+| Base de données, authentification, fichiers | **Supabase**, région Paris : PostgreSQL, Supabase Auth, Supabase Storage. Isolation des données par utilisateur avec la *Row Level Security* (RLS). |
+| Hébergement | **Vercel**, fonctions en région Paris |
+| E-mails transactionnels | **Resend** |
+| Paiement (étape 6) | **Stripe** (Checkout et portail client) |
+| Visio (étape 7) | **LiveKit** |
+| Code | **GitHub**, tests automatiques à chaque modification |
+
+- Les bibliothèques de détail (glisser-déposer, dates et fuseaux, génération de PDF…) se choisissent au début de chaque module.
+- Dès l'étape 1, des tests de bout en bout simulent les parcours utilisateur importants (inscription, réservation…).
+- Coûts indicatifs (2026, à revérifier) : 0 € pendant le développement. En usage réel, environ 20 $/mois pour Vercel Pro (l'offre gratuite est réservée à un usage non commercial) et 25 $/mois pour Supabase Pro (un projet gratuit est mis en pause après 7 jours sans activité), plus le nom de domaine.
+- Écartés : no-code (trop limité, dépendance totale), Laravel et Rails (deux langages, moins bien maîtrisés par l'IA), base, authentification et stockage chez trois prestataires distincts (plus de pièces à assembler). Supabase reste du PostgreSQL standard, ce qui permet d'en sortir.
+
 ## Roadmap
 
 Chaque étape correspond au périmètre MVP du module (voir [modules.md](modules.md)).
 
 | # | Étape | Statut |
 |---|---|---|
-| 0 | Choix de la stack technique | À faire |
+| 0 | Choix de la stack technique | Fait |
 | 1 | Socle : authentification, compte, squelette du profil public | À faire |
 | 2 | Module **CV** et export | À faire |
 | 3 | Module **Rendez-vous** (type Calendly) | À faire |
@@ -56,10 +77,11 @@ Journal des choix validés (date : décision).
 - 2026-10-06 : CV multilingue dès le MVP.
 - 2026-10-06 : Rendez-vous sans aucune synchronisation avec des agendas externes. Les créneaux se gèrent uniquement dans l'application.
 - 2026-10-06 : Visio via une brique existante, **LiveKit** (référence open source, gratuite en auto-hébergement, offre cloud gratuite pour démarrer).
+- 2026-10-06 : stack technique : TypeScript, Next.js, Tailwind CSS + shadcn/ui, Supabase, Vercel, Resend, Stripe, GitHub (voir *Stack technique*).
+- 2026-10-06 : données hébergées à Paris chez des prestataires américains (Supabase, Vercel), préférés à des hébergeurs 100 % européens pour la simplicité et la maîtrise par l'IA.
 
 ## Questions ouvertes
 
 - Nom définitif du produit : « Linku » est provisoire et changera probablement.
 - Format de l'URL publique (`linku.app/<username>` ou `<username>.linku.app`), domaine personnalisé : plus tard.
 - Prix de l'abonnement et taille du quota : plus tard.
-- Stack technique : prochaine discussion.
