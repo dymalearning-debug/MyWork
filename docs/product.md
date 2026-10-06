@@ -43,11 +43,12 @@ Le porteur du projet n'est pas développeur : le code est écrit par des agents 
 | E-mails transactionnels | **Resend** |
 | Paiement (étape 6) | **Stripe** (Checkout et portail client) |
 | Visio (étape 7) | **LiveKit** |
+| Tests | **Vitest** (tests unitaires et de composants) et **Playwright** (tests de bout en bout dans un vrai navigateur) |
 | Code | **GitHub**, tests automatiques à chaque modification |
 
 - Les bibliothèques de détail (glisser-déposer, dates et fuseaux, génération de PDF…) se choisissent au début de chaque module.
 - Dès l'étape 1, des tests de bout en bout simulent les parcours utilisateur importants (inscription, réservation…).
-- Coûts indicatifs (2026, à revérifier) : 0 € pendant le développement. En usage réel, environ 20 $/mois pour Vercel Pro (l'offre gratuite est réservée à un usage non commercial) et 25 $/mois pour Supabase Pro (un projet gratuit est mis en pause après 7 jours sans activité), plus le nom de domaine.
+- Coûts indicatifs (2026, à revérifier) : 0 € pendant le développement, en restant sur les offres gratuites. En usage réel, environ 20 $/mois pour Vercel Pro (l'offre gratuite est réservée à un usage non commercial) et 25 $/mois pour Supabase Pro (un projet gratuit est mis en pause après 7 jours sans activité), plus le nom de domaine.
 - Écartés : no-code (trop limité, dépendance totale), Laravel et Rails (deux langages, moins bien maîtrisés par l'IA), base, authentification et stockage chez trois prestataires distincts (plus de pièces à assembler). Supabase reste du PostgreSQL standard, ce qui permet d'en sortir.
 
 ## Roadmap
@@ -79,6 +80,8 @@ Journal des choix validés (date : décision).
 - 2026-10-06 : Visio via une brique existante, **LiveKit** (référence open source, gratuite en auto-hébergement, offre cloud gratuite pour démarrer).
 - 2026-10-06 : stack technique : TypeScript, Next.js, Tailwind CSS + shadcn/ui, Supabase, Vercel, Resend, Stripe, GitHub (voir *Stack technique*).
 - 2026-10-06 : données hébergées à Paris chez des prestataires américains (Supabase, Vercel), préférés à des hébergeurs 100 % européens pour la simplicité et la maîtrise par l'IA.
+- 2026-10-06 : budget nul pendant le développement (offres gratuites uniquement). Environ 45 $/mois accepté une fois l'outil en usage réel.
+- 2026-10-06 : tests avec les outils standards d'une application Next.js : Vitest (unitaires) et Playwright (bout en bout).
 
 ## Questions ouvertes
 
