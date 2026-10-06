@@ -1,0 +1,104 @@
+# Modules : spécifications fonctionnelles
+
+Chaque module suit le même schéma : un espace **privé** (gestion) et une partie **publique** optionnelle, exposée sur le profil.
+**MVP** désigne ce qui est construit à l'étape correspondante de la roadmap. **Plus tard** regroupe des idées retenues mais hors périmètre.
+
+## Socle : compte et profil public
+
+- **Authentification** : inscription, connexion, mot de passe oublié. En usage personnel, un seul compte suffit.
+- **Profil public** : page accessible via une URL unique, qui regroupe les blocs publics des modules activés.
+- **Paramètres** : identifiant/URL, modules activés, modules visibles sur le profil.
+- *Plus tard* : domaine personnalisé, thèmes, statistiques de visites.
+
+## 1. CV (type LinkedIn)
+
+**Objectif** : renseigner son parcours facilement et le partager, par URL ou par export.
+
+MVP
+- Saisie simple et agréable : identité, titre, résumé, photo, coordonnées, expériences, formations, compétences, langues, projets, liens.
+- Réorganisation des sections et des éléments.
+- **Multilingue** : contenu saisi en plusieurs langues (au moins FR et EN), avec choix de la langue sur le profil public et à l'export.
+- Vue publique façon profil LinkedIn sur le profil.
+- Export **PDF** et **image (PNG)**.
+
+Plus tard
+- Plusieurs modèles de mise en page pour l'export.
+- Import (export LinkedIn, format JSON Resume).
+- Variantes de CV ciblées (par mission, par type de poste).
+
+Points d'attention
+- L'export doit être fidèle à l'aperçu : le générer à partir du même rendu HTML.
+- Métadonnées SEO / Open Graph, pour un bel aperçu quand le lien est partagé.
+
+## 2. Rendez-vous (type Calendly)
+
+**Objectif** : permettre aux clients de réserver un créneau depuis le profil public.
+
+MVP
+- Privé : disponibilités hebdomadaires (plages horaires par jour), exceptions (congés, jours bloqués), types de rendez-vous (nom, durée, description), liste des rendez-vous à venir.
+- Public : affichage des créneaux libres, réservation (nom, e-mail, message).
+- E-mail de confirmation aux deux parties, avec invitation calendrier (`.ics`) et lien d'annulation.
+
+Plus tard
+- Temps tampon entre deux rendez-vous, délai minimum de réservation, limite par jour, rappels.
+- Replanification par le client.
+- Lien de visio automatique (voir module Visio).
+
+Hors périmètre
+- Synchronisation avec des agendas externes (Google Calendar, Outlook…). Pour éviter un conflit avec un autre engagement, on bloque le créneau à la main (exceptions).
+
+Points d'attention
+- **Fuseaux horaires** : stocker en UTC, afficher dans le fuseau du visiteur.
+- Concurrence : empêcher deux réservations sur le même créneau.
+
+## 3. Boards (type Trello)
+
+**Objectif** : organiser ses tâches dans des tableaux kanban.
+
+MVP
+- Plusieurs boards, avec des colonnes et des cartes (titre, description, étiquettes, échéance, checklist).
+- Glisser-déposer des cartes et des colonnes.
+- Visibilité par board, privée ou publique. Un board public se consulte en lecture seule depuis le profil (roadmap publique, suivi de projets…).
+
+Plus tard
+- Commentaires, pièces jointes (reliées au Drive), archivage, recherche et filtres.
+- Collaboration à plusieurs sur un même board.
+
+## 4. Drive (type Google Drive)
+
+**Objectif** : stocker et organiser ses fichiers, et en partager certains publiquement.
+
+MVP
+- Dossiers et sous-dossiers. Envoi, renommage, déplacement, suppression (avec corbeille), téléchargement.
+- Aperçu des images et des PDF.
+- Visibilité par fichier ou dossier, privée ou publique (lien de partage et/ou affichage sur le profil).
+- Quota de stockage par utilisateur.
+
+Plus tard
+- Recherche, liens de partage avec expiration, historique des versions.
+
+Points d'attention
+- Utiliser un stockage objet (type S3) plutôt que le disque du serveur. Les téléchargements passent par des URL signées.
+- En SaaS, l'hébergement public de fichiers attire les abus : limites de taille et de type, signalement, possibilité de retrait.
+
+## 5. Abonnement et paiement
+
+**Objectif** : monétiser l'ouverture en SaaS.
+
+- Un seul abonnement mensuel peu cher, qui inclut un quota de stockage.
+- L'utilisateur gère lui-même son abonnement : moyen de paiement, factures, résiliation.
+- Prestataire de paiement à choisir (Stripe, par exemple).
+
+## 6. Visio (type Zoom)
+
+**Objectif** : tenir directement dans l'application le rendez-vous réservé.
+
+- Une salle de visio associée à chaque rendez-vous, ouverte aux deux participants à l'heure prévue.
+- Brique retenue : **[LiveKit](https://livekit.io)**, open source (Apache 2.0). Elle fournit des composants React prêts à l'emploi.
+  - Démarrage : LiveKit Cloud, offre *Build* gratuite et permanente (environ 5 000 minutes WebRTC par mois en 2026).
+  - Montée en charge (SaaS) : offre payante ou auto-hébergement sur nos serveurs (gratuit hors coût d'infrastructure, hébergement UE possible).
+  - Tarifs à revérifier au moment de l'étape 7.
+
+## Liens entre modules (plus tard)
+
+Tout centraliser n'a d'intérêt que si les modules communiquent. Quelques exemples : un rendez-vous réservé crée une carte dans un board, une carte reçoit des fichiers du Drive en pièces jointes, un projet du CV renvoie vers des fichiers publics.
