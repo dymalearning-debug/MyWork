@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Linku",
+  title: "MyWork",
   description: "L'espace tout-en-un des freelances : CV, rendez-vous, tâches et fichiers.",
 };
 

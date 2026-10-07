@@ -38,8 +38,8 @@ Le porteur du projet n'est pas développeur : le code est écrit par des agents 
 | Langage | **TypeScript** (mode strict) |
 | Application : pages publiques et espace privé | **Next.js** (React) |
 | Interface | **Tailwind CSS** + **shadcn/ui** |
-| Base de données, authentification, fichiers | **Supabase**, région Paris : PostgreSQL, Supabase Auth, Supabase Storage. Isolation des données par utilisateur avec la *Row Level Security* (RLS). |
-| Hébergement | **Vercel**, fonctions en région Paris |
+| Base de données, authentification, fichiers | **Supabase**, région Irlande (West EU) : PostgreSQL, Supabase Auth, Supabase Storage. Isolation des données par utilisateur avec la *Row Level Security* (RLS). |
+| Hébergement | **Vercel**, fonctions en région Dublin, au plus près de la base de données |
 | E-mails transactionnels | **Resend** |
 | Paiement (étape 6) | **Stripe** (Checkout et portail client) |
 | Visio (étape 7) | **LiveKit** |
@@ -79,12 +79,13 @@ Journal des choix validés (date : décision).
 - 2026-10-06 : Rendez-vous sans aucune synchronisation avec des agendas externes. Les créneaux se gèrent uniquement dans l'application.
 - 2026-10-06 : Visio via une brique existante, **LiveKit** (référence open source, gratuite en auto-hébergement, offre cloud gratuite pour démarrer).
 - 2026-10-06 : stack technique : TypeScript, Next.js, Tailwind CSS + shadcn/ui, Supabase, Vercel, Resend, Stripe, GitHub (voir *Stack technique*).
-- 2026-10-06 : données hébergées à Paris chez des prestataires américains (Supabase, Vercel), préférés à des hébergeurs 100 % européens pour la simplicité et la maîtrise par l'IA.
+- 2026-10-06 : données hébergées dans l'UE chez des prestataires américains (Supabase, Vercel), préférés à des hébergeurs 100 % européens pour la simplicité et la maîtrise par l'IA.
 - 2026-10-06 : budget nul pendant le développement (offres gratuites uniquement). Environ 45 $/mois accepté une fois l'outil en usage réel.
 - 2026-10-06 : tests avec les outils standards d'une application Next.js : Vitest (unitaires) et Playwright (bout en bout).
+- 2026-10-07 : le produit s'appelle **MyWork** (remplace le nom provisoire « Linku »).
+- 2026-10-07 : projet Supabase **MyWork** (offre gratuite), en Irlande (West EU) plutôt qu'à Paris : données toujours dans l'UE, écart de rapidité négligeable. RLS activée automatiquement sur chaque nouvelle table, et aucune table exposée à l'API par défaut : l'accès est ouvert table par table, dans les migrations.
 
 ## Questions ouvertes
 
-- Nom définitif du produit : « Linku » est provisoire et changera probablement.
-- Format de l'URL publique (`linku.app/<username>` ou `<username>.linku.app`), domaine personnalisé : plus tard.
+- Format de l'URL publique (`<domaine>/<username>` ou `<username>.<domaine>`), domaine personnalisé : plus tard.
 - Prix de l'abonnement et taille du quota : plus tard.

@@ -4,7 +4,7 @@ Point d'entrée pour tout agent (IA ou humain) qui travaille sur ce dépôt. À 
 
 ## Le projet en une phrase
 
-**Linku** (nom provisoire) : une application web tout-en-un pour freelances. Un **profil public** (CV, prise de rendez-vous, board public, fichiers partagés) s'appuie sur un **espace privé** qui remplace plusieurs outils payants (LinkedIn, Calendly, Trello, Google Drive).
+**MyWork** : une application web tout-en-un pour freelances. Un **profil public** (CV, prise de rendez-vous, board public, fichiers partagés) s'appuie sur un **espace privé** qui remplace plusieurs outils payants (LinkedIn, Calendly, Trello, Google Drive).
 
 ## Carte de la documentation
 
@@ -15,7 +15,7 @@ Point d'entrée pour tout agent (IA ou humain) qui travaille sur ce dépôt. À 
 
 ## État actuel
 
-- Phase : étape 1 (socle) en cours. Application Next.js créée, avec une page d'accueil provisoire. Restent à faire : Supabase, authentification, compte, profil public, tests (Vitest, Playwright).
+- Phase : étape 1 (socle) en cours. Application Next.js créée, avec une page d'accueil provisoire. Projet Supabase créé et relié (CLI). Restent à faire : branchement de Supabase dans l'application, authentification, compte, profil public, tests (Vitest, Playwright).
 - Stack technique : **TypeScript, Next.js, Tailwind CSS + shadcn/ui, Supabase, Vercel**. Détail et justification dans `docs/product.md`, section *Stack technique*.
 
 ## Code
@@ -23,6 +23,7 @@ Point d'entrée pour tout agent (IA ou humain) qui travaille sur ce dépôt. À 
 - Next.js 16 (App Router), React 19, Tailwind CSS v4, shadcn/ui (style `base-nova`, composants Base UI). Gestionnaire de paquets : **npm**. Prérequis : Node.js LTS (24).
 - Code dans `src/` : pages dans `src/app/`, composants shadcn/ui dans `src/components/ui/` (ajout : `npx shadcn@latest add <composant>`).
 - Commandes : `npm run dev` (serveur local sur http://localhost:3000), `npm run build`, `npm run lint`.
+- CLI Supabase : installé dans le projet (dépendance de dev), à lancer avec `npx supabase <commande>`. Configuration dans `supabase/`, dossier relié au projet Supabase **MyWork** (référence `ulufanywmrporutivwgc`). Côté application : clients Supabase dans `src/lib/supabase/` (`client.ts` navigateur, `server.ts` serveur), réglages dans `.env.local` (modèle : `.env.example`, jamais commité).
 
 ## Règles de travail
 
