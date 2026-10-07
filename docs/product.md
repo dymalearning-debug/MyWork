@@ -58,7 +58,7 @@ Chaque étape correspond au périmètre MVP du module (voir [modules.md](modules
 | # | Étape | Statut |
 |---|---|---|
 | 0 | Choix de la stack technique | Fait |
-| 1 | Socle : authentification, compte, squelette du profil public | À faire |
+| 1 | Socle : authentification, compte, squelette du profil public | En cours |
 | 2 | Module **CV** et export | À faire |
 | 3 | Module **Rendez-vous** (type Calendly) | À faire |
 | 4 | Module **Boards** (type Trello) | À faire |

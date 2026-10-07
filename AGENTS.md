@@ -15,8 +15,14 @@ Point d'entrée pour tout agent (IA ou humain) qui travaille sur ce dépôt. À 
 
 ## État actuel
 
-- Phase : stack choisie, aucun code. Prochaine étape : le socle (étape 1 de la roadmap).
+- Phase : étape 1 (socle) en cours. Application Next.js créée, avec une page d'accueil provisoire. Restent à faire : Supabase, authentification, compte, profil public, tests (Vitest, Playwright).
 - Stack technique : **TypeScript, Next.js, Tailwind CSS + shadcn/ui, Supabase, Vercel**. Détail et justification dans `docs/product.md`, section *Stack technique*.
+
+## Code
+
+- Next.js 16 (App Router), React 19, Tailwind CSS v4, shadcn/ui (style `base-nova`, composants Base UI). Gestionnaire de paquets : **npm**. Prérequis : Node.js LTS (24).
+- Code dans `src/` : pages dans `src/app/`, composants shadcn/ui dans `src/components/ui/` (ajout : `npx shadcn@latest add <composant>`).
+- Commandes : `npm run dev` (serveur local sur http://localhost:3000), `npm run build`, `npm run lint`.
 
 ## Règles de travail
 
@@ -26,3 +32,13 @@ Point d'entrée pour tout agent (IA ou humain) qui travaille sur ce dépôt. À 
 - Toute décision validée avec le porteur du projet est ajoutée à `docs/product.md` (section *Décisions*), et la roadmap est tenue à jour.
 - Respecter le périmètre de l'étape en cours : ne pas implémenter ce qui est marqué *Plus tard*.
 - Multi-tenant dès le départ : chaque donnée appartient à un utilisateur, même tant que l'application n'en a qu'un seul.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
