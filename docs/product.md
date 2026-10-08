@@ -84,6 +84,12 @@ Journal des choix validés (date : décision).
 - 2026-10-06 : tests avec les outils standards d'une application Next.js : Vitest (unitaires) et Playwright (bout en bout).
 - 2026-10-07 : le produit s'appelle **MyWork** (remplace le nom provisoire « Linku »).
 - 2026-10-07 : projet Supabase **MyWork** (offre gratuite), en Irlande (West EU) plutôt qu'à Paris : données toujours dans l'UE, écart de rapidité négligeable. RLS activée automatiquement sur chaque nouvelle table, et aucune table exposée à l'API par défaut : l'accès est ouvert table par table, dans les migrations.
+- 2026-10-08 : identité visuelle inspirée de **Westworld** (saison 1), version « plaquette de luxe » : celle que Delos remettrait aux visiteurs de son parc. Sobre, blanc et noir, à la Hermès, avec une touche technologique. Une première version plus « écran de labo » (fond blanc os, police mono, grille, crochets de cadrage) a été écartée : trop « geek ».
+  - Deux thèmes conservés, **clair** (blanc franc) et **sombre** (noir profond), avec un interrupteur. Par défaut, le thème du système.
+  - Couleur primaire : un **rouge vif et profond**, pour les boutons principaux et la sélection. Cases à cocher et interrupteurs en encre noire, pour que le rouge reste rare. Le cognac, puis Archivo (titres élargis), ont été écartés : pas assez à son goût, et Archivo trop singulière, on s'en lasserait.
+  - Typographie : **Newsreader** (sérif éditoriale, classique et robuste) pour les titres, préférée à Cormorant Garamond, Bodoni Moda et Geist seule. **Geist** pour tout le reste. Étiquettes en petites capitales espacées. Pas de police mono.
+  - Effets discrets : angles droits, filets fins et clairs, beaucoup d'espace, halo de « lumière de studio » sur les grandes zones, survols sobres.
+  - Page de référence `/design`, accessible en local uniquement (404 en production).
 
 ## Questions ouvertes
 

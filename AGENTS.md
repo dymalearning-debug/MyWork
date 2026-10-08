@@ -15,13 +15,15 @@ Point d'entrée pour tout agent (IA ou humain) qui travaille sur ce dépôt. À 
 
 ## État actuel
 
-- Phase : étape 1 (socle) en cours. Application Next.js créée, avec une page d'accueil provisoire. Projet Supabase créé et relié (CLI). Restent à faire : branchement de Supabase dans l'application, authentification, compte, profil public, tests (Vitest, Playwright).
+- Phase : étape 1 (socle) en cours. Application Next.js créée, avec une page d'accueil provisoire. Projet Supabase créé et relié (CLI). Design system validé, présenté sur la page `/design` ; à appliquer aux écrans au fur et à mesure. Restent à faire : branchement de Supabase dans l'application, authentification, compte, profil public, tests (Vitest, Playwright).
 - Stack technique : **TypeScript, Next.js, Tailwind CSS + shadcn/ui, Supabase, Vercel**. Détail et justification dans `docs/product.md`, section *Stack technique*.
 
 ## Code
 
 - Next.js 16 (App Router), React 19, Tailwind CSS v4, shadcn/ui (style `base-nova`, composants Base UI). Gestionnaire de paquets : **npm**. Prérequis : Node.js LTS (24).
-- Code dans `src/` : pages dans `src/app/`, composants shadcn/ui dans `src/components/ui/` (ajout : `npx shadcn@latest add <composant>`).
+- Code dans `src/` : pages dans `src/app/`, composants shadcn/ui dans `src/components/ui/` (ajout : `npx shadcn@latest add <composant>`, puis adapter au design system).
+- Design system : couleurs des deux thèmes (rouge en `primary`), polices et utilitaires (`bg-spotlight`, `eyebrow`) dans `src/app/globals.css`. Page de référence http://localhost:3000/design (`src/app/design/`), en local uniquement. Toute nouvelle brique d'interface y est ajoutée.
+- Si un changement de style dans `globals.css` n'apparaît pas (cache du compilateur CSS, qui survit au redémarrage) : arrêter `npm run dev`, supprimer le dossier `.next/dev`, relancer.
 - Commandes : `npm run dev` (serveur local sur http://localhost:3000), `npm run build`, `npm run lint`.
 - CLI Supabase : installé dans le projet (dépendance de dev), à lancer avec `npx supabase <commande>`. Configuration dans `supabase/`, dossier relié au projet Supabase **MyWork** (référence `ulufanywmrporutivwgc`). Côté application : clients Supabase dans `src/lib/supabase/` (`client.ts` navigateur, `server.ts` serveur), réglages dans `.env.local` (modèle : `.env.example`, jamais commité).
 
