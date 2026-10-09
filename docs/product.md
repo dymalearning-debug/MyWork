@@ -90,6 +90,8 @@ Journal des choix validés (date : décision).
   - Typographie : **Newsreader** (sérif éditoriale, classique et robuste) pour les titres, préférée à Cormorant Garamond, Bodoni Moda et Geist seule. **Geist** pour tout le reste. Étiquettes en petites capitales espacées. Pas de police mono.
   - Effets discrets : angles droits, filets fins et clairs, beaucoup d'espace, halo de « lumière de studio » sur les grandes zones, survols sobres.
   - Page de référence `/design`, accessible en local uniquement (404 en production).
+- 2026-10-09 : design system **MyWork** synchronisé sur claude.ai (tokens, typographie, composants de l'application avec aperçus, logos).
+- 2026-10-09 : logo : le nom **MyWork** en Newsreader (lettres vectorisées), dont le **M est porté par un carré rouge** (un seul M ; la version « carré + nom complet » a été écartée, le M en double faisait bizarre). Le carré seul sert de favicon et d'icône d'application. Image de partage (1200 × 630) sur fond noir, lumière de studio et fine trame de points ; une première version en blocs de couleur a été écartée (« damier »). Fichiers dans `public/brand/`, composant `Logo` dans l'interface.
 
 ## Questions ouvertes
 

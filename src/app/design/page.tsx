@@ -10,6 +10,7 @@ import {
   Share2Icon,
 } from "lucide-react"
 
+import { Logo } from "@/components/logo"
 import { StatusDot } from "@/components/status-dot"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Avatar, AvatarFallback, AvatarGroup, AvatarGroupCount } from "@/components/ui/avatar"
@@ -81,6 +82,7 @@ const SECTIONS = [
   { id: "feedback", title: "Retours" },
   { id: "data", title: "Données" },
   { id: "modules", title: "Briques" },
+  { id: "brand", title: "Marque" },
 ]
 
 // Alternative heading fonts, loaded on this page only for comparison.
@@ -249,8 +251,7 @@ export default function DesignPage() {
       <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-md">
         <div className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between px-6">
           <div className="flex items-center gap-3">
-            <span className="size-2 bg-primary" />
-            <span className="font-heading text-lg font-semibold tracking-[0.18em] uppercase">MyWork</span>
+            <Logo className="h-6" />
             <span className="eyebrow hidden text-muted-foreground sm:inline">/ Design system</span>
           </div>
           <div className="flex items-center gap-4">
@@ -864,6 +865,42 @@ export default function DesignPage() {
               <ModuleHeading module="Module · Drive" title="Liste de fichiers" />
               <DrivePreview />
             </div>
+          </Section>
+
+          <Section
+            id="brand"
+            index="12"
+            title="Marque"
+            description="Le nom MyWork en Newsreader, dont le M est porté par un carré rouge. Le carré seul sert d'icône. Les fichiers sont dans public/brand ; dans l'interface, utiliser le composant Logo."
+          >
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="flex h-40 items-center justify-center border border-border bg-background">
+                <Logo className="h-10" />
+              </div>
+              <div className="dark flex h-40 items-center justify-center bg-background text-foreground">
+                <Logo className="h-10" />
+              </div>
+            </div>
+            <Specimen label="Variantes" hint="lockup, mark, wordmark">
+              <Logo />
+              <Logo variant="mark" />
+              <Logo variant="wordmark" />
+            </Specimen>
+            <Specimen label="Icône" hint="Onglet du navigateur, écran d'accueil du téléphone.">
+              <Logo variant="mark" className="size-4" />
+              <Logo variant="mark" className="size-8" />
+              <Logo variant="mark" className="size-12" />
+              <Logo variant="mark" className="size-20" />
+            </Specimen>
+            <Specimen
+              label="Règles"
+              hint="Pour un usage hors de l'application."
+              className="block max-w-xl space-y-2 text-sm text-muted-foreground"
+            >
+              <p>Laisser autour du logo un espace au moins égal à la moitié du carré.</p>
+              <p>Sur fond sombre, prendre la version blanche ; le carré reste rouge.</p>
+              <p>Ne pas déformer, recolorer ni réécrire le nom dans une autre police.</p>
+            </Specimen>
           </Section>
 
           <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-6">
