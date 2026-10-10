@@ -68,6 +68,7 @@ import {
   SidebarPreview,
   VisibilityBadge,
 } from "./_components/module-previews"
+import { EmailPreviews } from "./_components/email-previews"
 import { ModuleHeading, Section, Specimen } from "./_components/showcase"
 
 const SECTIONS = [
@@ -83,6 +84,7 @@ const SECTIONS = [
   { id: "data", title: "Données" },
   { id: "modules", title: "Briques" },
   { id: "brand", title: "Marque" },
+  { id: "emails", title: "E-mails" },
 ]
 
 // Alternative heading fonts, loaded on this page only for comparison.
@@ -901,6 +903,15 @@ export default function DesignPage() {
               <p>Sur fond sombre, prendre la version blanche ; le carré reste rouge.</p>
               <p>Ne pas déformer, recolorer ni réécrire le nom dans une autre police.</p>
             </Specimen>
+          </Section>
+
+          <Section
+            id="emails"
+            index="13"
+            title="E-mails"
+            description="Les e-mails de Supabase Auth, aux couleurs de MyWork. Les messageries ne comprennent ni les variables CSS ni les polices web : couleurs en valeurs fixes, Georgia et Helvetica en secours, logo en image."
+          >
+            <EmailPreviews />
           </Section>
 
           <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-6">

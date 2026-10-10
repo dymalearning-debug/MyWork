@@ -47,13 +47,13 @@ Statut : **cadrage terminé, maquettes validées**. Développement : prochaine s
 
 - Au premier passage, le compte est créé directement, sans e-mail de confirmation : Google a déjà vérifié l'adresse.
 - Si un compte e-mail et mot de passe existe déjà avec la même adresse (confirmée), Supabase relie les deux : c'est le même compte, accessible des deux façons.
-- La case « Rester connecté » s'applique aussi.
+- La case « Rester connecté » s'applique aussi. Depuis la page d'inscription, qui n'a pas cette case, la valeur par défaut s'applique : rester connecté.
 
 ### Mot de passe oublié
 
 1. L'utilisateur saisit son e-mail. Message neutre : « Si un compte existe pour cette adresse, un e-mail vient d'être envoyé ».
-2. Le lien de l'e-mail (valable une heure, utilisable une seule fois) ouvre la page **Nouveau mot de passe**.
-3. Une fois le mot de passe enregistré, l'utilisateur est connecté et arrive dans l'application.
+2. Le lien de l'e-mail (valable une heure, utilisable une seule fois) connecte l'utilisateur et ouvre la page **Nouveau mot de passe**. C'est le fonctionnement de Supabase : s'il quitte la page sans changer son mot de passe, il reste connecté (risque faible, il a fallu accéder à sa boîte mail).
+3. Une fois le mot de passe enregistré, il arrive dans l'application.
 
 ### Lien expiré ou déjà utilisé
 
@@ -163,12 +163,16 @@ Deux e-mails : **confirmation de l'inscription** et **réinitialisation du mot d
 
 Ces réglages sont versionnés dans `supabase/config.toml` et appliqués au projet en ligne avec `npx supabase config push`, qui affiche les différences et demande confirmation. Le code secret Google y est lu depuis une variable d'environnement.
 
+`config push` envoie **tout** le fichier, pas seulement les lignes modifiées. Avant le premier envoi, le fichier (encore aux valeurs par défaut de l'installation) est donc aligné sur les réglages en ligne, pour ne rien écraser par accident ; les changements ci-dessus sont ajoutés ensuite.
+
 ## Technique
 
 Pour les agents qui développeront la fonctionnalité.
 
-- Next.js 16 : `src/proxy.ts` (l'ancien `middleware`) rafraîchit la session Supabase à chaque requête et redirige les visiteurs non connectés. Il ne suffit pas : chaque page et chaque action serveur revérifie l'utilisateur. Lire d'abord `node_modules/next/dist/docs/01-app/02-guides/authentication.md`.
-- Routes, en anglais comme le code : `/login`, `/signup`, `/forgot-password`, `/reset-password`, `/profile` (page de profil ; `/` y redirige pour l'instant), et deux routes techniques :
+- Next.js 16 : `src/proxy.ts` (l'ancien `middleware`) rafraîchit la session Supabase à chaque requête et redirige les visiteurs non connectés. Il ne suffit pas : chaque page et chaque action serveur revérifie l'utilisateur. Lire d'abord `node_modules/next/dist/docs/01-app/02-guides/authentication.md` et, `cacheComponents` étant activé, `authentication-with-cache-components.md`.
+- Table `profiles` : aucune table n'est exposée à l'API par défaut (décision du 2026-10-07), la migration lui donne donc explicitement accès au rôle `authenticated`.
+- « Vérifiez votre boîte mail » remplace le formulaire d'inscription sur la même page : l'adresse (utilisée par « Renvoyer l'e-mail ») reste dans l'état de la page, jamais dans l'URL.
+- Routes, en anglais comme le code : `/login`, `/signup`, `/forgot-password`, `/reset-password`, `/link-expired` (lien expiré ou déjà utilisé), `/profile` (page de profil ; `/` y redirige pour l'instant), et deux routes techniques :
   - `/auth/callback` : retour de Google (échange du code contre une session) ;
   - `/auth/confirm` : liens des e-mails, vérifiés par `token_hash`, ce qui marche même si le lien est ouvert dans un autre navigateur.
 - Ces noms seront interdits comme identifiants du futur profil public.
@@ -180,7 +184,9 @@ Pour les agents qui développeront la fonctionnalité.
   - Bout en bout : redirection d'un visiteur non connecté, connexion et déconnexion, erreurs de connexion, rester connecté, inscription, mot de passe oublié.
   - Les tests ne lisent pas de boîte mail : les liens de confirmation et de réinitialisation sont générés par l'API d'administration de Supabase, qui crée aussi les comptes de test.
   - Les tests tournent sur la base en ligne : comptes de test à adresse reconnaissable, supprimés à la fin de chaque exécution. Il faut pour cela la clé secrète Supabase, uniquement dans `.env.local` et dans les secrets GitHub, jamais côté navigateur.
-  - Inscription : le vrai formulaire déclenche un e-mail, refusé pour une adresse hors équipe et limité à 2 par heure. En attendant Resend, la logique d'inscription est couverte par un test unitaire (Vitest, Supabase simulé) ; le bout en bout vérifie le formulaire, puis la confirmation avec un compte non confirmé créé par l'API d'administration.
+  - Aucun test automatique n'envoie d'e-mail : un envoi est refusé pour une adresse hors équipe, et le quota de 2 par heure est partagé avec l'usage réel du porteur du projet. En attendant Resend, les trois parcours qui envoient un e-mail (inscription, mot de passe oublié, renvoi de l'e-mail de confirmation) sont couverts par des tests unitaires (Vitest, Supabase simulé). Le bout en bout vérifie les formulaires sans les envoyer, puis reprend le parcours à partir d'un lien généré par l'API d'administration (confirmation d'un compte non confirmé, nouveau mot de passe).
+  - « Trop de tentatives » : test unitaire uniquement (le provoquer pour de vrai épuiserait les limites de Supabase).
+  - GitHub : l'application est construite et lancée dans le workflow ; il lui faut trois secrets (adresse Supabase, clé publique, clé secrète).
   - Le bouton Google n'est pas testé automatiquement : vérification manuelle.
 
 ## Mise en œuvre
