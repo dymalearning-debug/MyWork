@@ -93,6 +93,14 @@ Journal des choix validés (date : décision).
 - 2026-10-09 : design system **MyWork** synchronisé sur claude.ai (tokens, typographie, composants de l'application avec aperçus, logos).
 - 2026-10-09 : logo : le nom **MyWork** en Newsreader (lettres vectorisées), dont le **M est porté par un carré rouge** (un seul M ; la version « carré + nom complet » a été écartée, le M en double faisait bizarre). Le carré seul sert de favicon et d'icône d'application. Image de partage (1200 × 630) sur fond noir, lumière de studio et fine trame de points ; une première version en blocs de couleur a été écartée (« damier »). Fichiers dans `public/brand/`, composant `Logo` dans l'interface.
 - 2026-10-10 : aucune copie locale de la base de données (pas de Supabase en local). Tant que le développement de l'application n'est pas terminé, développement et production utilisent le même projet Supabase en ligne, **MyWork**.
+- 2026-10-10 : authentification (détail dans [auth.md](auth.md)) :
+  - application entièrement privée, connexion obligatoire ; la page d'entrée est la **connexion** (une landing page viendra plus tard) ;
+  - connexion par **Google** ou par **e-mail et mot de passe**, avec **confirmation de l'e-mail** (préférée à une liste d'adresses autorisées) ;
+  - case « Rester connecté » à la connexion, mot de passe oublié, déconnexion ;
+  - e-mails envoyés aux utilisateurs aux couleurs du design system ;
+  - pas encore de page « Mon compte » : elle viendra avec les Paramètres ;
+  - navigation de l'espace privé par une **barre latérale** très simple, dans l'esprit de l'application de bureau de Claude : le logo en haut, un lien « Profil » vers une page de profil provisoire (l'accueil après connexion), et en bas le bloc du profil, qui ouvre un menu avec le choix du thème (clair, sombre ou système) et « Se déconnecter ». Avatar : la photo Google, sinon l'initiale de l'e-mail ;
+  - maquettes validées : direction **« Plaquette »** (formulaire centré dans une carte à filet fin, barre latérale claire), pour tous les écrans d'authentification, la page de profil et les deux e-mails. Écartées : « Diptyque » (volet noir et volet blanc) et « Catalogue » (grille éditoriale, sections numérotées).
 
 ## Questions ouvertes
 
