@@ -12,12 +12,13 @@ Point d'entrée pour tout agent (IA ou humain) qui travaille sur ce dépôt. À 
 |---|---|---|
 | [docs/product.md](docs/product.md) | Vision, cible, modèle économique, principes transverses, stack technique, roadmap, décisions, questions ouvertes | Toujours, avant toute tâche |
 | [docs/modules.md](docs/modules.md) | Spécification fonctionnelle de chaque module (périmètre MVP / plus tard) | Avant de travailler sur un module |
+| [docs/auth.md](docs/auth.md) | Authentification : parcours, e-mails, données utilisateur, configuration Google et Supabase, tests | Avant de travailler sur la connexion, l'inscription ou la coque de l'application |
 | [docs/design-system.md](docs/design-system.md) | Identité visuelle : où trouver tokens, composants, vitrine `/design` et logos ; règles d'usage | Avant de créer ou modifier un écran ou un composant |
 
 ## État actuel
 
 - Phase : étape 1 (socle) en cours.
-  - Fait : application Next.js (page d'accueil provisoire), déployée automatiquement sur Vercel. Projet Supabase créé, relié au CLI et branché dans l'application (aucune table pour l'instant). Design system validé ([docs/design-system.md](docs/design-system.md)), à appliquer aux écrans au fur et à mesure.
+  - Fait : application Next.js (page d'accueil provisoire), déployée automatiquement sur Vercel. Projet Supabase créé, relié au CLI et branché dans l'application (aucune table pour l'instant). Design system validé ([docs/design-system.md](docs/design-system.md)), à appliquer aux écrans au fur et à mesure. Authentification cadrée et maquettée ([docs/auth.md](docs/auth.md)), prête à développer.
   - Reste à faire : authentification, compte, espace privé, profil public. Tests automatiques (Vitest, Playwright), lancés par GitHub à chaque modification. Vérifier que les fonctions Vercel tournent bien à Dublin, comme prévu par la stack.
 - Stack technique : **TypeScript, Next.js, Tailwind CSS + shadcn/ui, Supabase, Vercel**. Détail et justification dans `docs/product.md`, section *Stack technique*.
 
