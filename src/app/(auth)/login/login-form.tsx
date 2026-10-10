@@ -14,7 +14,9 @@ import { GoogleButton } from "../_components/google-button";
 import { login } from "../actions";
 import { ResendConfirmation } from "../resend-confirmation";
 
-export function LoginForm({ next, notice }: { next?: string; notice?: string }) {
+export type Notice = { tone: "info" | "error"; text: string };
+
+export function LoginForm({ next, notice }: { next?: string; notice?: Notice }) {
   const [state, action] = useActionState(login, {} as FormState);
   // Shared with the Google button, which is a separate form.
   const [remember, setRemember] = useState(true);
@@ -31,7 +33,7 @@ export function LoginForm({ next, notice }: { next?: string; notice?: string }) 
         {state.error ? (
           <FormMessage tone="error">{state.error}</FormMessage>
         ) : (
-          notice && <FormMessage tone="error">{notice}</FormMessage>
+          notice && <FormMessage tone={notice.tone}>{notice.text}</FormMessage>
         )}
 
         <div className="flex flex-col gap-5">

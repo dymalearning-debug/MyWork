@@ -31,9 +31,10 @@ async function rememberChoice(remember: boolean) {
   cookieStore.set(REMEMBER_COOKIE, remember ? "1" : "0", REMEMBER_COOKIE_OPTIONS);
 }
 
-// Email links land on /auth/confirm, which checks the token and opens the session.
-async function emailLinkTarget() {
-  return `${await getRequestOrigin()}/auth/confirm`;
+// Email links land on /auth/confirm, which checks the link and opens the session.
+// The type tells it where to go next (the app for a sign-up, the new password page for a reset).
+async function emailLinkTarget(type: "signup" | "recovery") {
+  return `${await getRequestOrigin()}/auth/confirm?type=${type}`;
 }
 
 export async function login(_prev: FormState, formData: FormData): Promise<FormState> {
@@ -73,18 +74,18 @@ export async function signup(_prev: FormState, formData: FormData): Promise<Form
   return signUpWithEmail(
     supabase.auth,
     { email: normalizeEmail(formData.get("email")), password: text(formData, "password") },
-    await emailLinkTarget(),
+    await emailLinkTarget("signup"),
   );
 }
 
 export async function resendConfirmation(_prev: FormState, formData: FormData): Promise<FormState> {
   const supabase = await createClient();
-  return resendConfirmationEmail(supabase.auth, normalizeEmail(formData.get("email")), await emailLinkTarget());
+  return resendConfirmationEmail(supabase.auth, normalizeEmail(formData.get("email")), await emailLinkTarget("signup"));
 }
 
 export async function forgotPassword(_prev: FormState, formData: FormData): Promise<FormState> {
   const supabase = await createClient();
-  return requestPasswordReset(supabase.auth, normalizeEmail(formData.get("email")), await emailLinkTarget());
+  return requestPasswordReset(supabase.auth, normalizeEmail(formData.get("email")), await emailLinkTarget("recovery"));
 }
 
 // "Ce lien n'est plus valide": sends a new link of the same kind as the expired one.
@@ -92,9 +93,9 @@ export async function requestNewLink(_prev: FormState, formData: FormData): Prom
   const email = normalizeEmail(formData.get("email"));
   const supabase = await createClient();
   if (formData.get("type") === "recovery") {
-    return requestPasswordReset(supabase.auth, email, await emailLinkTarget());
+    return requestPasswordReset(supabase.auth, email, await emailLinkTarget("recovery"));
   }
-  const result = await resendConfirmationEmail(supabase.auth, email, await emailLinkTarget());
+  const result = await resendConfirmationEmail(supabase.auth, email, await emailLinkTarget("signup"));
   // Same neutral answer as for a password reset: the screen does not reveal whether the address has an account.
   if (result.fieldErrors || result.error === MESSAGES.tooManyAttempts) return result;
   return { status: "sent", email };

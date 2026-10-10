@@ -252,14 +252,16 @@ otp_expiry = 3600
 # admin_email = "admin@email.com"
 # sender_name = "Admin"
 
-# MyWork emails, in French (see docs/auth.md, "E-mails"). Previewed on the local /design page.
-[auth.email.template.confirmation]
-subject = "Confirmez votre adresse e-mail"
-content_path = "./supabase/templates/confirmation.html"
-
-[auth.email.template.recovery]
-subject = "Réinitialisez votre mot de passe"
-content_path = "./supabase/templates/recovery.html"
+# MyWork emails, in French (supabase/templates/, previewed on the local /design page): not active yet.
+# The free plan refuses custom templates with Supabase's built-in email service; they will be
+# enabled with our own sending service (Resend). Until then, Supabase's default emails are used.
+# [auth.email.template.confirmation]
+# subject = "Confirmez votre adresse e-mail"
+# content_path = "./supabase/templates/confirmation.html"
+#
+# [auth.email.template.recovery]
+# subject = "Réinitialisez votre mot de passe"
+# content_path = "./supabase/templates/recovery.html"
 
 # Uncomment to customize email template
 # [auth.email.template.invite]

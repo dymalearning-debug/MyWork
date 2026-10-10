@@ -909,7 +909,7 @@ export default function DesignPage() {
             id="emails"
             index="13"
             title="E-mails"
-            description="Les e-mails de Supabase Auth, aux couleurs de MyWork. Les messageries ne comprennent ni les variables CSS ni les polices web : couleurs en valeurs fixes, Georgia et Helvetica en secours, logo en image."
+            description="Les e-mails de Supabase Auth, aux couleurs de MyWork. Prêts, mais pas encore actifs : ils demandent notre propre service d'envoi (Resend). Les messageries ne comprennent ni les variables CSS ni les polices web : couleurs en valeurs fixes, Georgia et Helvetica en secours, logo en image."
           >
             <EmailPreviews />
           </Section>

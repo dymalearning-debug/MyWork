@@ -4,12 +4,14 @@ import { Suspense } from "react";
 import { safeNextPath } from "@/lib/auth/paths";
 
 import { AuthCard, AuthFooter, AuthHeader, AuthLink } from "../_components/auth-shell";
-import { LoginForm } from "./login-form";
+import { LoginForm, type Notice } from "./login-form";
 
 export const metadata: Metadata = { title: "Connexion · MyWork" };
 
-const NOTICES: Record<string, string> = {
-  google: "La connexion avec Google n'a pas abouti. Réessayez.",
+// Messages announced by the URL (?error=… or ?notice=…), after a return from Google or an email link.
+const NOTICES: Record<string, Notice> = {
+  google: { tone: "error", text: "La connexion avec Google n'a pas abouti. Réessayez." },
+  confirmed: { tone: "info", text: "Votre adresse est confirmée. Connectez-vous pour accéder à votre espace." },
 };
 
 export default function LoginPage({ searchParams }: PageProps<"/login">) {
@@ -34,6 +36,7 @@ export default function LoginPage({ searchParams }: PageProps<"/login">) {
 async function LoginFormWithParams({ searchParams }: Pick<PageProps<"/login">, "searchParams">) {
   const params = await searchParams;
   const next = safeNextPath(params.next) ?? undefined;
-  const notice = typeof params.error === "string" ? NOTICES[params.error] : undefined;
+  const key = params.error ?? params.notice;
+  const notice = typeof key === "string" ? NOTICES[key] : undefined;
   return <LoginForm next={next} notice={notice} />;
 }
