@@ -1,7 +1,7 @@
 # Modules : spécifications fonctionnelles
 
 Chaque module suit le même schéma : un espace **privé** (gestion) et une partie **publique** optionnelle, exposée sur le profil.
-**MVP** désigne ce qui est construit à l'étape correspondante de la roadmap. **Plus tard** regroupe des idées retenues mais hors périmètre.
+**MVP** désigne ce qui est construit à l'étape correspondante de la roadmap (voir [product.md](product.md), section *Roadmap*). **Plus tard** regroupe des idées retenues mais hors périmètre.
 
 ## Socle : compte et profil public
 
@@ -10,7 +10,7 @@ Chaque module suit le même schéma : un espace **privé** (gestion) et une part
 - **Paramètres** : identifiant/URL, modules activés, modules visibles sur le profil.
 - *Plus tard* : domaine personnalisé, thèmes, statistiques de visites.
 
-## 1. CV (type LinkedIn)
+## CV (type LinkedIn)
 
 **Objectif** : renseigner son parcours facilement et le partager, par URL ou par export.
 
@@ -30,7 +30,7 @@ Points d'attention
 - L'export doit être fidèle à l'aperçu : le générer à partir du même rendu HTML.
 - Métadonnées SEO / Open Graph, pour un bel aperçu quand le lien est partagé.
 
-## 2. Rendez-vous (type Calendly)
+## Rendez-vous (type Calendly)
 
 **Objectif** : permettre aux clients de réserver un créneau depuis le profil public.
 
@@ -51,7 +51,7 @@ Points d'attention
 - **Fuseaux horaires** : stocker en UTC, afficher dans le fuseau du visiteur.
 - Concurrence : empêcher deux réservations sur le même créneau.
 
-## 3. Boards (type Trello)
+## Boards (type Trello)
 
 **Objectif** : organiser ses tâches dans des tableaux kanban.
 
@@ -64,7 +64,7 @@ Plus tard
 - Commentaires, pièces jointes (reliées au Drive), archivage, recherche et filtres.
 - Collaboration à plusieurs sur un même board.
 
-## 4. Drive (type Google Drive)
+## Drive (type Google Drive)
 
 **Objectif** : stocker et organiser ses fichiers, et en partager certains publiquement.
 
@@ -81,15 +81,15 @@ Points d'attention
 - Utiliser un stockage objet (type S3) plutôt que le disque du serveur. Les téléchargements passent par des URL signées.
 - En SaaS, l'hébergement public de fichiers attire les abus : limites de taille et de type, signalement, possibilité de retrait.
 
-## 5. Abonnement et paiement
+## Abonnement et paiement
 
 **Objectif** : monétiser l'ouverture en SaaS.
 
 - Un seul abonnement mensuel peu cher, qui inclut un quota de stockage.
 - L'utilisateur gère lui-même son abonnement : moyen de paiement, factures, résiliation.
-- Prestataire de paiement à choisir (Stripe, par exemple).
+- Prestataire : **Stripe** (Checkout pour le paiement, portail client pour la gestion de l'abonnement).
 
-## 6. Visio (type Zoom)
+## Visio (type Zoom)
 
 **Objectif** : tenir directement dans l'application le rendez-vous réservé.
 

@@ -12,20 +12,26 @@ Point d'entrée pour tout agent (IA ou humain) qui travaille sur ce dépôt. À 
 |---|---|---|
 | [docs/product.md](docs/product.md) | Vision, cible, modèle économique, principes transverses, stack technique, roadmap, décisions, questions ouvertes | Toujours, avant toute tâche |
 | [docs/modules.md](docs/modules.md) | Spécification fonctionnelle de chaque module (périmètre MVP / plus tard) | Avant de travailler sur un module |
+| [docs/design-system.md](docs/design-system.md) | Identité visuelle : où trouver tokens, composants, vitrine `/design` et logos ; règles d'usage | Avant de créer ou modifier un écran ou un composant |
 
 ## État actuel
 
-- Phase : étape 1 (socle) en cours. Application Next.js créée, avec une page d'accueil provisoire. Projet Supabase créé et relié (CLI). Design system validé, présenté sur la page `/design` ; à appliquer aux écrans au fur et à mesure. Restent à faire : branchement de Supabase dans l'application, authentification, compte, profil public, tests (Vitest, Playwright).
+- Phase : étape 1 (socle) en cours.
+  - Fait : application Next.js (page d'accueil provisoire), déployée automatiquement sur Vercel. Projet Supabase créé, relié au CLI et branché dans l'application (aucune table pour l'instant). Design system validé ([docs/design-system.md](docs/design-system.md)), à appliquer aux écrans au fur et à mesure.
+  - Reste à faire : authentification, compte, espace privé, profil public. Tests automatiques (Vitest, Playwright), lancés par GitHub à chaque modification. Vérifier que les fonctions Vercel tournent bien à Dublin, comme prévu par la stack.
 - Stack technique : **TypeScript, Next.js, Tailwind CSS + shadcn/ui, Supabase, Vercel**. Détail et justification dans `docs/product.md`, section *Stack technique*.
 
 ## Code
 
 - Next.js 16 (App Router), React 19, Tailwind CSS v4, shadcn/ui (style `base-nova`, composants Base UI). Gestionnaire de paquets : **npm**. Prérequis : Node.js LTS (24).
 - Code dans `src/` : pages dans `src/app/`, composants shadcn/ui dans `src/components/ui/` (ajout : `npx shadcn@latest add <composant>`, puis adapter au design system).
-- Design system : couleurs des deux thèmes (rouge en `primary`), polices et utilitaires (`bg-spotlight`, `eyebrow`) dans `src/app/globals.css`. Page de référence http://localhost:3000/design (`src/app/design/`), en local uniquement. Toute nouvelle brique d'interface y est ajoutée. Copie synchronisée sur claude.ai (design system **MyWork**, https://claude.ai/artifact/T7MhWyh31URAnNAjyGd61b) : tokens, typographie, composants (dont `Logo`), logos et guide de marque, à resynchroniser quand `globals.css`, un composant ou le logo change.
+- Design system : **lire [docs/design-system.md](docs/design-system.md) avant toute interface**. En bref : tokens dans `src/app/globals.css`, composants dans `src/components/`, vitrine http://localhost:3000/design (en local uniquement), copie sur claude.ai à resynchroniser quand `globals.css`, un composant ou le logo change.
 - Si un changement de style dans `globals.css` n'apparaît pas (cache du compilateur CSS, qui survit au redémarrage) : arrêter `npm run dev`, supprimer le dossier `.next/dev`, relancer.
 - Commandes : `npm run dev` (serveur local sur http://localhost:3000), `npm run build`, `npm run lint`.
-- CLI Supabase : installé dans le projet (dépendance de dev), à lancer avec `npx supabase <commande>`. Configuration dans `supabase/`, dossier relié au projet Supabase **MyWork** (référence `ulufanywmrporutivwgc`). Côté application : clients Supabase dans `src/lib/supabase/` (`client.ts` navigateur, `server.ts` serveur), réglages dans `.env.local` (modèle : `.env.example`, jamais commité).
+- CLI Supabase : installé dans le projet (dépendance de dev), à lancer avec `npx supabase <commande>`. Configuration dans `supabase/`, dossier relié au projet Supabase **MyWork** (référence `ulufanywmrporutivwgc`). Côté application : clients Supabase dans `src/lib/supabase/` (`client.ts` navigateur, `server.ts` serveur), réglages dans `.env.local` (modèle : `.env.example`, jamais commité). Pas encore de table : le schéma de la base sera versionné par des migrations dans `supabase/migrations/`.
+- **Jamais de base de données locale** (ni `npx supabase start`, ni Docker) : développement et production utilisent le même projet Supabase en ligne, jusqu'à la fin du développement (voir `docs/product.md`, *Décisions*).
+- Dépôt GitHub : https://github.com/dymalearning-debug/MyWork (privé).
+- Déploiement : Vercel, équipe `mywork-8619`, projet `linku` (ancien nom du produit). Chaque push sur `main` part en production (https://linku-nu.vercel.app) ; chaque pull request reçoit une URL d'aperçu. Les variables d'environnement sont gérées dans Vercel : `vercel env pull .env.local` régénère le fichier local (CLI Vercel installé sur le poste).
 
 ## Règles de travail
 
@@ -33,6 +39,7 @@ Point d'entrée pour tout agent (IA ou humain) qui travaille sur ce dépôt. À 
 - Le porteur du projet n'est pas développeur : expliquer les choix en langage simple, et couvrir les parcours importants par des tests automatiques plutôt que de compter sur une relecture du code.
 - Documentation concise : enrichir les fichiers existants plutôt que d'en créer de nouveaux.
 - Toute décision validée avec le porteur du projet est ajoutée à `docs/product.md` (section *Décisions*), et la roadmap est tenue à jour.
+- Toute interface suit le design system ([docs/design-system.md](docs/design-system.md)) : aucune couleur, police ou rayon en dur, et chaque écran vérifié en thème clair et sombre.
 - Respecter le périmètre de l'étape en cours : ne pas implémenter ce qui est marqué *Plus tard*.
 - Multi-tenant dès le départ : chaque donnée appartient à un utilisateur, même tant que l'application n'en a qu'un seul.
 

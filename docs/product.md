@@ -92,6 +92,7 @@ Journal des choix validés (date : décision).
   - Page de référence `/design`, accessible en local uniquement (404 en production).
 - 2026-10-09 : design system **MyWork** synchronisé sur claude.ai (tokens, typographie, composants de l'application avec aperçus, logos).
 - 2026-10-09 : logo : le nom **MyWork** en Newsreader (lettres vectorisées), dont le **M est porté par un carré rouge** (un seul M ; la version « carré + nom complet » a été écartée, le M en double faisait bizarre). Le carré seul sert de favicon et d'icône d'application. Image de partage (1200 × 630) sur fond noir, lumière de studio et fine trame de points ; une première version en blocs de couleur a été écartée (« damier »). Fichiers dans `public/brand/`, composant `Logo` dans l'interface.
+- 2026-10-10 : aucune copie locale de la base de données (pas de Supabase en local). Tant que le développement de l'application n'est pas terminé, développement et production utilisent le même projet Supabase en ligne, **MyWork**.
 
 ## Questions ouvertes
 
