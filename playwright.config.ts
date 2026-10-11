@@ -12,6 +12,10 @@ const baseURL = "http://localhost:3000";
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
+  // Each test signs in against the online Supabase project: a few at a time is enough,
+  // and leaves room for the dev server, which compiles pages on first visit.
+  workers: isCI ? 2 : 4,
+  expect: { timeout: 15_000 },
   forbidOnly: isCI,
   retries: isCI ? 1 : 0,
   reporter: isCI ? [["list"], ["html", { open: "never" }]] : "list",

@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useActionState, useState } from "react";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -12,28 +13,35 @@ import { OrSeparator } from "../_components/auth-shell";
 import { FieldError, FormMessage, PasswordInput, SubmitButton } from "../_components/form-parts";
 import { GoogleButton } from "../_components/google-button";
 import { login } from "../actions";
+import { UrlParamInputs } from "../_components/url-params";
 import { ResendConfirmation } from "../resend-confirmation";
 
-export type Notice = { tone: "info" | "error"; text: string };
+// Messages announced by the address (?error=… or ?notice=…), after a return from Google or an email link.
+const NOTICES: Record<string, { tone: "info" | "error"; text: string }> = {
+  google: { tone: "error", text: "La connexion avec Google n'a pas abouti. Réessayez." },
+  confirmed: { tone: "info", text: "Votre adresse est confirmée. Connectez-vous pour accéder à votre espace." },
+};
 
-export function LoginForm({ next, notice }: { next?: string; notice?: Notice }) {
+export function LoginForm() {
   const [state, action] = useActionState(login, {} as FormState);
   // Shared with the Google button, which is a separate form.
   const [remember, setRemember] = useState(true);
   const errors = state.fieldErrors ?? {};
 
+
   return (
     <>
-      <GoogleButton remember={remember} next={next} />
+      <GoogleButton remember={remember} />
       <OrSeparator />
 
       <form action={action} noValidate className="flex flex-col gap-6">
-        {next && <input type="hidden" name="next" value={next} />}
-
+        <UrlParamInputs names={["next"]} />
         {state.error ? (
           <FormMessage tone="error">{state.error}</FormMessage>
         ) : (
-          notice && <FormMessage tone={notice.tone}>{notice.text}</FormMessage>
+          <Suspense fallback={null}>
+            <UrlNotice />
+          </Suspense>
         )}
 
         <div className="flex flex-col gap-5">
@@ -90,4 +98,10 @@ export function LoginForm({ next, notice }: { next?: string; notice?: Notice }) 
       {state.unconfirmed && state.email && <ResendConfirmation email={state.email} />}
     </>
   );
+}
+
+function UrlNotice() {
+  const params = useSearchParams();
+  const notice = NOTICES[params.get("error") ?? params.get("notice") ?? ""];
+  return notice ? <FormMessage tone={notice.tone}>{notice.text}</FormMessage> : null;
 }

@@ -1,6 +1,7 @@
 import "server-only";
 
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { cache } from "react";
 
 import { createClient } from "@/lib/supabase/server";
@@ -18,6 +19,8 @@ export type CurrentUser = {
 };
 
 export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
+  // The session depends on the visit (and on the current time, to check its expiry): never prerendered.
+  await connection();
   const supabase = await createClient();
   // getClaims verifies the session token's signature, unlike getSession.
   const { data } = await supabase.auth.getClaims();

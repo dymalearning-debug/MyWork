@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import type { FormState } from "@/lib/auth/flows";
 
 import { FieldError, FormMessage, SubmitButton } from "./form-parts";
+import { UrlParamInputs } from "./url-params";
 
 // An email field that asks for a link ("Mot de passe oublié", "Ce lien n'est plus valide").
 // Once sent, the form gives way to a neutral message: it never tells whether the account exists.
@@ -14,12 +15,13 @@ export function EmailLinkForm({
   id,
   action: serverAction,
   submitLabel,
-  hidden,
+  urlParams = [],
 }: {
   id: string;
   action: (prev: FormState, formData: FormData) => Promise<FormState>;
   submitLabel: string;
-  hidden?: Record<string, string>;
+  // Parameters of the page address to send along (e.g. the kind of expired link).
+  urlParams?: string[];
 }) {
   const [state, action] = useActionState(serverAction, {} as FormState);
   const emailError = state.fieldErrors?.email;
@@ -40,9 +42,7 @@ export function EmailLinkForm({
 
   return (
     <form action={action} noValidate className="flex flex-col gap-5">
-      {Object.entries(hidden ?? {}).map(([name, value]) => (
-        <input key={name} type="hidden" name={name} value={value} />
-      ))}
+      <UrlParamInputs names={urlParams} />
       {state.error && <FormMessage tone="error">{state.error}</FormMessage>}
       <div className="flex flex-col gap-2">
         <Label htmlFor={id}>E-mail</Label>

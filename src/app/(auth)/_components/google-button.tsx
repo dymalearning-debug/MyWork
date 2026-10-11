@@ -5,15 +5,16 @@ import { useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/button";
 
 import { loginWithGoogle } from "../actions";
+import { UrlParamInputs } from "./url-params";
 
 // "Continuer avec Google", in a form of its own so that pressing Enter in the email form
 // never leaves for Google. On the login page it also sends the "Rester connecté" choice
 // and the return address; the sign-up page has no such box (default: stay signed in).
-export function GoogleButton({ remember, next }: { remember?: boolean; next?: string }) {
+export function GoogleButton({ remember }: { remember?: boolean }) {
   return (
     <form action={loginWithGoogle}>
+      <UrlParamInputs names={["next"]} />
       {remember !== undefined && <input type="hidden" name="remember" value={remember ? "on" : "off"} />}
-      {next && <input type="hidden" name="next" value={next} />}
       <GoogleSubmit />
     </form>
   );

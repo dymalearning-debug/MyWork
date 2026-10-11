@@ -1,7 +1,7 @@
 # Authentification
 
 Spécification de l'authentification, première brique de l'étape 1 (voir [product.md](product.md), *Roadmap*).
-Statut : **cadrage terminé, maquettes validées**. Développement : prochaine session (voir *Mise en œuvre*).
+Statut : **développée** (branche `feat/auth`, 2026-10-11). Écarts avec le cadrage initial signalés dans le texte (e-mails par défaut de Supabase, liens à ouvrir dans le même navigateur).
 
 ## En bref
 
@@ -143,7 +143,9 @@ Deux e-mails : **confirmation de l'inscription** et **réinitialisation du mot d
 
 ## Configuration de Google
 
-À faire pendant la session d'implémentation. Claude prépare tout dans le Chrome du porteur du projet (extension Claude in Chrome, où il est déjà connecté à Google et à Supabase), puis le porteur du projet finalise.
+Fait le 2026-10-11 : projet Google Cloud **MyWork** (`mywork-511308`), client OAuth « MyWork (Supabase) ». Le compte Google doit avoir la validation en deux étapes (exigée par Google Cloud).
+
+Le fournisseur Google est réglé **dans le tableau de bord Supabase** (Authentication › Sign In / Providers › Google), pas dans `supabase/config.toml` : le code secret n'a ainsi jamais à passer par le dépôt ni par une variable d'environnement, et `config push` laisse intact ce que le fichier ne déclare pas. Le code secret se régénère au besoin dans Google Cloud (Clients › MyWork (Supabase)).
 
 1. **Google Cloud** : un projet « MyWork » et, dans *Google Auth Platform* :
    - *Branding* : nom MyWork, e-mail d'assistance. Pas de logo pour l'instant, car il déclencherait une vérification de la marque par Google (plusieurs jours).

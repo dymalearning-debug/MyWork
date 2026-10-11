@@ -95,10 +95,10 @@ test.describe("login errors", () => {
     const user = await createUser();
     await page.goto("/login");
     await login(page, user.email, "not-the-password");
-    await expect(page.getByRole("alert")).toHaveText("E-mail ou mot de passe incorrect.");
+    await expect(page.locator("main").getByRole("alert")).toHaveText("E-mail ou mot de passe incorrect.");
 
     await login(page, testEmail(), "whatever-password");
-    await expect(page.getByRole("alert")).toHaveText("E-mail ou mot de passe incorrect.");
+    await expect(page.locator("main").getByRole("alert")).toHaveText("E-mail ou mot de passe incorrect.");
     await expect(page).toHaveURL(/\/login$/);
   });
 
@@ -106,7 +106,7 @@ test.describe("login errors", () => {
     const user = await createUser({ confirmed: false });
     await page.goto("/login");
     await login(page, user.email, user.password);
-    await expect(page.getByRole("alert")).toContainText("pas encore confirmée");
+    await expect(page.locator("main").getByRole("alert")).toContainText("pas encore confirmée");
     // Not clicked: it would send a real email.
     await expect(page.getByRole("button", { name: "Renvoyer l'e-mail" })).toBeVisible();
   });
@@ -163,6 +163,13 @@ test.describe("sign-up", () => {
     expect(profile?.email).toBe(email);
   });
 
+  test("a confirmation link opened in another browser sends to the login page with a message", async ({ page }) => {
+    await page.goto("/login?notice=confirmed");
+    await expect(page.locator("main").getByRole("status")).toHaveText(
+      "Votre adresse est confirmée. Connectez-vous pour accéder à votre espace.",
+    );
+  });
+
   test("a confirmation link can only be used once", async ({ page }) => {
     const link = await emailLink("signup", testEmail());
     await page.goto(link);
@@ -198,7 +205,7 @@ test.describe("forgot password", () => {
 
     await signOut(page);
     await login(page, user.email, TEST_PASSWORD);
-    await expect(page.getByRole("alert")).toHaveText("E-mail ou mot de passe incorrect.");
+    await expect(page.locator("main").getByRole("alert")).toHaveText("E-mail ou mot de passe incorrect.");
     await login(page, user.email, newPassword);
     await expect(page).toHaveURL(/\/profile$/);
   });
