@@ -100,6 +100,12 @@ Journal des choix validés (date : décision).
   - e-mails envoyés aux utilisateurs aux couleurs du design system ;
   - pas encore de page « Mon compte » : elle viendra avec les Paramètres ;
   - navigation de l'espace privé par une **barre latérale** très simple, dans l'esprit de l'application de bureau de Claude : le logo en haut, un lien « Profil » vers une page de profil provisoire (l'accueil après connexion), et en bas le bloc du profil, qui ouvre un menu avec le choix du thème (clair, sombre ou système) et « Se déconnecter ». Avatar : la photo Google, sinon l'initiale de l'e-mail ;
+  - aucun test automatique n'envoie d'e-mail (quota de 2 par heure partagé avec l'usage réel) : les envois sont couverts par des tests unitaires, le bout en bout repart de liens générés par l'API d'administration ;
+  - `supabase/config.toml` est d'abord aligné sur les réglages en ligne avant tout `config push`, qui envoie le fichier entier ;
+  - e-mails par défaut de Supabase (en anglais) tant qu'on n'a pas notre propre service d'envoi : l'offre gratuite refuse les modèles personnalisés. Les modèles MyWork sont prêts et seront activés avec Resend ;
+  - la clé secrète Supabase (tests de bout en bout uniquement) est rangée sur Vercel dans l'environnement « Development » seulement (jamais transmise aux déploiements), récupérée par `vercel env pull`, et copiée dans les secrets GitHub. Pas dans l'environnement des sessions cloud tant qu'on n'y lance pas les tests ;
+  - fournisseur Google réglé dans le tableau de bord Supabase, pas dans `supabase/config.toml`, pour que son code secret ne passe jamais par le dépôt ;
+  - le lien « mot de passe oublié » connecte l'utilisateur dès le clic (fonctionnement de Supabase), avant le choix du nouveau mot de passe : accepté ;
   - maquettes validées : direction **« Plaquette »** (formulaire centré dans une carte à filet fin, barre latérale claire), pour tous les écrans d'authentification, la page de profil et les deux e-mails. Écartées : « Diptyque » (volet noir et volet blanc) et « Catalogue » (grille éditoriale, sections numérotées).
 
 ## Questions ouvertes

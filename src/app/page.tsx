@@ -1,13 +1,9 @@
-import { Logo } from "@/components/logo";
+import { redirect } from "next/navigation";
 
+import { HOME_PATH } from "@/lib/auth/paths";
+
+// No landing page yet: the address of the site leads to the private space
+// (or to the login page, through the proxy, for a signed-out visitor).
 export default function Home() {
-  return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
-      <Logo variant="mark" className="mb-4 size-14" />
-      <h1 className="font-heading text-4xl font-semibold tracking-tight">MyWork – Bonjour Anthropic</h1>
-      <p className="max-w-md text-lg text-muted-foreground">
-        L&apos;espace tout-en-un des freelances : CV, rendez-vous, tâches et fichiers.
-      </p>
-    </main>
-  );
+  redirect(HOME_PATH);
 }

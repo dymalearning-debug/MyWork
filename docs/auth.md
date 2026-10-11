@@ -1,7 +1,7 @@
 # Authentification
 
 Spécification de l'authentification, première brique de l'étape 1 (voir [product.md](product.md), *Roadmap*).
-Statut : **cadrage terminé, maquettes validées**. Développement : prochaine session (voir *Mise en œuvre*).
+Statut : **développée** (branche `feat/auth`, 2026-10-11). Écarts avec le cadrage initial signalés dans le texte (e-mails par défaut de Supabase, liens à ouvrir dans le même navigateur).
 
 ## En bref
 
@@ -47,13 +47,13 @@ Statut : **cadrage terminé, maquettes validées**. Développement : prochaine s
 
 - Au premier passage, le compte est créé directement, sans e-mail de confirmation : Google a déjà vérifié l'adresse.
 - Si un compte e-mail et mot de passe existe déjà avec la même adresse (confirmée), Supabase relie les deux : c'est le même compte, accessible des deux façons.
-- La case « Rester connecté » s'applique aussi.
+- La case « Rester connecté » s'applique aussi. Depuis la page d'inscription, qui n'a pas cette case, la valeur par défaut s'applique : rester connecté.
 
 ### Mot de passe oublié
 
 1. L'utilisateur saisit son e-mail. Message neutre : « Si un compte existe pour cette adresse, un e-mail vient d'être envoyé ».
-2. Le lien de l'e-mail (valable une heure, utilisable une seule fois) ouvre la page **Nouveau mot de passe**.
-3. Une fois le mot de passe enregistré, l'utilisateur est connecté et arrive dans l'application.
+2. Le lien de l'e-mail (valable une heure, utilisable une seule fois) connecte l'utilisateur et ouvre la page **Nouveau mot de passe**. C'est le fonctionnement de Supabase : s'il quitte la page sans changer son mot de passe, il reste connecté (risque faible, il a fallu accéder à sa boîte mail).
+3. Une fois le mot de passe enregistré, il arrive dans l'application.
 
 ### Lien expiré ou déjà utilisé
 
@@ -114,6 +114,10 @@ Dans les maquettes, l'adresse `ines.robert@exemple.fr` (ou `quentin@exemple.fr`)
 
 Deux e-mails : **confirmation de l'inscription** et **réinitialisation du mot de passe**.
 
+> **Pour l'instant, ce sont les e-mails par défaut de Supabase (en anglais).** L'offre gratuite refuse les modèles personnalisés tant qu'on utilise le service d'envoi intégré de Supabase (refus constaté le 2026-10-10). Les modèles MyWork décrits ci-dessous sont prêts dans le dépôt et seront activés avec notre propre service d'envoi (Resend).
+>
+> Conséquence : le lien des e-mails par défaut doit être ouvert **dans le navigateur qui a fait la demande**. Ouvert ailleurs, le lien de confirmation confirme quand même l'adresse (la page de connexion l'annonce), mais ne connecte pas ; le lien de réinitialisation mène à « Ce lien n'est plus valide ».
+
 - **Aux couleurs du design system** : logo MyWork, blanc franc et encre, bouton rouge à angles droits pour l'action, filets fins, titre en sérif, beaucoup d'espace. Les messageries imposent quelques adaptations :
   - couleurs écrites en valeurs fixes (hexadécimal), converties depuis les tokens de `src/app/globals.css` : les messageries ne comprennent ni les variables CSS ni le format `oklch` ;
   - polices de secours proches : Georgia pour les titres (à la place de Newsreader), Helvetica ou Arial pour le texte (à la place de Geist), car Gmail et Outlook ne chargent pas les polices web ;
@@ -123,7 +127,7 @@ Deux e-mails : **confirmation de l'inscription** et **réinitialisation du mot d
 - Contenu (maquettes `Email-Confirmation` et `Email-Reinitialisation`) : sur fond gris perle, une carte blanche de 560 px à filet fin. Dedans : le logo, un filet, une étiquette, le titre en Georgia, un paragraphe, le bouton rouge, la durée de validité du lien, puis le lien en clair pour le cas où le bouton ne marche pas. Sous la carte : « MyWork — L'espace tout-en-un des freelances ».
   - Confirmation : objet « Confirmez votre adresse e-mail », bouton « Confirmer mon adresse ».
   - Réinitialisation : objet « Réinitialisez votre mot de passe », bouton « Choisir un nouveau mot de passe ».
-- Les modèles HTML sont versionnés dans le dépôt (`supabase/templates/`) et ajoutés à la vitrine `/design`, pour contrôler leur rendu.
+- Les modèles HTML sont versionnés dans le dépôt (`supabase/templates/`) et ajoutés à la vitrine `/design`, pour contrôler leur rendu. Leur déclaration dans `supabase/config.toml` est en commentaire, à réactiver avec Resend.
 - **Service d'envoi** : celui intégré à Supabase, pour l'instant, avec deux limites :
   - il n'envoie qu'aux membres de l'équipe du projet Supabase. C'est le cas du compte MyWork du porteur du projet, qui utilise la même adresse Gmail que son compte Supabase. Effet de bord utile : personne d'autre ne peut finaliser une inscription par e-mail ;
   - 2 e-mails par heure au maximum, tous types confondus ;
@@ -139,7 +143,9 @@ Deux e-mails : **confirmation de l'inscription** et **réinitialisation du mot d
 
 ## Configuration de Google
 
-À faire pendant la session d'implémentation. Claude prépare tout dans le Chrome du porteur du projet (extension Claude in Chrome, où il est déjà connecté à Google et à Supabase), puis le porteur du projet finalise.
+Fait le 2026-10-11 : projet Google Cloud **MyWork** (`mywork-511308`), client OAuth « MyWork (Supabase) ». Le compte Google doit avoir la validation en deux étapes (exigée par Google Cloud).
+
+Le fournisseur Google est réglé **dans le tableau de bord Supabase** (Authentication › Sign In / Providers › Google), pas dans `supabase/config.toml` : le code secret n'a ainsi jamais à passer par le dépôt ni par une variable d'environnement, et `config push` laisse intact ce que le fichier ne déclare pas. Le code secret se régénère au besoin dans Google Cloud (Clients › MyWork (Supabase)).
 
 1. **Google Cloud** : un projet « MyWork » et, dans *Google Auth Platform* :
    - *Branding* : nom MyWork, e-mail d'assistance. Pas de logo pour l'instant, car il déclencherait une vérification de la marque par Google (plusieurs jours).
@@ -158,19 +164,23 @@ Deux e-mails : **confirmation de l'inscription** et **réinitialisation du mot d
 | URL du site | `https://linku-nu.vercel.app` |
 | URL de redirection autorisées | `http://localhost:3000/**`, `https://linku-nu.vercel.app/**` et les aperçus Vercel `https://*-mywork-8619.vercel.app/**` |
 | Fournisseur Google | Activé |
-| Modèles d'e-mails | Confirmation et réinitialisation, en français, aux couleurs de MyWork |
+| Modèles d'e-mails | Par défaut de Supabase pour l'instant (offre gratuite) ; ceux de MyWork avec Resend |
 | Durée des sessions | Illimitée (réglage par défaut) |
 
 Ces réglages sont versionnés dans `supabase/config.toml` et appliqués au projet en ligne avec `npx supabase config push`, qui affiche les différences et demande confirmation. Le code secret Google y est lu depuis une variable d'environnement.
+
+`config push` envoie **tout** le fichier, pas seulement les lignes modifiées. Avant le premier envoi, le fichier (encore aux valeurs par défaut de l'installation) est donc aligné sur les réglages en ligne, pour ne rien écraser par accident ; les changements ci-dessus sont ajoutés ensuite.
 
 ## Technique
 
 Pour les agents qui développeront la fonctionnalité.
 
-- Next.js 16 : `src/proxy.ts` (l'ancien `middleware`) rafraîchit la session Supabase à chaque requête et redirige les visiteurs non connectés. Il ne suffit pas : chaque page et chaque action serveur revérifie l'utilisateur. Lire d'abord `node_modules/next/dist/docs/01-app/02-guides/authentication.md`.
-- Routes, en anglais comme le code : `/login`, `/signup`, `/forgot-password`, `/reset-password`, `/profile` (page de profil ; `/` y redirige pour l'instant), et deux routes techniques :
+- Next.js 16 : `src/proxy.ts` (l'ancien `middleware`) rafraîchit la session Supabase à chaque requête et redirige les visiteurs non connectés. Il ne suffit pas : chaque page et chaque action serveur revérifie l'utilisateur. Lire d'abord `node_modules/next/dist/docs/01-app/02-guides/authentication.md` et, `cacheComponents` étant activé, `authentication-with-cache-components.md`.
+- Table `profiles` : aucune table n'est exposée à l'API par défaut (décision du 2026-10-07), la migration lui donne donc explicitement accès au rôle `authenticated`.
+- « Vérifiez votre boîte mail » remplace le formulaire d'inscription sur la même page : l'adresse (utilisée par « Renvoyer l'e-mail ») reste dans l'état de la page, jamais dans l'URL.
+- Routes, en anglais comme le code : `/login`, `/signup`, `/forgot-password`, `/reset-password`, `/link-expired` (lien expiré ou déjà utilisé), `/profile` (page de profil ; `/` y redirige pour l'instant), et deux routes techniques :
   - `/auth/callback` : retour de Google (échange du code contre une session) ;
-  - `/auth/confirm` : liens des e-mails, vérifiés par `token_hash`, ce qui marche même si le lien est ouvert dans un autre navigateur.
+  - `/auth/confirm` : liens des e-mails. L'application y ajoute `type=signup` ou `type=recovery` pour savoir où aller ensuite. Deux formes acceptées : un `code` (e-mails par défaut de Supabase, à ouvrir dans le même navigateur) ou un `token_hash` (modèles MyWork et tests, valable dans n'importe quel navigateur).
 - Ces noms seront interdits comme identifiants du futur profil public.
 - Développement et production partagent le même projet Supabase : les liens des e-mails ramènent vers le site d'où vient la demande (local, aperçu ou production), grâce à l'adresse de redirection transmise par l'application, et non vers l'URL du site.
 - Formulaires : Server Actions, validation côté serveur. Le paramètre de retour (`next`) n'accepte que des chemins internes, jamais un autre site.
@@ -180,7 +190,9 @@ Pour les agents qui développeront la fonctionnalité.
   - Bout en bout : redirection d'un visiteur non connecté, connexion et déconnexion, erreurs de connexion, rester connecté, inscription, mot de passe oublié.
   - Les tests ne lisent pas de boîte mail : les liens de confirmation et de réinitialisation sont générés par l'API d'administration de Supabase, qui crée aussi les comptes de test.
   - Les tests tournent sur la base en ligne : comptes de test à adresse reconnaissable, supprimés à la fin de chaque exécution. Il faut pour cela la clé secrète Supabase, uniquement dans `.env.local` et dans les secrets GitHub, jamais côté navigateur.
-  - Inscription : le vrai formulaire déclenche un e-mail, refusé pour une adresse hors équipe et limité à 2 par heure. En attendant Resend, la logique d'inscription est couverte par un test unitaire (Vitest, Supabase simulé) ; le bout en bout vérifie le formulaire, puis la confirmation avec un compte non confirmé créé par l'API d'administration.
+  - Aucun test automatique n'envoie d'e-mail : un envoi est refusé pour une adresse hors équipe, et le quota de 2 par heure est partagé avec l'usage réel du porteur du projet. En attendant Resend, les trois parcours qui envoient un e-mail (inscription, mot de passe oublié, renvoi de l'e-mail de confirmation) sont couverts par des tests unitaires (Vitest, Supabase simulé). Le bout en bout vérifie les formulaires sans les envoyer, puis reprend le parcours à partir d'un lien généré par l'API d'administration (confirmation d'un compte non confirmé, nouveau mot de passe).
+  - « Trop de tentatives » : test unitaire uniquement (le provoquer pour de vrai épuiserait les limites de Supabase).
+  - GitHub : l'application est construite et lancée dans le workflow ; il lui faut trois secrets (adresse Supabase, clé publique, clé secrète).
   - Le bouton Google n'est pas testé automatiquement : vérification manuelle.
 
 ## Mise en œuvre
