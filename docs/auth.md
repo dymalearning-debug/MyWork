@@ -19,7 +19,7 @@ Statut : **développée** (branche `feat/auth`, 2026-10-11). Écarts avec le cad
 | Non connecté | Une page d'authentification | Affichée |
 | Connecté | Connexion ou inscription | Redirigé vers l'accueil de l'application |
 
-- Restent publiques : les pages d'authentification, le **profil public** `/<identifiant>` (c'est sa raison d'être ; règles d'accès dans [modules.md](modules.md), *Profil public : le squelette*) et, plus tard, la landing page.
+- Restent publiques : les pages d'authentification, le **profil public** `/<identifiant>` (c'est sa raison d'être ; règles d'accès dans [public-profile.md](public-profile.md)) et, plus tard, la landing page.
 - La vitrine `/design` reste accessible sans connexion, en local uniquement.
 
 ## Parcours
@@ -106,7 +106,7 @@ Dans les maquettes, l'adresse `ines.robert@exemple.fr` (ou `quentin@exemple.fr`)
     - l'adresse e-mail, en petit ;
     - **Thème** : Clair, Sombre ou Système (par défaut), une coche sur le choix actif. Ce choix pourra plus tard rejoindre les Paramètres ;
     - **Se déconnecter**.
-  - Le profil public réorganise ce menu en sous-menus : **Mon profil public** (mise en ligne, copier l'adresse, ouvrir) et **Thème**. Voir [modules.md](modules.md), *Profil public : le squelette*, section *Menu du profil*.
+  - Le profil public réorganise ce menu en sous-menus : **Mon profil public** (mise en ligne, copier l'adresse, ouvrir) et **Thème**. Voir [public-profile.md](public-profile.md), *Menu du profil*.
 - **Avatar** : la photo Google quand elle existe, sinon l'initiale de l'adresse e-mail.
 - **Page de profil** : l'accueil de l'espace privé, où l'on arrive après la connexion. Pour l'instant un simple emplacement réservé : l'étiquette « Espace privé », le titre « Page de profil » et « Contenu à venir ». Son contenu viendra plus tard.
 - Textes en français, en vouvoiement comme le reste de l'interface. Les messages d'erreur de Supabase, en anglais, sont traduits.
@@ -182,7 +182,7 @@ Pour les agents qui développeront la fonctionnalité.
 - Routes, en anglais comme le code : `/login`, `/signup`, `/forgot-password`, `/reset-password`, `/link-expired` (lien expiré ou déjà utilisé), `/profile` (page de profil ; `/` y redirige pour l'instant ; elle deviendra `/app/profile` avec le profil public), et deux routes techniques :
   - `/auth/callback` : retour de Google (échange du code contre une session) ;
   - `/auth/confirm` : liens des e-mails. L'application y ajoute `type=signup` ou `type=recovery` pour savoir où aller ensuite. Deux formes acceptées : un `code` (e-mails par défaut de Supabase, à ouvrir dans le même navigateur) ou un `token_hash` (modèles MyWork et tests, valable dans n'importe quel navigateur).
-- Ces noms sont interdits comme identifiants du profil public (mots réservés, voir [modules.md](modules.md), *Profil public : le squelette*).
+- Ces noms sont interdits comme identifiants du profil public (mots réservés, voir [public-profile.md](public-profile.md)).
 - Développement et production partagent le même projet Supabase : les liens des e-mails ramènent vers le site d'où vient la demande (local, aperçu ou production), grâce à l'adresse de redirection transmise par l'application, et non vers l'URL du site.
 - Formulaires : Server Actions, validation côté serveur. Le paramètre de retour (`next`) n'accepte que des chemins internes, jamais un autre site.
 - Rester connecté : la préférence est gardée dans un petit cookie. Quand elle est désactivée, les cookies de session Supabase sont écrits sans date d'expiration.
