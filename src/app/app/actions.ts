@@ -1,5 +1,6 @@
 "use server";
 
+import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { LOGIN_PATH } from "@/lib/auth/paths";
@@ -15,14 +16,17 @@ export async function signOut() {
 }
 
 // Puts the public profile online or offline (docs/public-profile.md, "En ligne ou hors ligne").
-// The public pages read the database on each visit: nothing to refresh.
-export async function setProfileOnline(online: boolean): Promise<{ ok: true; online: boolean } | { ok: false }> {
+// The public pages read the database on each visit. The private space is refreshed, so that the
+// profile menu, rebuilt each time it opens, shows the saved state.
+export async function setProfileOnline(online: boolean): Promise<{ ok: boolean }> {
   const user = await getCurrentUser();
   if (!user || typeof online !== "boolean") return { ok: false };
   try {
-    return { ok: true, online: await setOwnProfileOnline(user.id, online) };
+    await setOwnProfileOnline(user.id, online);
   } catch (error) {
     console.error(error);
     return { ok: false };
   }
+  refresh();
+  return { ok: true };
 }

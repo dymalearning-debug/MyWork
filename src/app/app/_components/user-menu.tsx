@@ -14,7 +14,7 @@ import {
   SunIcon,
 } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useOptimistic, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -63,6 +63,21 @@ export function UserMenu({
   publicProfile: PublicProfile;
 }) {
   const [signingOut, startSignOut] = useTransition();
+  // Held here and not in the submenu, whose content is rebuilt each time the menu opens. The new
+  // state shows at once, until the refreshed page brings the saved one, or the previous one if
+  // the change fails.
+  const [online, setOptimisticOnline] = useOptimistic(publicProfile.isOnline);
+  const [saving, startSaving] = useTransition();
+
+  // Switched at once, without confirmation.
+  function toggleOnline(next: boolean) {
+    if (saving) return;
+    startSaving(async () => {
+      setOptimisticOnline(next);
+      const result = await setProfileOnline(next);
+      if (!result.ok) toast.error("L'état du profil n'a pas pu être changé. Réessayez.");
+    });
+  }
 
   return (
     <DropdownMenu>
@@ -77,7 +92,7 @@ export function UserMenu({
       <DropdownMenuContent side="top" sideOffset={8} className="rounded-none">
         <p className="truncate px-2.5 py-2 text-xs text-muted-foreground">{email}</p>
         <DropdownMenuSeparator />
-        <PublicProfileSubmenu profile={publicProfile} />
+        <PublicProfileSubmenu handle={publicProfile.handle} online={online} onOnlineChange={toggleOnline} />
         <ThemeSubmenu />
         <DropdownMenuSeparator />
         <DropdownMenuItem
@@ -94,28 +109,20 @@ export function UserMenu({
 }
 
 // "Mon profil public": the online switch, "Copier l'adresse", "Ouvrir mon profil public".
-function PublicProfileSubmenu({ profile }: { profile: PublicProfile }) {
-  const [online, setOnline] = useState(profile.isOnline);
-  const [saving, startSaving] = useTransition();
+function PublicProfileSubmenu({
+  handle,
+  online,
+  onOnlineChange,
+}: {
+  handle: string;
+  online: boolean;
+  onOnlineChange: (online: boolean) => void;
+}) {
   const [copied, setCopied] = useState(false);
   const copiedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
-  const path = publicProfilePath(profile.handle);
+  const path = publicProfilePath(handle);
 
   useEffect(() => () => clearTimeout(copiedTimer.current), []);
-
-  // Switched at once, without confirmation; back to the previous state if the change fails.
-  function toggleOnline(next: boolean) {
-    setOnline(next);
-    startSaving(async () => {
-      const result = await setProfileOnline(next);
-      if (result.ok) {
-        setOnline(result.online);
-      } else {
-        setOnline(!next);
-        toast.error("L'état du profil n'a pas pu être changé. Réessayez.");
-      }
-    });
-  }
 
   async function copyAddress() {
     try {
@@ -138,7 +145,7 @@ function PublicProfileSubmenu({ profile }: { profile: PublicProfile }) {
       <DropdownMenuSubContent className={cn(SUBMENU, "w-64")} sideOffset={9} alignOffset={-5}>
         <MenuPrimitive.CheckboxItem
           checked={online}
-          onCheckedChange={(next) => !saving && toggleOnline(next)}
+          onCheckedChange={onOnlineChange}
           closeOnClick={false}
           className={cn(ITEM, ROW)}
         >

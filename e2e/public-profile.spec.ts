@@ -190,6 +190,35 @@ test.describe("profile menu, Mon profil public", () => {
     await visitor.close();
   });
 
+  // The menu is rebuilt each time it opens: it must show the state just saved, not the one
+  // read when the page was loaded.
+  test("the switch keeps its state when the menu is closed and opened again", async ({ page }) => {
+    const user = await createUser();
+    await signIn(page, user);
+    // Escape closes the submenu, then the menu.
+    const closeMenu = async () => {
+      await page.keyboard.press("Escape");
+      await expect(page.getByRole("menu")).toHaveCount(1);
+      await page.keyboard.press("Escape");
+      await expect(page.getByRole("menu")).toHaveCount(0);
+    };
+
+    for (const name of ["Profil en ligne", "Profil hors ligne"]) {
+      await openProfileSubmenu(page, "Mon profil public");
+      await page.getByRole("menuitemcheckbox").click();
+      await expect(page.getByRole("menuitemcheckbox", { name })).toBeVisible();
+      await expect.poll(async () => (await getProfile(user.id)).is_online).toBe(name === "Profil en ligne");
+      await closeMenu();
+
+      await openProfileSubmenu(page, "Mon profil public");
+      await expect(page.getByRole("menuitemcheckbox", { name })).toHaveAttribute(
+        "aria-checked",
+        String(name === "Profil en ligne"),
+      );
+      await closeMenu();
+    }
+  });
+
   test("copies the address of the public profile", async ({ page, context, baseURL }) => {
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
     const user = await createUser();
