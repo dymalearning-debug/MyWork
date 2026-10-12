@@ -1,7 +1,7 @@
 # Profil public
 
 Spécification du squelette du profil public, qui fait partie de l'étape 1 (voir [product.md](product.md), *Roadmap*).
-Statut : **développé** (branche `feat/public-profile`, 2026-10-12). Reste la copie claude.ai du design system à resynchroniser pour le nouvel interrupteur.
+Statut : **développé** et en production (pull request #4, 2026-10-12). Copie claude.ai du design system resynchronisée (nouvel interrupteur).
 
 Le squelette prépare la partie publique de tous les modules : l'adresse, la mise en page, l'accès sans connexion, la mise en ligne. Le contenu arrivera avec les modules (voir [modules.md](modules.md)).
 
@@ -34,13 +34,18 @@ Le squelette prépare la partie publique de tous les modules : l'adresse, la mis
 | Visiteur | Page demandée | Résultat |
 |---|---|---|
 | N'importe qui | `/<identifiant>` d'un profil en ligne | La page publique |
-| N'importe qui, sauf le propriétaire | `/<identifiant>` d'un profil hors ligne | Page introuvable (404) |
+| N'importe qui, sauf le propriétaire | `/<identifiant>` d'un profil hors ligne | Page introuvable (code 200, voir ci-dessous) |
 | Le propriétaire, connecté | Son propre profil, hors ligne | Un aperçu, avec le bandeau « Hors ligne » |
-| N'importe qui | `/<identifiant>` inconnu | Page introuvable (404) |
+| N'importe qui | `/<identifiant>` inconnu | Page introuvable (code 200, voir ci-dessous) |
 | Non connecté | Une page de l'espace privé (`/app/…`) | Redirigé vers la connexion |
 
 - Les sous-pages `/<identifiant>/…` suivent les mêmes règles.
 - Un profil hors ligne et un identifiant inconnu donnent exactement la même page : rien ne révèle qu'un compte existe.
+- **Code de réponse** : la « Page introuvable » d'un profil (hors ligne ou inconnu) répond avec le **code 200**, pas 404. Ce n'est pas un choix : en production, Next.js commence à envoyer la page avant de savoir si le profil existe, et le code part avec ce début. Next.js ajoute alors la mention « ne pas indexer » (`noindex`), comme il le ferait pour un 404.
+  - Pour le visiteur, rien ne change : il voit « Page introuvable ».
+  - Pour les moteurs de recherche, l'effet est le même qu'un 404 : la page n'est pas indexée. C'est voulu pour un profil hors ligne. Une fois en ligne, il répond avec la vraie page (code 200, sans « Page introuvable »), et les moteurs le reprennent à leur prochain passage : ni un 404, ni ce 200 ne le pénalisent durablement. Aujourd'hui, de toute façon, aucune page publique n'est indexée (`noindex` tant qu'elles sont vides).
+  - Les autres adresses inconnues (sous-page de profil inexistante, `/app/…`) répondent bien 404.
+  - Un vrai 404 pour les profils demanderait une lecture de la base à chaque visite dans `src/proxy.ts` (voir *Technique*) : à revoir avec le référencement, si besoin.
 
 ## Identifiant public
 
@@ -59,7 +64,7 @@ Le squelette prépare la partie publique de tous les modules : l'adresse, la mis
 
 - Un interrupteur, dans le menu du profil (voir *Interface*) : « Profil en ligne » ou « Profil hors ligne ». **Hors ligne par défaut**, pour qu'aucun profil vide ou inachevé ne soit visible.
 - Hors ligne :
-  - les visiteurs tombent sur une page introuvable (404) ;
+  - les visiteurs tombent sur une page introuvable ;
   - le propriétaire connecté voit quand même sa page, avec le bandeau « Hors ligne ». Il peut ainsi préparer son profil avant de le publier.
 - En ligne, la vue est stricte : identique pour tous, propriétaire compris, sans bandeau.
 - L'interrupteur s'ajoute à la visibilité de chaque élément (privé ou public, voir [product.md](product.md), *Principes transverses*) : un élément public n'est visible que si le profil est en ligne.
@@ -137,7 +142,7 @@ Pour les agents qui développeront la fonctionnalité.
 - Identiques pour tous, les pages publiques peuvent être mises en cache. Le cache est renouvelé quand le propriétaire change son profil (mise en ligne, identifiant…).
   - Pour le squelette, **pas de cache côté serveur** : celui de Next.js par défaut est propre à chaque instance de Vercel, et une mise en ligne pourrait n'apparaître qu'après un délai, ou l'aperçu « Hors ligne » persister. Une seule lecture légère de la base par visite ; à reprendre avec le contenu (CV), par exemple avec `use cache: remote`.
   - Un profil hors ligne et un identifiant inconnu passent par le même chemin : même page, même code, rien ne trahit l'existence d'un compte.
-  - Code de réponse : en production, Next.js commence à envoyer la page avant de savoir si le profil existe. La « Page introuvable » d'un profil part donc avec le code 200 et la mention « ne pas indexer » (comportement documenté de Next.js ; un vrai 404 demanderait une lecture de la base dans `src/proxy.ts`, à chaque visite). Les autres adresses inconnues reçoivent un vrai 404.
+  - Code de réponse 200 de la « Page introuvable » d'un profil, en production : voir *Accès aux pages*. C'est le comportement documenté de Next.js pour une page envoyée au fil de l'eau (`node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/loading.md`, *Status codes*). En développement, le code est 404 : les tests vérifient seulement que la réponse est la même pour un profil hors ligne et un identifiant inconnu.
 - Mots réservés : une seule liste, dans la base (voir *Données*). Un test vérifie que chaque adresse de premier niveau de l'application y figure : dossiers de `src/app/` (y compris ceux rangés dans un groupe comme `(auth)`), fichiers servis à la racine (`icon.svg`, `opengraph-image.png`…) et dossiers de `public/`.
 - « Copier l'adresse » utilise le presse-papiers du navigateur.
 - Interrupteur : adapter `src/components/ui/switch.tsx`, puis la vitrine `/design` et la copie claude.ai du design system.
@@ -146,7 +151,7 @@ Pour les agents qui développeront la fonctionnalité.
 
 - Bout en bout :
   - un visiteur non connecté voit un profil en ligne ;
-  - 404 pour un identifiant inconnu et pour un profil hors ligne ;
+  - « Page introuvable », identique, pour un identifiant inconnu et pour un profil hors ligne ;
   - aperçu avec bandeau pour le propriétaire d'un profil hors ligne ;
   - le sous-menu « Mon profil public » : interrupteur, copier l'adresse, ouvrir ;
   - le sous-menu « Thème » ;
