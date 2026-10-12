@@ -21,7 +21,7 @@ En cas d'écart : le code (`globals.css`, composants) fait foi, la page `/design
 ## Principes
 
 - **Blanc et noir** : un blanc franc et une encre profonde, comme une plaquette imprimée.
-- **Le rouge pour l'essentiel** : action principale, sélection, focus. **Un seul bouton rouge par écran.** Cases à cocher et interrupteurs restent en encre. Dosage visé sur un écran : fond 62 %, surfaces 22 %, encre 11 %, rouge 5 %.
+- **Le rouge pour l'essentiel** : action principale, sélection, focus. **Un seul bouton rouge par écran.** Cases à cocher en encre. Interrupteurs : rouge quand ils sont activés (c'est une sélection), gris quand ils sont désactivés (décision du 2026-10-12, à appliquer au composant `Switch` avec le profil public ; d'ici là, il est encore à l'encre). Dosage visé sur un écran : fond 62 %, surfaces 22 %, encre 11 %, rouge 5 %.
 - **Sobriété** : angles droits (rayon 0 ; seuls les boutons radio et les pastilles sont ronds), filets de 1 px clairs, aucune ombre portée, beaucoup d'espace. Survols discrets : le filet se renforce, la flèche avance.
 - **Précision technique** : chiffres alignés (`tabular-nums`), détails nets.
 - **Deux thèmes**, clair et sombre, avec le thème du système par défaut. Tout écran doit fonctionner dans les deux.

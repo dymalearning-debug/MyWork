@@ -6,9 +6,100 @@ Chaque module suit le même schéma : un espace **privé** (gestion) et une part
 ## Socle : compte et profil public
 
 - **Authentification** : connexion obligatoire pour accéder à l'application, par Google ou par e-mail et mot de passe (e-mail confirmé), « Rester connecté », mot de passe oublié. En usage personnel, un seul compte suffit. Détail dans [auth.md](auth.md).
-- **Profil public** : page accessible via une URL unique, qui regroupe les blocs publics des modules activés.
-- **Paramètres** : identifiant/URL, modules activés, modules visibles sur le profil.
+- **Profil public** : page accessible via une URL unique, qui regroupe les blocs publics des modules activés. Son squelette est détaillé ci-dessous.
+- **Paramètres** : modification de l'identifiant (donc de l'URL), modules activés, modules visibles sur le profil.
 - *Plus tard* : domaine personnalisé, thèmes, statistiques de visites.
+
+### Profil public : le squelette
+
+Statut : **spécifié, maquettes validées** (2026-10-12), à développer. Le squelette prépare la partie publique de tous les modules : l'adresse, la mise en page, l'accès sans connexion, la mise en ligne. Le contenu arrivera avec les modules.
+
+Maquettes : [Maquettes profil public](https://claude.ai/artifact/XmfpRWfmpH1FqnzEgksuEc) sur claude.ai, direction **« Onglets »**. Trois planches : `Page publique — ordinateur`, `Page publique — mobile` (réglages *thème*, *état* : en ligne, hors ligne ou introuvable, et *contenu* : squelette ou avec modules) et `Espace privé — menu du profil` (interactive). Inès Robert est un personnage fictif ; les cadres en pointillés marquent l'emplacement des futurs modules.
+
+**Adresses**
+
+| Adresse | Rôle |
+|---|---|
+| `/<identifiant>` | Profil public, accessible sans connexion |
+| `/<identifiant>/…` | Pages publiques d'un module, s'il en a besoin (réservation, board, dossier partagé…) |
+| `/app/…` | Espace privé, connexion obligatoire. La page de profil privée `/profile` devient `/app/profile`. |
+| `/login`, `/signup`… | Authentification, inchangée |
+| `/` | La landing page, plus tard. D'ici là, elle renvoie vers l'espace privé (ou vers la connexion). |
+
+- L'adresse suffit à savoir où l'on est : `/app` est privé, le reste est public.
+- Plus tard, un sous-domaine (`<identifiant>.<domaine>`) ou un domaine personnel pourra renvoyer vers ces mêmes pages, sans les refaire.
+- Noms des sous-pages des modules (en anglais comme les autres routes, ou en français pour les visiteurs) : question ouverte, voir [product.md](product.md).
+
+**Identifiant public**
+
+- Généré à la création du compte : à partir du nom Google, au format `prenom-nom` (« Inès Robert » → `ines-robert`), sinon à partir du début de l'adresse e-mail (`ines.robert@exemple.fr` → `ines-robert`).
+- Format : lettres minuscules sans accents, chiffres et tirets, de 3 à 30 caractères. Unique.
+- S'il est déjà pris ou réservé, on ajoute `-2`, `-3`… (`ines-robert-2`).
+- Mots réservés : les adresses de l'application (`app`, `login`, `auth`, `design`…) et quelques noms génériques (`admin`, `api`, `help`, `settings`…).
+- Les comptes existants reçoivent le leur lors de la mise en place.
+- Modifiable plus tard, dans les Paramètres.
+
+**En ligne ou hors ligne**
+
+- Un interrupteur, dans le sous-menu **Mon profil public** du menu du profil (voir *Menu du profil*) : « Profil en ligne » ou « Profil hors ligne ». **Hors ligne par défaut**, pour qu'aucun profil vide ou inachevé ne soit visible.
+- Hors ligne, les visiteurs tombent sur une page introuvable (404), exactement comme pour un identifiant qui n'existe pas : rien ne révèle que le compte existe.
+- Hors ligne, le propriétaire connecté voit quand même sa page, avec en haut une bande à l'encre (fond `foreground`, texte `background`) : une icône d'œil barré, « Hors ligne », puis « Vous seul voyez cette page. ». Il peut ainsi préparer son profil avant de le publier.
+- En ligne, la vue est stricte : identique pour tous, propriétaire compris, sans bandeau.
+- L'interrupteur s'ajoute à la visibilité de chaque élément (privé ou public, voir [product.md](product.md), *Principes transverses*) : un élément public n'est visible que si le profil est en ligne.
+
+**Menu du profil** (voir et partager son profil)
+
+- La barre latérale n'affiche rien de plus : ni adresse, ni état. Tout passe par le menu, ouvert par le bloc du profil en bas de la barre latérale.
+- Menu, une ligne par entrée, sans valeur affichée, une flèche à droite des entrées qui ouvrent un sous-menu :
+  - l'adresse e-mail, en petit ;
+  - **Mon profil public ›** ;
+  - **Thème ›** ;
+  - **Se déconnecter**.
+- Les sous-menus s'ouvrent à droite, au survol ou au clic. Textes alignés à gauche, icônes à droite.
+  - **Mon profil public** :
+    - l'interrupteur, sur une ligne : « Profil en ligne » ou « Profil hors ligne » selon l'état ; un clic n'importe où sur la ligne le bascule ;
+    - **Copier l'adresse** (icône copier) : copie l'adresse du profil public ; la ligne affiche un instant « Adresse copiée » avec une coche ;
+    - **Ouvrir mon profil public** (icône « nouvel onglet ») : ouvre le profil dans un nouvel onglet.
+  - **Thème** : Clair, Sombre, Système. Une coche juste après le libellé du choix actif ; l'icône (soleil, lune, écran) à droite.
+- L'interrupteur, redessiné pour être lisible : désactivé, fond gris pâle et rond gris à gauche ; activé, fond rouge (`primary`) et rond blanc à droite. Il remplace le `Switch` actuel du design system (voir [design-system.md](design-system.md)).
+- Un nouvel onglet suffit pour voir son profil comme un visiteur (voir *Points d'attention*) : pas besoin de navigation privée. Pour revenir à l'espace privé, on ferme l'onglet.
+
+**Mise en page publique** (direction « Onglets »)
+
+- Distincte de l'espace privé : ni barre latérale, ni menu du profil. Pensée d'abord pour le mobile, dans le thème du visiteur (clair ou sombre). Contenu dans une colonne de 1080 px au plus.
+- **En-tête**, avec la lumière de studio et un filet en bas :
+  - une photo carrée, une étiquette (le titre professionnel) et le nom en grand (Newsreader, 72 px sur ordinateur, 40 px sur mobile) ;
+  - à droite (dessous sur mobile), le bouton rouge de l'action principale, par exemple « Prendre rendez-vous » ;
+  - des **onglets** : « Profil », puis un onglet par module public (CV, Rendez-vous, Board, Fichiers). Onglet actif : texte à l'encre et trait rouge dessous. Sur mobile, les onglets défilent horizontalement.
+- Chaque onglet est une page, avec sa propre adresse : `/<identifiant>` pour « Profil », `/<identifiant>/<module>` pour les autres.
+- **Pied de page**, sous un filet : « Créé avec » et le logo MyWork.
+- **Pour l'instant (squelette)** : l'en-tête montre seulement l'étiquette « Espace public » et le titre « Page de profil », sans photo, bouton ni onglets ; dessous, « Contenu à venir. ». Photo, nom, bouton et onglets arriveront avec les modules.
+- **Page introuvable (404)** : même gabarit, étiquette « Erreur 404 », titre « Page introuvable », puis « Cette adresse ne correspond à aucun profil public. Vérifiez le lien, ou demandez-le à la personne qui vous l'a envoyé. »
+- Titre de l'onglet et aperçu au partage du lien (Open Graph) provisoires, enrichis avec le CV.
+- Pas de référencement par les moteurs de recherche (`noindex`) tant que la page est vide.
+
+**Ce que le squelette fournit aux modules**
+
+- Un onglet et une sous-page `/<identifiant>/<module>` par module public, avec la même mise en page et les mêmes règles (404 hors ligne, aperçu du propriétaire).
+- L'onglet « Profil » (`/<identifiant>`), page d'accueil du profil, où chaque module pourra ajouter un aperçu de son contenu.
+
+Points d'attention
+- **La page publique ignore la connexion** : elle lit toujours les données comme un visiteur anonyme, même quand le propriétaire est connecté. Ce que voit le propriétaire est donc exactement ce que voient ses visiteurs. Et la page ne peut pas afficher une donnée privée par erreur, car la base la refuserait. Seule exception, l'aperçu hors ligne : il reconnaît le propriétaire pour lui ouvrir la page, et montre le même contenu que verront les visiteurs une fois le profil en ligne.
+- La lecture publique passe par un accès dédié, ouvert aux visiteurs anonymes, qui n'expose que le strict nécessaire (l'identifiant, puis les blocs publics), jamais l'adresse e-mail.
+- Identiques pour tous, les pages publiques peuvent être mises en cache : elles restent rapides, y compris sur mobile.
+- Tests de bout en bout : un visiteur voit un profil en ligne ; 404 pour un identifiant inconnu et pour un profil hors ligne ; aperçu avec bandeau pour le propriétaire hors ligne ; le sous-menu « Mon profil public » (interrupteur, copier l'adresse, ouvrir) ; le sous-menu « Thème » ; l'espace privé reste fermé aux visiteurs. Tests unitaires pour la génération de l'identifiant (accents, doublons, mots réservés).
+
+Mise en œuvre (ordre proposé)
+1. Maquettes : fait, validées le 2026-10-12.
+2. Déplacement de l'espace privé sous `/app`, et règles d'accès.
+3. Base de données : identifiant et état en ligne dans `profiles`, génération de l'identifiant (comptes existants compris), accès public dédié.
+4. Page publique et sa mise en page, 404, aperçu hors ligne.
+5. Menu du profil : sous-menus « Mon profil public » et « Thème ». Nouvel interrupteur dans le composant `Switch`, puis vitrine `/design` et copie claude.ai du design system mises à jour.
+6. Tests ; vérification en clair et en sombre, et sur mobile.
+
+Plus tard
+- Redirection depuis l'ancien identifiant quand on en change, pour ne pas casser les liens déjà partagés.
+- Référencement par les moteurs de recherche, avec le contenu et le nom de domaine.
 
 ## CV (type LinkedIn)
 

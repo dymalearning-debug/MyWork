@@ -107,8 +107,21 @@ Journal des choix validés (date : décision).
   - fournisseur Google réglé dans le tableau de bord Supabase, pas dans `supabase/config.toml`, pour que son code secret ne passe jamais par le dépôt ;
   - le lien « mot de passe oublié » connecte l'utilisateur dès le clic (fonctionnement de Supabase), avant le choix du nouveau mot de passe : accepté ;
   - maquettes validées : direction **« Plaquette »** (formulaire centré dans une carte à filet fin, barre latérale claire), pour tous les écrans d'authentification, la page de profil et les deux e-mails. Écartées : « Diptyque » (volet noir et volet blanc) et « Catalogue » (grille éditoriale, sections numérotées).
+- 2026-10-12 : squelette du profil public, préparé avant les modules pour qu'ils y branchent leur partie publique (détail dans [modules.md](modules.md), *Profil public : le squelette*) :
+  - adresses : profil public à `<domaine>/<identifiant>`, pages publiques des modules sous `/<identifiant>/…`, espace privé déplacé sous `/app/…`. L'adresse dit si l'on est en public ou en privé, et les noms des modules ne peuvent pas entrer en conflit avec un identifiant. Sous-domaine ou domaine personnel plus tard, sur les mêmes pages ;
+  - la page publique **ignore la connexion** : elle lit les données comme un visiteur anonyme, même pour son propriétaire. Un nouvel onglet suffit donc pour voir son profil comme un visiteur. Une fenêtre de navigation privée, qu'un site ne peut pas ouvrir lui-même, est inutile ;
+  - mise en page publique **distincte** de l'espace privé (pas de barre latérale), pensée d'abord pour le mobile. Préférée à la coque de l'espace privé avec un simple changement de titre ;
+  - identifiant public généré à la création du compte, au format `prenom-nom` à partir du nom Google, sinon du début de l'e-mail ; `-2`, `-3`… en cas de doublon. Préféré au prénom seul (trop de doublons une fois en SaaS). Modifiable plus tard dans les Paramètres ;
+  - interrupteur en ligne / hors ligne, **hors ligne par défaut**. Hors ligne, les visiteurs tombent sur une 404 ; le propriétaire voit un aperçu avec un bandeau « Hors ligne : vous seul voyez cette page ». En ligne, vue stricte, sans bandeau ;
+  - maquettes validées ([Maquettes profil public](https://claude.ai/artifact/XmfpRWfmpH1FqnzEgksuEc)) :
+    - page publique en **« Onglets »** : un en-tête (photo, titre, nom, bouton de l'action principale) et un onglet par module, chacun avec sa sous-page. Écartées : « Colonne » (une seule page qui défile) et « Sommaire » (une couverture et une tuile par module) ;
+    - bandeau « Hors ligne » : une bande à l'encre en haut de la page ;
+    - barre latérale inchangée : ni adresse, ni état, ni lien au-dessus du bloc du profil. Ces éléments (adresse et état affichés, boutons ou liens « ouvrir » et « copier ») ont été essayés puis retirés, jugés trop chargés ;
+    - menu du profil réorganisé en sous-menus, pour rester compact : **Mon profil public** (interrupteur « Profil en ligne » / « Profil hors ligne », « Copier l'adresse », « Ouvrir mon profil public ») et **Thème** (Clair, Sombre, Système). Une ligne par entrée, sans valeur affichée ; dans les sous-menus, icônes à droite ;
+    - interrupteur redessiné, plus lisible : **rouge** (`primary`) quand il est activé, gris sinon. L'interrupteur actuel, à l'encre, a été jugé peu clair ; le vert (`success`) a été écarté : un profil en ligne n'est pas un succès, le rouge rappelle la couleur principale.
 
 ## Questions ouvertes
 
-- Format de l'URL publique (`<domaine>/<username>` ou `<username>.<domaine>`), domaine personnalisé : plus tard.
+- Sous-domaine par utilisateur (`<identifiant>.<domaine>`) et domaine personnalisé : plus tard. Le profil public est à `<domaine>/<identifiant>` (décision du 2026-10-12).
+- Noms des sous-pages publiques des modules : en anglais comme les autres routes (`/cv`, `/booking`, `/files`), ou en français pour les visiteurs (`/rendez-vous`, `/fichiers`). À trancher avec le premier module qui en a besoin.
 - Prix de l'abonnement et taille du quota : plus tard.
