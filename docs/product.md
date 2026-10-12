@@ -119,6 +119,13 @@ Journal des choix validés (date : décision).
     - barre latérale inchangée : ni adresse, ni état, ni lien au-dessus du bloc du profil. Ces éléments (adresse et état affichés, boutons ou liens « ouvrir » et « copier ») ont été essayés puis retirés, jugés trop chargés ;
     - menu du profil réorganisé en sous-menus, pour rester compact : **Mon profil public** (interrupteur « Profil en ligne » / « Profil hors ligne », « Copier l'adresse », « Ouvrir mon profil public ») et **Thème** (Clair, Sombre, Système). Une ligne par entrée, sans valeur affichée ; dans les sous-menus, icônes à droite ;
     - interrupteur redessiné, plus lisible : **rouge** (`primary`) quand il est activé, gris sinon. L'interrupteur actuel, à l'encre, a été jugé peu clair ; le vert (`success`) a été écarté : un profil en ligne n'est pas un succès, le rouge rappelle la couleur principale.
+  - précisions avant le développement :
+    - l'identifiant est fabriqué **dans la base de données**, avec la liste des mots réservés (une table). Préféré à une fabrication par l'application après l'inscription, qui laisserait un moment des comptes sans identifiant. Ses règles sont donc testées de bout en bout sur la base en ligne, et non par des tests unitaires ;
+    - cas limites de l'identifiant : nom trop court ou sans lettres latines, on passe à l'e-mail, sinon `profil` ; plus de 30 caractères, coupé entre deux mots ; partie de l'e-mail après un « + » ignorée ;
+    - l'interrupteur est **arrondi** (pilule et rond qui glisse), comme dans la maquette : exception à la règle des angles droits, pour tous les interrupteurs de l'application ;
+    - logo du pied de page de la page publique sans lien, tant qu'il n'y a pas de landing page ;
+    - toutes les pages introuvables de l'application prennent le gabarit de la 404 du profil public (texte plus général hors des profils), à la place de la page par défaut de Next.js ;
+    - titre de l'onglet provisoire : `<identifiant> · MyWork`, et `Page introuvable · MyWork` pour la 404.
 
 ## Questions ouvertes
 
