@@ -2,8 +2,9 @@ import { OfflineBanner, PublicPage, PublicPageHeading } from "@/components/publi
 import { getProfileView } from "@/lib/public-profile/data";
 
 // Public profile (docs/public-profile.md): /<handle> and, with the modules, one sub-page per tab.
-// The page waits for its answer before sending it, so that "Page introuvable" comes with a real
-// 404 status: an offline profile and an unknown handle give exactly the same response.
+// The whole page depends on the profile (shown, previewed or not found): navigations to it wait for
+// the answer instead of showing a loading state. An offline profile and an unknown handle give
+// exactly the same response.
 export const instant = false;
 
 export default async function PublicProfileLayout({ children, params }: LayoutProps<"/[handle]">) {

@@ -1,7 +1,7 @@
 # Profil public
 
 Spécification du squelette du profil public, qui fait partie de l'étape 1 (voir [product.md](product.md), *Roadmap*).
-Statut : **spécifié, maquettes validées** (2026-10-12), en développement (branche `feat/public-profile`).
+Statut : **développé** (branche `feat/public-profile`, 2026-10-12). Reste la copie claude.ai du design system à resynchroniser pour le nouvel interrupteur.
 
 Le squelette prépare la partie publique de tous les modules : l'adresse, la mise en page, l'accès sans connexion, la mise en ligne. Le contenu arrivera avec les modules (voir [modules.md](modules.md)).
 
@@ -136,7 +136,8 @@ Pour les agents qui développeront la fonctionnalité.
 - **La page publique ignore la connexion** : elle lit toujours les données comme un visiteur anonyme, même quand le propriétaire est connecté. Ce que voit le propriétaire est donc exactement ce que voient ses visiteurs. Et la page ne peut pas afficher une donnée privée par erreur, car la base la refuserait. Seule exception, l'aperçu hors ligne : quand le profil est hors ligne, la page vérifie si le visiteur en est le propriétaire, et lui montre le même contenu que verront les visiteurs une fois le profil en ligne.
 - Identiques pour tous, les pages publiques peuvent être mises en cache. Le cache est renouvelé quand le propriétaire change son profil (mise en ligne, identifiant…).
   - Pour le squelette, **pas de cache côté serveur** : celui de Next.js par défaut est propre à chaque instance de Vercel, et une mise en ligne pourrait n'apparaître qu'après un délai, ou l'aperçu « Hors ligne » persister. Une seule lecture légère de la base par visite ; à reprendre avec le contenu (CV), par exemple avec `use cache: remote`.
-  - La page attend sa réponse avant de l'envoyer (`instant = false`), pour qu'une page introuvable renvoie un vrai code 404. Un profil hors ligne et un identifiant inconnu passent par le même chemin : même page, même code, rien ne trahit l'existence d'un compte.
+  - Un profil hors ligne et un identifiant inconnu passent par le même chemin : même page, même code, rien ne trahit l'existence d'un compte.
+  - Code de réponse : en production, Next.js commence à envoyer la page avant de savoir si le profil existe. La « Page introuvable » d'un profil part donc avec le code 200 et la mention « ne pas indexer » (comportement documenté de Next.js ; un vrai 404 demanderait une lecture de la base dans `src/proxy.ts`, à chaque visite). Les autres adresses inconnues reçoivent un vrai 404.
 - Mots réservés : une seule liste, dans la base (voir *Données*). Un test vérifie que chaque adresse de premier niveau de l'application y figure : dossiers de `src/app/` (y compris ceux rangés dans un groupe comme `(auth)`), fichiers servis à la racine (`icon.svg`, `opengraph-image.png`…) et dossiers de `public/`.
 - « Copier l'adresse » utilise le presse-papiers du navigateur.
 - Interrupteur : adapter `src/components/ui/switch.tsx`, puis la vitrine `/design` et la copie claude.ai du design system.
@@ -155,7 +156,7 @@ Pour les agents qui développeront la fonctionnalité.
 
 ## Mise en œuvre
 
-Ordre proposé, sur une branche, avec une pull request et son URL d'aperçu Vercel :
+Fait le 2026-10-12, dans cet ordre :
 
 1. Maquettes : fait, validées le 2026-10-12.
 2. Déplacement de l'espace privé sous `/app`, et règles d'accès.

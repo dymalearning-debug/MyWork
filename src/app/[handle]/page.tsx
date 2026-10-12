@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { NOT_FOUND_TITLE } from "@/components/public-page";
 import { getProfileView } from "@/lib/public-profile/data";
 
-// Waits for its answer before sending it, like the layout (real 404 status).
+// Waits for the profile, like the layout.
 export const instant = false;
 
 // Provisional title and share preview, enriched with the CV. Not indexed while the page is empty.

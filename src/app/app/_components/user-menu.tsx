@@ -147,7 +147,7 @@ function PublicProfileSubmenu({ profile }: { profile: PublicProfile }) {
         </MenuPrimitive.CheckboxItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className={ROW} closeOnClick={false} onClick={copyAddress}>
-          <span role="status">{copied ? "Adresse copiée" : "Copier l'adresse"}</span>
+          <span aria-live="polite">{copied ? "Adresse copiée" : "Copier l'adresse"}</span>
           {copied ? <CheckIcon className="ml-auto text-success" /> : <CopyIcon className={ROW_ICON} />}
         </DropdownMenuItem>
         <MenuPrimitive.LinkItem

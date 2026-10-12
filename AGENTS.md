@@ -20,7 +20,8 @@ Point d'entrée pour tout agent (IA ou humain) qui travaille sur ce dépôt. À 
 
 - Phase : étape 1 (socle) en cours.
   - Fait : application Next.js, déployée automatiquement sur Vercel. Projet Supabase relié au CLI (table `profiles`). Design system validé ([docs/design-system.md](docs/design-system.md)). Authentification ([docs/auth.md](docs/auth.md)) : e-mail et mot de passe, Google, coque de l'espace privé (barre latérale, page de profil provisoire). Tests automatiques (Vitest, Playwright) lancés par GitHub à chaque modification.
-  - Reste à faire : squelette du profil public (spécifié dans [docs/public-profile.md](docs/public-profile.md), maquettes validées, à développer), compte (Paramètres), espace privé. Vérifier que les fonctions Vercel tournent bien à Dublin, comme prévu par la stack.
+  - Fait aussi : profil public ([docs/public-profile.md](docs/public-profile.md)) : espace privé déplacé sous `/app`, identifiant public et mise en ligne (fabriqués dans la base), page publique `/<identifiant>` et pages introuvables, menu du profil en sous-menus.
+  - Reste à faire : compte (Paramètres), espace privé. Vérifier que les fonctions Vercel tournent bien à Dublin, comme prévu par la stack.
 - Stack technique : **TypeScript, Next.js, Tailwind CSS + shadcn/ui, Supabase, Vercel**. Détail et justification dans `docs/product.md`, section *Stack technique*.
 
 ## Code

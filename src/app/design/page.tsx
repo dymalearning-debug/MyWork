@@ -11,6 +11,7 @@ import {
 } from "lucide-react"
 
 import { Logo } from "@/components/logo"
+import { OfflineBanner, PublicPageHeading } from "@/components/public-page"
 import { StatusDot } from "@/components/status-dot"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Avatar, AvatarFallback, AvatarGroup, AvatarGroupCount } from "@/components/ui/avatar"
@@ -325,7 +326,7 @@ export default function DesignPage() {
             id="colors"
             index="02"
             title="Couleurs"
-            description="Une palette noir et blanc, et une seule couleur de marque : un rouge vif et profond, dans la lignée des grandes maisons. Les cases à cocher et interrupteurs restent en encre, pour que le rouge garde sa force. Basculez le thème pour voir les deux versions."
+            description="Une palette noir et blanc, et une seule couleur de marque : un rouge vif et profond, dans la lignée des grandes maisons. Les cases à cocher restent en encre, pour que le rouge garde sa force ; un interrupteur activé passe au rouge, comme une sélection. Basculez le thème pour voir les deux versions."
           >
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
               {COLORS.map((color) => (
@@ -436,8 +437,8 @@ export default function DesignPage() {
                 </div>
                 <p className="mt-4 text-sm font-medium">Angles droits</p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Rayon zéro, comme une page imprimée. Seuls les boutons radio et les pastilles
-                  restent ronds.
+                  Rayon zéro, comme une page imprimée. Seuls les boutons radio, les pastilles et
+                  les interrupteurs restent ronds.
                 </p>
               </div>
               <div className="bg-muted p-6">
@@ -712,6 +713,18 @@ export default function DesignPage() {
                       <TabsTrigger value="files">Fichiers</TabsTrigger>
                     </TabsList>
                   </Tabs>
+                </Specimen>
+                <Specimen
+                  label="Page publique"
+                  hint="Bandeau vu par le seul propriétaire d'un profil hors ligne, puis l'en-tête."
+                  className="block"
+                >
+                  <div className="border border-border">
+                    <OfflineBanner />
+                    <div className="bg-spotlight px-6 pt-10">
+                      <PublicPageHeading eyebrow="Espace public" title="Page de profil" />
+                    </div>
+                  </div>
                 </Specimen>
                 <Specimen label="Menu" hint="Cliquez sur les trois points.">
                   <FileActionsMenu />
