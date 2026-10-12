@@ -4,10 +4,11 @@ import { UserIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { HOME_PATH } from "@/lib/auth/paths";
 import { cn } from "@/lib/utils";
 
 // Links of the private space. Module links will be added with the modules.
-const LINKS = [{ href: "/profile", label: "Profil", icon: UserIcon }];
+const LINKS = [{ href: HOME_PATH, label: "Profil", icon: UserIcon }];
 
 export function SidebarNav() {
   const pathname = usePathname();

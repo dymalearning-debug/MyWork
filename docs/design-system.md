@@ -10,7 +10,7 @@ Ce fichier dit **où trouver** chaque élément et **comment l'appliquer**. L'hi
 | Tokens : couleurs des deux thèmes, polices, rayons. Utilitaires `bg-spotlight` et `eyebrow` | `src/app/globals.css` |
 | Chargement des polices, thème (clair, sombre, système) | `src/app/layout.tsx` |
 | Composants de base (shadcn/ui, style `base-nova`, sur Base UI), déjà adaptés | `src/components/ui/` |
-| Composants maison : `Logo`, `StatusDot`, `ThemeToggle` | `src/components/` |
+| Composants maison : `Logo`, `StatusDot`, `ThemeToggle`, `PublicPage` (gabarit des pages publiques et des pages introuvables, bandeau « Hors ligne ») | `src/components/` |
 | **Vitrine** : chaque composant dans les deux thèmes, et une maquette par module | http://localhost:3000/design (`src/app/design/`), en local uniquement (404 en production) |
 | Fichiers du logo (SVG, PNG) | `public/brand/` |
 | Favicon, icône d'application, image de partage | `src/app/` : `icon.svg`, `favicon.ico`, `apple-icon.png`, `opengraph-image.png` |
@@ -21,8 +21,8 @@ En cas d'écart : le code (`globals.css`, composants) fait foi, la page `/design
 ## Principes
 
 - **Blanc et noir** : un blanc franc et une encre profonde, comme une plaquette imprimée.
-- **Le rouge pour l'essentiel** : action principale, sélection, focus. **Un seul bouton rouge par écran.** Cases à cocher et interrupteurs restent en encre. Dosage visé sur un écran : fond 62 %, surfaces 22 %, encre 11 %, rouge 5 %.
-- **Sobriété** : angles droits (rayon 0 ; seuls les boutons radio et les pastilles sont ronds), filets de 1 px clairs, aucune ombre portée, beaucoup d'espace. Survols discrets : le filet se renforce, la flèche avance.
+- **Le rouge pour l'essentiel** : action principale, sélection, focus. **Un seul bouton rouge par écran.** Cases à cocher en encre. Interrupteurs : rouge quand ils sont activés (c'est une sélection), gris quand ils sont désactivés, et arrondis (décisions du 2026-10-12). Dans une ligne de menu qui sert elle-même d'interrupteur, `SwitchIndicator` dessine le même interrupteur, sans en être un. Dosage visé sur un écran : fond 62 %, surfaces 22 %, encre 11 %, rouge 5 %.
+- **Sobriété** : angles droits (rayon 0 ; seuls les boutons radio, les pastilles et les interrupteurs sont ronds), filets de 1 px clairs, aucune ombre portée, beaucoup d'espace. Survols discrets : le filet se renforce, la flèche avance.
 - **Précision technique** : chiffres alignés (`tabular-nums`), détails nets.
 - **Deux thèmes**, clair et sombre, avec le thème du système par défaut. Tout écran doit fonctionner dans les deux.
 - Interface en **français**.

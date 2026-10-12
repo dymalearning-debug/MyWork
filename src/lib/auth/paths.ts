@@ -1,28 +1,21 @@
-// Page access rules (docs/auth.md, "Accès aux pages").
+// Page access rules (docs/auth.md and docs/public-profile.md, "Accès aux pages").
 
-export const HOME_PATH = "/profile";
+export const APP_PATH = "/app";
+export const HOME_PATH = "/app/profile";
 export const LOGIN_PATH = "/login";
 
 // Pages a signed-in visitor has no reason to see: sent to the app instead.
 const SIGNED_OUT_ONLY = ["/login", "/signup"];
 
-// Pages anyone can open. Everything else requires being signed in.
-// /reset-password checks the session itself (it comes from an email link).
-const PUBLIC = [
-  ...SIGNED_OUT_ONLY,
-  "/forgot-password",
-  "/reset-password",
-  "/link-expired",
-  "/auth",
-  "/design",
-];
-
 function matches(pathname: string, prefixes: string[]) {
   return prefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 }
 
-export function isPublicPath(pathname: string) {
-  return matches(pathname, PUBLIC);
+// The address tells where we are: /app is private, everything else is public
+// (public profiles, authentication pages). The site address "/" leads to the private space
+// until there is a landing page, so it is treated as private too.
+export function isPrivatePath(pathname: string) {
+  return pathname === "/" || matches(pathname, [APP_PATH]);
 }
 
 export function isSignedOutOnlyPath(pathname: string) {

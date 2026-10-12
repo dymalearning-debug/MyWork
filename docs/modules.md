@@ -6,8 +6,8 @@ Chaque module suit le même schéma : un espace **privé** (gestion) et une part
 ## Socle : compte et profil public
 
 - **Authentification** : connexion obligatoire pour accéder à l'application, par Google ou par e-mail et mot de passe (e-mail confirmé), « Rester connecté », mot de passe oublié. En usage personnel, un seul compte suffit. Détail dans [auth.md](auth.md).
-- **Profil public** : page accessible via une URL unique, qui regroupe les blocs publics des modules activés.
-- **Paramètres** : identifiant/URL, modules activés, modules visibles sur le profil.
+- **Profil public** : page accessible via une URL unique (`<domaine>/<identifiant>`), qui regroupe les blocs publics des modules activés, un onglet par module. Hors ligne par défaut, mis en ligne depuis le menu du profil. Squelette (adresses, identifiant, mise en ligne, mise en page, menu du profil) détaillé dans [public-profile.md](public-profile.md).
+- **Paramètres** : modification de l'identifiant (donc de l'URL), modules activés, modules visibles sur le profil.
 - *Plus tard* : domaine personnalisé, thèmes, statistiques de visites.
 
 ## CV (type LinkedIn)
