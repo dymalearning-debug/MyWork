@@ -2,22 +2,8 @@ import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
 
-import type { PublicProfile } from "./data";
-
-// The signed-in user's own public profile, for the profile menu of the private space
-// ("Mon profil public"). RLS limits the read to their own row.
-export async function getOwnPublicProfile(userId: string): Promise<PublicProfile> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("handle, is_online")
-    .eq("id", userId)
-    .single();
-  if (error) throw new Error(`Own profile read failed: ${error.message}`);
-  return { handle: data.handle, isOnline: data.is_online };
-}
-
-// "Profil en ligne" / "Profil hors ligne". Only the online switch is editable (RLS and grants).
+// "Profil en ligne" / "Profil hors ligne", from the profile menu. RLS limits the change to the
+// signed-in user's own row. Their profile itself is read by getOwnProfile (src/lib/account/profile.ts).
 export async function setOwnProfileOnline(userId: string, online: boolean): Promise<boolean> {
   const supabase = await createClient();
   const { data, error } = await supabase

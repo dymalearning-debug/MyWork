@@ -3,9 +3,9 @@ import { Suspense } from "react";
 
 import { Logo } from "@/components/logo";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getOwnProfile } from "@/lib/account/profile";
 import { HOME_PATH } from "@/lib/auth/paths";
 import { requireUser } from "@/lib/auth/user";
-import { getOwnPublicProfile } from "@/lib/public-profile/own";
 
 import { SidebarNav } from "./_components/sidebar-nav";
 import { UserMenu } from "./_components/user-menu";
@@ -35,8 +35,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
 async function CurrentUserMenu() {
   const user = await requireUser();
-  const publicProfile = await getOwnPublicProfile(user.id);
-  return <UserMenu email={user.email} avatarUrl={user.avatarUrl} publicProfile={publicProfile} />;
+  const profile = await getOwnProfile(user.id);
+  return <UserMenu email={user.email} avatarUrl={user.avatarUrl} profile={profile} />;
 }
 
 function UserMenuSkeleton() {

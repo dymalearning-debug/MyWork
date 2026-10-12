@@ -11,6 +11,7 @@ import {
   LogOutIcon,
   MonitorIcon,
   MoonIcon,
+  SettingsIcon,
   SunIcon,
 } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -30,11 +31,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SwitchIndicator } from "@/components/ui/switch";
-import type { PublicProfile } from "@/lib/public-profile/data";
+import type { OwnProfile } from "@/lib/account/profile";
+import { displayName } from "@/lib/account/settings";
 import { publicProfilePath } from "@/lib/public-profile/handle";
 import { cn } from "@/lib/utils";
 
 import { setProfileOnline, signOut } from "../actions";
+import { SettingsDialog } from "./settings-dialog";
 
 const THEMES = [
   { value: "light", label: "Clair", icon: SunIcon },
@@ -50,61 +53,84 @@ const SUBMENU = "rounded-none p-1";
 const ITEM =
   "flex cursor-default items-center text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4";
 
-// Profile block at the bottom of the sidebar. A click opens the menu just above it, as in the
-// Claude desktop app: the address, "Mon profil public ›", "Thème ›", "Se déconnecter"
+// Profile block at the bottom of the sidebar: the first and last name, or the email address
+// without them (docs/settings.md). A click opens the menu just above it, as in the Claude desktop
+// app: the address, "Mon profil public ›", "Paramètres", "Thème ›", "Se déconnecter"
 // (docs/public-profile.md, "Menu du profil"). Submenus open at the right, on hover or click.
 export function UserMenu({
   email,
   avatarUrl,
-  publicProfile,
+  profile,
 }: {
   email: string;
   avatarUrl: string | null;
-  publicProfile: PublicProfile;
+  profile: OwnProfile;
 }) {
   const [signingOut, startSignOut] = useTransition();
   // Held here and not in the submenu, whose content is rebuilt each time the menu opens. The new
   // state shows at once, until the refreshed page brings the saved one, or the previous one if
   // the change fails.
-  const [online, setOptimisticOnline] = useOptimistic(publicProfile.isOnline);
+  const [online, setOptimisticOnline] = useOptimistic(profile.isOnline);
   const [saving, startSaving] = useTransition();
+  // The Settings dialog lives outside the menu, which closes when it opens. A new key at each
+  // opening starts it again from the saved values.
+  const [settings, setSettings] = useState({ open: false, key: 0 });
+  const name = displayName(profile, email);
 
-  // Switched at once, without confirmation.
+  // Switched at once, without confirmation; a notification confirms it, as every change of the account.
   function toggleOnline(next: boolean) {
     if (saving) return;
     startSaving(async () => {
       setOptimisticOnline(next);
       const result = await setProfileOnline(next);
-      if (!result.ok) toast.error("L'état du profil n'a pas pu être changé. Réessayez.");
+      if (result.ok) toast.success(next ? "Profil mis en ligne" : "Profil mis hors ligne");
+      else toast.error("L'état du profil n'a pas pu être changé. Réessayez.");
     });
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        aria-label="Menu du profil"
-        className="flex w-full items-center gap-3 px-2 py-2 text-left transition-colors outline-none hover:bg-sidebar-accent focus-visible:ring-3 focus-visible:ring-ring/50 aria-expanded:bg-sidebar-accent"
-      >
-        <UserAvatar email={email} avatarUrl={avatarUrl} />
-        <span className="min-w-0 flex-1 truncate text-sm">{email}</span>
-        <ChevronsUpDownIcon className="size-4 shrink-0 text-muted-foreground" />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent side="top" sideOffset={8} className="rounded-none">
-        <p className="truncate px-2.5 py-2 text-xs text-muted-foreground">{email}</p>
-        <DropdownMenuSeparator />
-        <PublicProfileSubmenu handle={publicProfile.handle} online={online} onOnlineChange={toggleOnline} />
-        <ThemeSubmenu />
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          className={ROW}
-          disabled={signingOut}
-          onClick={() => startSignOut(() => signOut())}
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          aria-label="Menu du profil"
+          className="flex w-full items-center gap-3 px-2 py-2 text-left transition-colors outline-none hover:bg-sidebar-accent focus-visible:ring-3 focus-visible:ring-ring/50 aria-expanded:bg-sidebar-accent"
         >
-          <LogOutIcon />
-          Se déconnecter
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          <UserAvatar name={name} avatarUrl={avatarUrl} />
+          <span className="min-w-0 flex-1 truncate text-sm">{name}</span>
+          <ChevronsUpDownIcon className="size-4 shrink-0 text-muted-foreground" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent side="top" sideOffset={8} className="rounded-none">
+          <p className="truncate px-2.5 py-2 text-xs text-muted-foreground">{email}</p>
+          <DropdownMenuSeparator />
+          <PublicProfileSubmenu handle={profile.handle} online={online} onOnlineChange={toggleOnline} />
+          <DropdownMenuItem
+            className={ROW}
+            onClick={() => setSettings((current) => ({ open: true, key: current.key + 1 }))}
+          >
+            <SettingsIcon />
+            Paramètres
+          </DropdownMenuItem>
+          <ThemeSubmenu />
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            className={ROW}
+            disabled={signingOut}
+            onClick={() => startSignOut(() => signOut())}
+          >
+            <LogOutIcon />
+            Se déconnecter
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <SettingsDialog
+        key={settings.key}
+        open={settings.open}
+        onOpenChange={(open) => setSettings((current) => ({ ...current, open }))}
+        email={email}
+        profile={{ firstName: profile.firstName, lastName: profile.lastName, handle: profile.handle }}
+      />
+    </>
   );
 }
 
@@ -206,12 +232,13 @@ function ThemeSubmenu() {
   );
 }
 
-// The Google photo when there is one, otherwise the initial of the email address.
-function UserAvatar({ email, avatarUrl }: { email: string; avatarUrl: string | null }) {
+// The Google photo when there is one, otherwise the initial of the name shown (first name, or
+// email address).
+function UserAvatar({ name, avatarUrl }: { name: string; avatarUrl: string | null }) {
   return (
     <Avatar size="sm">
       {avatarUrl && <AvatarImage src={avatarUrl} alt="" referrerPolicy="no-referrer" />}
-      <AvatarFallback>{email.charAt(0).toUpperCase() || "?"}</AvatarFallback>
+      <AvatarFallback>{name.charAt(0).toUpperCase() || "?"}</AvatarFallback>
     </Avatar>
   );
 }

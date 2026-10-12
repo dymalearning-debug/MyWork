@@ -38,7 +38,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           disableTransitionOnChange
         >
           <TooltipProvider>{children}</TooltipProvider>
-          <Toaster />
+          {/* Notifications at the bottom right, after each change of the account (docs/settings.md). */}
+          <Toaster position="bottom-right" />
         </ThemeProvider>
       </body>
     </html>

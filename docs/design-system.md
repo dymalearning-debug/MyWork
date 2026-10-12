@@ -68,6 +68,8 @@ Deux polices, pas de police mono : **Newsreader** (`font-heading`) pour les titr
 - **`StatusDot`** : pastille de statut. La pulsation (`pulse`) est réservée à ce qui est en direct.
 - **Maquettes des modules** (en-tête du profil, CV, choix d'un créneau, kanban, fichiers, barre latérale, badge de visibilité) : dans `src/app/design/_components/`, avec des données fictives. Pour construire le vrai écran, partir de la maquette et déplacer le composant dans le code du module : ne jamais importer depuis `src/app/design/`.
 - Autres motifs visibles sur `/design` : message d'information (fond `muted`, filet rouge à gauche), état vide, chargement (`Skeleton`), indicateurs chiffrés, tableaux.
+- **Notifications** (`toast`, Sonner) : **en bas à droite**, après chaque action sur le compte (enregistrement, mise en ligne, suppression…). Un titre court au passé, le détail dessous (voir [settings.md](settings.md), *Notifications*).
+- **Aide contextuelle** : une icône « ? » (`CircleHelpIcon`, encre atténuée) à droite d'un libellé, avec une infobulle (`Tooltip`) au survol ou au focus. Exemple : « Adresse de mon profil public » dans les Paramètres.
 
 ## Ajouter ou modifier
 

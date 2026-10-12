@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useActionState, useState } from "react";
+import { Suspense, useActionState, useEffect, useState } from "react";
+import { toast } from "sonner";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { FormState } from "@/lib/auth/flows";
+import { ACCOUNT_DELETED_NOTICE } from "@/lib/auth/paths";
 
 import { OrSeparator } from "../_components/auth-shell";
 import { FieldError, FormMessage, PasswordInput, SubmitButton } from "../_components/form-parts";
@@ -102,6 +104,19 @@ export function LoginForm() {
 
 function UrlNotice() {
   const params = useSearchParams();
-  const notice = NOTICES[params.get("error") ?? params.get("notice") ?? ""];
+  const key = params.get("error") ?? params.get("notice") ?? "";
+  const notice = NOTICES[key];
+
+  // After the deletion of the account: a notification, as for every change of the account
+  // (docs/settings.md). Its id shows it only once.
+  useEffect(() => {
+    if (key === ACCOUNT_DELETED_NOTICE) {
+      toast.success("Compte supprimé", {
+        id: ACCOUNT_DELETED_NOTICE,
+        description: "Toutes les données liées à votre compte ont été supprimées.",
+      });
+    }
+  }, [key]);
+
   return notice ? <FormMessage tone={notice.tone}>{notice.text}</FormMessage> : null;
 }

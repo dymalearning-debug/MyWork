@@ -106,8 +106,8 @@ Dans les maquettes, l'adresse `ines.robert@exemple.fr` (ou `quentin@exemple.fr`)
     - l'adresse e-mail, en petit ;
     - **Thème** : Clair, Sombre ou Système (par défaut), une coche sur le choix actif. Ce choix pourra plus tard rejoindre les Paramètres ;
     - **Se déconnecter**.
-  - Le profil public réorganise ce menu en sous-menus : **Mon profil public** (mise en ligne, copier l'adresse, ouvrir) et **Thème**. Voir [public-profile.md](public-profile.md), *Menu du profil*.
-- **Avatar** : la photo Google quand elle existe, sinon l'initiale de l'adresse e-mail.
+  - Le profil public réorganise ce menu en sous-menus : **Mon profil public** (mise en ligne, copier l'adresse, ouvrir) et **Thème**. Voir [public-profile.md](public-profile.md), *Menu du profil*. Les Paramètres y ajoutent l'entrée **Paramètres**, et le bloc affiche le prénom et le nom à la place de l'e-mail quand ils sont renseignés (voir [settings.md](settings.md)).
+- **Avatar** : la photo Google quand elle existe, sinon l'initiale du prénom, ou de l'adresse e-mail.
 - **Page de profil** : l'accueil de l'espace privé, où l'on arrive après la connexion. Pour l'instant un simple emplacement réservé : l'étiquette « Espace privé », le titre « Page de profil » et « Contenu à venir ». Son contenu viendra plus tard.
 - Textes en français, en vouvoiement comme le reste de l'interface. Les messages d'erreur de Supabase, en anglais, sont traduits.
 
@@ -140,7 +140,7 @@ Deux e-mails : **confirmation de l'inscription** et **réinitialisation du mot d
 - **Supabase Auth** conserve l'essentiel dans sa table interne `auth.users` : e-mail, mot de passe (chiffré), méthodes de connexion (e-mail, Google), date de confirmation, dates de création et de dernière connexion. L'application n'y écrit jamais directement.
 - **Table `profiles`** de MyWork : une ligne par utilisateur, créée automatiquement à l'inscription. Pour l'instant : identifiant (le même que dans Supabase Auth), **e-mail** (tenu à jour automatiquement), dates de création et de modification. Elle accueillera ensuite les informations propres à MyWork : nom, photo, identifiant du profil public…
 - Sécurité (RLS) : chaque utilisateur ne lit et ne modifie que sa propre ligne.
-- Google fournit aussi le nom et la photo. Supabase Auth les conserve avec le compte : la photo y est lue pour l'avatar. Rien n'est copié dans `profiles` pour l'instant.
+- Google fournit aussi le nom et la photo. Supabase Auth les conserve avec le compte : la photo y est lue pour l'avatar. Le nom est copié dans `profiles` à la création du compte, en prénom et nom, modifiables dans les Paramètres (voir [settings.md](settings.md)).
 
 ## Configuration de Google
 
@@ -216,7 +216,7 @@ Ce qui revient au porteur du projet :
 ## Hors périmètre (plus tard)
 
 - Landing page publique.
-- Page **Mon compte** : changer d'e-mail ou de mot de passe, gérer les méthodes de connexion, supprimer son compte (obligation RGPD avant l'ouverture SaaS). Elle arrivera avec les Paramètres de l'étape 1.
+- Changer d'e-mail ou de mot de passe, gérer les méthodes de connexion : dans les Paramètres, plus tard (avec Resend pour l'e-mail). La suppression du compte (obligation RGPD avant l'ouverture SaaS) y est déjà : voir [settings.md](settings.md).
 - Resend et nom de domaine ; domaine personnalisé Supabase et logo sur l'écran de Google.
 - Protection contre les robots (captcha) à l'inscription, avant l'ouverture SaaS.
 - Autres méthodes : autres fournisseurs (Apple, LinkedIn…), lien magique, double authentification, passkeys.

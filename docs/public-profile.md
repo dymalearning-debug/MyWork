@@ -8,7 +8,7 @@ Le squelette prépare la partie publique de tous les modules : l'adresse, la mis
 ## En bref
 
 - Chaque utilisateur a un profil public à l'adresse `<domaine>/<identifiant>`. L'espace privé passe sous `/app`.
-- L'identifiant est généré à la création du compte, au format `prenom-nom`. Il sera modifiable dans les Paramètres.
+- L'identifiant est généré à la création du compte, au format `prenom-nom`. Il est modifiable dans les Paramètres, sous le nom « Adresse de mon profil public » ([settings.md](settings.md)).
 - Le profil est **hors ligne par défaut**. On le met en ligne depuis le menu du profil. Hors ligne, les visiteurs tombent sur une page introuvable ; le propriétaire, lui, voit un aperçu.
 - La page publique **ignore la connexion** : un nouvel onglet suffit pour voir son profil exactement comme un visiteur.
 - Mise en page **« Onglets »** : un en-tête, puis un onglet par module, chacun avec sa propre adresse. Pensée d'abord pour le mobile.
@@ -57,8 +57,8 @@ Le squelette prépare la partie publique de tous les modules : l'adresse, la mis
   - plus de 30 caractères : coupé entre deux mots.
 - S'il est déjà pris ou réservé, on ajoute `-2`, `-3`… (`ines-robert-2`).
 - Mots réservés : les adresses de l'application (`app`, `login`, `signup`, `auth`, `design`…, l'ancienne `profile`, les fichiers servis à la racine comme `brand` ou `icon`) et quelques noms génériques (`admin`, `api`, `help`, `settings`…).
-- Les comptes existants reçoivent le leur lors de la mise en place. Celui du porteur du projet (son compte Google) est tiré de son nom Google ; il pourra le corriger dans les Paramètres.
-- Modifiable plus tard, dans les Paramètres.
+- Les comptes existants reçoivent le leur lors de la mise en place. Celui du porteur du projet (son compte Google) est tiré de son nom Google ; il peut le corriger dans les Paramètres.
+- Modifiable dans les Paramètres, sans redirection depuis l'ancien (voir [settings.md](settings.md)).
 
 ## En ligne ou hors ligne
 
@@ -107,11 +107,12 @@ Dans l'espace privé, la barre latérale ne change pas : ni adresse, ni état, n
 - Menu, une ligne par entrée, sans valeur affichée, une flèche à droite des entrées qui ouvrent un sous-menu :
   - l'adresse e-mail, en petit ;
   - **Mon profil public ›** ;
+  - **Paramètres**, qui ouvre la fenêtre des Paramètres (ajouté le 2026-10-12, voir [settings.md](settings.md)) ;
   - **Thème ›** ;
   - **Se déconnecter**.
 - Les sous-menus s'ouvrent à droite, au survol ou au clic. Textes alignés à gauche, icônes à droite.
   - **Mon profil public** :
-    - l'interrupteur, sur une ligne : « Profil en ligne » ou « Profil hors ligne » selon l'état ; un clic n'importe où sur la ligne le bascule, tout de suite, sans confirmation. Le menu reste ouvert, pour qu'on voie le libellé changer. En cas d'erreur, l'interrupteur revient à son état précédent et un message s'affiche ;
+    - l'interrupteur, sur une ligne : « Profil en ligne » ou « Profil hors ligne » selon l'état ; un clic n'importe où sur la ligne le bascule, tout de suite, sans confirmation. Le menu reste ouvert, pour qu'on voie le libellé changer. Une notification le confirme (« Profil mis en ligne », « Profil mis hors ligne »). En cas d'erreur, l'interrupteur revient à son état précédent et un message s'affiche ;
     - **Copier l'adresse** (icône copier) : copie l'adresse complète du profil public, sur le site où l'on se trouve (local, aperçu ou production) ; la ligne affiche un instant « Adresse copiée » avec une coche ;
     - **Ouvrir mon profil public** (icône « nouvel onglet ») : ouvre le profil dans un nouvel onglet.
   - **Thème** : Clair, Sombre, Système. Une coche juste après le libellé du choix actif ; l'icône (soleil, lune, écran) à droite.
@@ -126,7 +127,7 @@ Dans l'espace privé, la barre latérale ne change pas : ni adresse, ni état, n
 
 - Table `profiles` : deux colonnes en plus, l'identifiant public (unique) et l'état en ligne (faux par défaut).
 - **Tout se passe dans la base** (décision du 2026-10-12) : l'identifiant est fabriqué avec le profil, par le déclencheur qui existe déjà à l'inscription, quel que soit le chemin (Google ou e-mail). Le nom Google se lit dans les données du compte que Supabase Auth reçoit de Google. Une migration complète les comptes existants, du plus ancien au plus récent.
-- Mots réservés : une table de la base (`reserved_handles`), seule liste, lue par la fabrication de l'identifiant et, plus tard, par les Paramètres.
+- Mots réservés : une table de la base (`reserved_handles`), seule liste, lue par la fabrication de l'identifiant et par les Paramètres (un déclencheur refuse un mot réservé choisi par l'utilisateur).
 - Seul l'utilisateur peut changer l'état de son profil (RLS).
 - Lecture publique : un accès dédié, ouvert aux visiteurs anonymes (rôle `anon`), qui ne renvoie que le strict nécessaire pour les profils en ligne (l'identifiant, puis les blocs publics des modules). Jamais l'adresse e-mail. Aucune table n'étant exposée par défaut (décision du 2026-10-07), cet accès est ouvert explicitement dans la migration.
 
@@ -177,7 +178,7 @@ Fait le 2026-10-12, dans cet ordre :
 
 ## Hors périmètre (plus tard)
 
-- Modification de l'identifiant, dans les Paramètres ; redirection depuis l'ancien identifiant, pour ne pas casser les liens déjà partagés.
+- Redirection depuis l'ancien identifiant, après un changement dans les Paramètres : écartée le 2026-10-12 (voir [settings.md](settings.md)).
 - Référencement par les moteurs de recherche, avec le contenu et le nom de domaine.
 - Sous-domaine par utilisateur et domaine personnalisé.
 - Thèmes du profil, statistiques de visites.

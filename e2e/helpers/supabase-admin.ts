@@ -28,27 +28,40 @@ export function isTestEmail(email: string | undefined) {
   return !!email && email.startsWith(TEST_EMAIL_PREFIX) && email.endsWith(TEST_EMAIL_DOMAIN);
 }
 
-// `name`: the name Google would give (full_name), from which the public handle is built.
+// `name`: the name Google would give (full_name), from which the public handle and the first and
+// last name are built. `metadata`: other account data Google could give (given_name, family_name).
 export async function createUser({
   confirmed = true,
   email = testEmail(),
   name,
-}: { confirmed?: boolean; email?: string; name?: string } = {}) {
+  metadata,
+}: { confirmed?: boolean; email?: string; name?: string; metadata?: Record<string, string> } = {}) {
   const { data, error } = await adminClient().auth.admin.createUser({
     email,
     password: TEST_PASSWORD,
     email_confirm: confirmed,
-    user_metadata: name ? { full_name: name } : undefined,
+    user_metadata: name || metadata ? { ...(name && { full_name: name }), ...metadata } : undefined,
   });
   if (error) throw error;
   return { id: data.user.id, email, password: TEST_PASSWORD };
 }
 
-// Public profile of a test account: its handle and whether it is online.
+// Profile of a test account: its handle, whether it is online, its first and last name.
 export async function getProfile(id: string) {
-  const { data, error } = await adminClient().from("profiles").select("handle, is_online").eq("id", id).single();
+  const { data, error } = await adminClient()
+    .from("profiles")
+    .select("handle, is_online, first_name, last_name")
+    .eq("id", id)
+    .single();
   if (error) throw error;
-  return data as { handle: string; is_online: boolean };
+  return data as { handle: string; is_online: boolean; first_name: string | null; last_name: string | null };
+}
+
+// Whether a test account still exists (account deletion).
+export async function userExists(id: string) {
+  const { data, error } = await adminClient().auth.admin.getUserById(id);
+  if (error && error.status !== 404) throw error;
+  return !!data.user;
 }
 
 export async function setProfileOnline(id: string, online: boolean) {

@@ -3,6 +3,8 @@
 export const APP_PATH = "/app";
 export const HOME_PATH = "/app/profile";
 export const LOGIN_PATH = "/login";
+// The login page announces the deletion of the account (?notice=account-deleted, docs/settings.md).
+export const ACCOUNT_DELETED_NOTICE = "account-deleted";
 
 // Pages a signed-in visitor has no reason to see: sent to the app instead.
 const SIGNED_OUT_ONLY = ["/login", "/signup"];

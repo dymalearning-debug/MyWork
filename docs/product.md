@@ -126,6 +126,17 @@ Journal des choix validés (date : décision).
     - logo du pied de page de la page publique sans lien, tant qu'il n'y a pas de landing page ;
     - toutes les pages introuvables de l'application prennent le gabarit de la 404 du profil public (texte plus général hors des profils), à la place de la page par défaut de Next.js ;
     - titre de l'onglet provisoire : `<identifiant> · MyWork`, et `Page introuvable · MyWork` pour la 404.
+- 2026-10-12 : Paramètres (détail dans [settings.md](settings.md)) :
+  - une entrée « Paramètres » dans le menu du profil, entre « Mon profil public » et « Thème », qui ouvre une grande fenêtre de dialogue, comme dans l'application de bureau de Claude : les sections à gauche (pour l'instant « Profil » seule ; plus tard abonnement, réglages des modules), la page à droite ;
+  - page Profil compacte, sans catégories ni textes d'aide : prénom, nom, adresse e-mail, puis, après un filet, « Adresse de mon profil public » (le mot « identifiant » a été jugé incompréhensible), avec une icône « ? » et son infobulle ; « Supprimer le compte » tout en bas, à gauche ;
+  - un seul bouton « Enregistrer » pour toute la fenêtre, et « Annuler » qui ferme sans enregistrer. L'enregistrement automatique en quittant un champ a été envisagé puis écarté. Fermer avec des modifications non enregistrées (croix, Échap, clic à côté) pose la question « Enregistrer les modifications ? » ;
+  - adresse e-mail affichée mais **non modifiable** pour l'instant : sa confirmation par e-mail attend Resend ;
+  - prénom et nom facultatifs, pré-remplis depuis Google, vides pour un compte e-mail. Le bas de la barre latérale affiche le nom, sinon l'e-mail ;
+  - adresse du profil public : vérifiée pendant la frappe, un seul message pour « prise » et « réservée », la règle de format seulement en cas d'erreur. **Pas de redirection** depuis l'ancienne adresse : elle casse, c'est accepté (on ne la change qu'une fois, au début) ;
+  - suppression du compte après une confirmation qui avertit que toutes les données liées au compte seront supprimées ; puis déconnexion. Bouton en variante `destructive` (texte rouge sur fond rosé), le rouge plein restant à « Enregistrer » ;
+  - **notifications en bas à droite** pour chaque action sur le compte (enregistrement, mise en ligne, suppression, plus tard abonnement…), qui disent ce qui a été fait ;
+  - pas de raccourci clavier pour l'instant ;
+  - suppression du compte par une fonction de la base, pour que la clé secrète Supabase reste réservée aux tests.
 
 ## Questions ouvertes
 

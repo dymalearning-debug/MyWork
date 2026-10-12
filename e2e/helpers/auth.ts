@@ -15,6 +15,15 @@ export async function signOut(page: Page) {
   await expect(page).toHaveURL(/\/login$/);
 }
 
+// Opens the Settings dialog from the profile menu, and returns it.
+export async function openSettings(page: Page) {
+  await page.getByRole("button", { name: "Menu du profil" }).click();
+  await page.getByRole("menuitem", { name: "Paramètres" }).click();
+  const dialog = page.getByRole("dialog", { name: "Paramètres" });
+  await expect(dialog).toBeVisible();
+  return dialog;
+}
+
 // Opens the profile menu, then one of its submenus ("Mon profil public" or "Thème").
 export async function openProfileSubmenu(page: Page, name: "Mon profil public" | "Thème") {
   await page.getByRole("button", { name: "Menu du profil" }).click();

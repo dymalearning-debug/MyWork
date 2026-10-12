@@ -14,6 +14,7 @@ Point d'entrée pour tout agent (IA ou humain) qui travaille sur ce dépôt. À 
 | [docs/modules.md](docs/modules.md) | Spécification fonctionnelle de chaque module (périmètre MVP / plus tard) | Avant de travailler sur un module |
 | [docs/public-profile.md](docs/public-profile.md) | Profil public : adresses, identifiant, mise en ligne, page publique en onglets, menu du profil, maquettes, données, tests | Avant de travailler sur le profil public, la partie publique d'un module ou le menu du profil |
 | [docs/auth.md](docs/auth.md) | Authentification : parcours, e-mails, données utilisateur, configuration Google et Supabase, tests | Avant de travailler sur la connexion, l'inscription ou la coque de l'application |
+| [docs/settings.md](docs/settings.md) | Paramètres : fenêtre, page Profil (nom, adresse du profil public), suppression du compte, notifications, données, tests | Avant de travailler sur les Paramètres, le compte ou les notifications |
 | [docs/design-system.md](docs/design-system.md) | Identité visuelle : où trouver tokens, composants, vitrine `/design` et logos ; règles d'usage | Avant de créer ou modifier un écran ou un composant |
 
 ## État actuel
@@ -21,7 +22,8 @@ Point d'entrée pour tout agent (IA ou humain) qui travaille sur ce dépôt. À 
 - Phase : étape 1 (socle) en cours.
   - Fait : application Next.js, déployée automatiquement sur Vercel. Projet Supabase relié au CLI (table `profiles`). Design system validé ([docs/design-system.md](docs/design-system.md)). Authentification ([docs/auth.md](docs/auth.md)) : e-mail et mot de passe, Google, coque de l'espace privé (barre latérale, page de profil provisoire). Tests automatiques (Vitest, Playwright) lancés par GitHub à chaque modification.
   - Fait aussi : profil public ([docs/public-profile.md](docs/public-profile.md)) : espace privé déplacé sous `/app`, identifiant public et mise en ligne (fabriqués dans la base), page publique `/<identifiant>` et pages introuvables, menu du profil en sous-menus.
-  - Reste à faire : compte (Paramètres), espace privé. Vérifier que les fonctions Vercel tournent bien à Dublin, comme prévu par la stack.
+  - Fait aussi : Paramètres ([docs/settings.md](docs/settings.md)) : fenêtre ouverte depuis le menu du profil, prénom et nom, adresse du profil public modifiable, suppression du compte, notifications en bas à droite.
+  - Reste à faire : espace privé. Plus tard, avec Resend : changement d'e-mail et de mot de passe. Vérifier que les fonctions Vercel tournent bien à Dublin, comme prévu par la stack.
 - Stack technique : **TypeScript, Next.js, Tailwind CSS + shadcn/ui, Supabase, Vercel**. Détail et justification dans `docs/product.md`, section *Stack technique*.
 
 ## Code
