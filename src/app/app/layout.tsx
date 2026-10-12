@@ -3,7 +3,9 @@ import { Suspense } from "react";
 
 import { Logo } from "@/components/logo";
 import { Skeleton } from "@/components/ui/skeleton";
+import { HOME_PATH } from "@/lib/auth/paths";
 import { requireUser } from "@/lib/auth/user";
+import { getOwnPublicProfile } from "@/lib/public-profile/own";
 
 import { SidebarNav } from "./_components/sidebar-nav";
 import { UserMenu } from "./_components/user-menu";
@@ -14,7 +16,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-svh flex-1">
       <aside className="sticky top-0 flex h-svh w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
         <div className="px-5 pt-6 pb-5">
-          <Link href="/profile" aria-label="MyWork, page de profil" className="inline-flex">
+          <Link href={HOME_PATH} aria-label="MyWork, page de profil" className="inline-flex">
             <Logo className="h-6" />
           </Link>
         </div>
@@ -33,7 +35,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
 async function CurrentUserMenu() {
   const user = await requireUser();
-  return <UserMenu email={user.email} avatarUrl={user.avatarUrl} />;
+  const publicProfile = await getOwnPublicProfile(user.id);
+  return <UserMenu email={user.email} avatarUrl={user.avatarUrl} publicProfile={publicProfile} />;
 }
 
 function UserMenuSkeleton() {

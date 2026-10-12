@@ -113,6 +113,7 @@ function CheckEmail({ email }: { email: string }) {
       <AuthFooter>
         {/* A full page load resets the form. */}
         Mauvaise adresse ?{" "}
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- the full page load is wanted */}
         <a
           href="/signup"
           className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"

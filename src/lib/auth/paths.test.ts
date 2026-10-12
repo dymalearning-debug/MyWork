@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { isPublicPath, isSignedOutOnlyPath, safeNextPath } from "./paths";
+import { isPrivatePath, isSignedOutOnlyPath, safeNextPath } from "./paths";
 
 describe("safeNextPath", () => {
   it("accepts paths inside the app", () => {
-    expect(safeNextPath("/profile")).toBe("/profile");
+    expect(safeNextPath("/app/profile")).toBe("/app/profile");
     expect(safeNextPath("/boards/42?tab=done#top")).toBe("/boards/42?tab=done#top");
   });
 
@@ -26,15 +26,28 @@ describe("safeNextPath", () => {
 });
 
 describe("page access", () => {
-  it("keeps the authentication pages public", () => {
-    for (const path of ["/login", "/signup", "/forgot-password", "/reset-password", "/link-expired", "/auth/confirm", "/auth/callback", "/design"]) {
-      expect(isPublicPath(path), path).toBe(true);
+  it("makes /app and the site address private", () => {
+    for (const path of ["/", "/app", "/app/profile", "/app/boards/42"]) {
+      expect(isPrivatePath(path), path).toBe(true);
     }
   });
 
-  it("makes everything else private", () => {
-    for (const path of ["/", "/profile", "/loginx", "/authors"]) {
-      expect(isPublicPath(path), path).toBe(false);
+  it("keeps everything else public: profiles, authentication pages", () => {
+    for (const path of [
+      "/ines-robert",
+      "/ines-robert/cv",
+      "/apple",
+      "/application",
+      "/login",
+      "/signup",
+      "/forgot-password",
+      "/reset-password",
+      "/link-expired",
+      "/auth/confirm",
+      "/auth/callback",
+      "/design",
+    ]) {
+      expect(isPrivatePath(path), path).toBe(false);
     }
   });
 

@@ -25,11 +25,11 @@ async function sessionCookies(page: Page) {
 test.describe("page access", () => {
   test("a signed-out visitor is sent to the login page, then back to the page asked for", async ({ page }) => {
     const user = await createUser();
-    await page.goto("/profile");
-    await expect(page).toHaveURL(/\/login\?next=%2Fprofile$/);
+    await page.goto("/app/profile");
+    await expect(page).toHaveURL(/\/login\?next=%2Fapp%2Fprofile$/);
 
     await login(page, user.email, user.password);
-    await expect(page).toHaveURL(/\/profile$/);
+    await expect(page).toHaveURL(/\/app\/profile$/);
     await expect(page.getByRole("heading", { name: "Page de profil" })).toBeVisible();
   });
 
@@ -43,12 +43,12 @@ test.describe("page access", () => {
     const user = await createUser();
     await page.goto("/login");
     await login(page, user.email, user.password);
-    await expect(page).toHaveURL(/\/profile$/);
+    await expect(page).toHaveURL(/\/app\/profile$/);
 
     await page.goto("/login");
-    await expect(page).toHaveURL(/\/profile$/);
+    await expect(page).toHaveURL(/\/app\/profile$/);
     await page.goto("/signup");
-    await expect(page).toHaveURL(/\/profile$/);
+    await expect(page).toHaveURL(/\/app\/profile$/);
   });
 });
 
@@ -58,22 +58,22 @@ test.describe("login and logout", () => {
     await page.goto("/login");
     await login(page, user.email, user.password);
 
-    await expect(page).toHaveURL(/\/profile$/);
+    await expect(page).toHaveURL(/\/app\/profile$/);
     const profileButton = page.getByRole("button", { name: "Menu du profil" });
     await expect(profileButton).toContainText(user.email);
     // No Google photo: the avatar shows the initial of the address.
     await expect(profileButton).toContainText("E");
 
     await signOut(page);
-    await page.goto("/profile");
-    await expect(page).toHaveURL(/\/login\?next=%2Fprofile$/);
+    await page.goto("/app/profile");
+    await expect(page).toHaveURL(/\/login\?next=%2Fapp%2Fprofile$/);
   });
 
   test("the profile menu changes the theme", async ({ page }) => {
     const user = await createUser();
     await page.goto("/login");
     await login(page, user.email, user.password);
-    await expect(page).toHaveURL(/\/profile$/);
+    await expect(page).toHaveURL(/\/app\/profile$/);
 
     await page.getByRole("button", { name: "Menu du profil" }).click();
     await page.getByRole("menuitemradio", { name: "Sombre" }).click();
@@ -117,7 +117,7 @@ test.describe("Rester connecté", () => {
     const user = await createUser();
     await page.goto("/login");
     await login(page, user.email, user.password);
-    await expect(page).toHaveURL(/\/profile$/);
+    await expect(page).toHaveURL(/\/app\/profile$/);
 
     const cookies = await sessionCookies(page);
     expect(cookies.length).toBeGreaterThan(0);
@@ -129,7 +129,7 @@ test.describe("Rester connecté", () => {
     const user = await createUser();
     await page.goto("/login");
     await login(page, user.email, user.password, { remember: false });
-    await expect(page).toHaveURL(/\/profile$/);
+    await expect(page).toHaveURL(/\/app\/profile$/);
 
     const cookies = await sessionCookies(page);
     expect(cookies.length).toBeGreaterThan(0);
@@ -156,7 +156,7 @@ test.describe("sign-up", () => {
     const email = testEmail();
     await page.goto(await emailLink("signup", email));
 
-    await expect(page).toHaveURL(/\/profile$/);
+    await expect(page).toHaveURL(/\/app\/profile$/);
     await expect(page.getByRole("button", { name: "Menu du profil" })).toContainText(email);
 
     const { data: profile } = await adminClient().from("profiles").select("email").eq("email", email).single();
@@ -173,7 +173,7 @@ test.describe("sign-up", () => {
   test("a confirmation link can only be used once", async ({ page }) => {
     const link = await emailLink("signup", testEmail());
     await page.goto(link);
-    await expect(page).toHaveURL(/\/profile$/);
+    await expect(page).toHaveURL(/\/app\/profile$/);
     await signOut(page);
 
     await page.goto(link);
@@ -201,13 +201,13 @@ test.describe("forgot password", () => {
     const newPassword = "new-e2e-password-456";
     await page.getByLabel("Nouveau mot de passe").fill(newPassword);
     await page.getByRole("button", { name: "Enregistrer et me connecter" }).click();
-    await expect(page).toHaveURL(/\/profile$/);
+    await expect(page).toHaveURL(/\/app\/profile$/);
 
     await signOut(page);
     await login(page, user.email, TEST_PASSWORD);
     await expect(page.locator("main").getByRole("alert")).toHaveText("E-mail ou mot de passe incorrect.");
     await login(page, user.email, newPassword);
-    await expect(page).toHaveURL(/\/profile$/);
+    await expect(page).toHaveURL(/\/app\/profile$/);
   });
 
   test("an invalid reset link opens the expired link page", async ({ page }) => {

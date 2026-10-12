@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { HOME_PATH, isPublicPath, isSignedOutOnlyPath, LOGIN_PATH } from "@/lib/auth/paths";
+import { HOME_PATH, isPrivatePath, isSignedOutOnlyPath, LOGIN_PATH } from "@/lib/auth/paths";
 import { updateSession } from "@/lib/supabase/proxy";
 
 // Runs before every page: refreshes the Supabase session and applies the access rules.
@@ -9,7 +9,15 @@ export async function proxy(request: NextRequest) {
   const { response, isSignedIn } = await updateSession(request);
   const { pathname, search } = request.nextUrl;
 
-  if (!isSignedIn && !isPublicPath(pathname)) {
+  // Public profile handles are lowercase: /Ines-Robert leads to /ines-robert.
+  // Escaped characters (%C3%A8) are left out of the check, so that their case never loops.
+  const firstSegment = pathname.split("/")[1] ?? "";
+  if (/[A-Z]/.test(firstSegment.replace(/%[0-9A-F]{2}/gi, ""))) {
+    const lowercased = `/${firstSegment.toLowerCase()}${pathname.slice(firstSegment.length + 1)}`;
+    return redirectKeepingCookies(request, response, lowercased, {}, search);
+  }
+
+  if (!isSignedIn && isPrivatePath(pathname)) {
     return redirectKeepingCookies(request, response, LOGIN_PATH, {
       next: pathname === "/" ? null : `${pathname}${search}`,
     });
@@ -28,10 +36,11 @@ function redirectKeepingCookies(
   sessionResponse: NextResponse,
   pathname: string,
   params: Record<string, string | null> = {},
+  search = "",
 ) {
   const url = request.nextUrl.clone();
   url.pathname = pathname;
-  url.search = "";
+  url.search = search;
   for (const [key, value] of Object.entries(params)) {
     if (value) url.searchParams.set(key, value);
   }
