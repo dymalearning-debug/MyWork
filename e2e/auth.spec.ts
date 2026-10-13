@@ -18,7 +18,7 @@ test.describe("page access", () => {
 
     await login(page, user.email, user.password);
     await expect(page).toHaveURL(/\/app\/profile$/);
-    await expect(page.getByRole("heading", { name: "Page de profil" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Mon profil" })).toBeVisible();
   });
 
   test("the site address leads to the login page", async ({ page }) => {
@@ -31,12 +31,12 @@ test.describe("page access", () => {
     const user = await createUser();
     await page.goto("/login");
     await login(page, user.email, user.password);
-    await expect(page).toHaveURL(/\/app\/profile$/);
+    await expect(page).toHaveURL(/\/app$/);
 
     await page.goto("/login");
-    await expect(page).toHaveURL(/\/app\/profile$/);
+    await expect(page).toHaveURL(/\/app$/);
     await page.goto("/signup");
-    await expect(page).toHaveURL(/\/app\/profile$/);
+    await expect(page).toHaveURL(/\/app$/);
   });
 });
 
@@ -46,7 +46,7 @@ test.describe("login and logout", () => {
     await page.goto("/login");
     await login(page, user.email, user.password);
 
-    await expect(page).toHaveURL(/\/app\/profile$/);
+    await expect(page).toHaveURL(/\/app$/);
     const profileButton = page.getByRole("button", { name: "Menu du profil" });
     await expect(profileButton).toContainText(user.email);
     // No Google photo: the avatar shows the initial of the address.
@@ -57,11 +57,28 @@ test.describe("login and logout", () => {
     await expect(page).toHaveURL(/\/login\?next=%2Fapp%2Fprofile$/);
   });
 
+  test("lands on the dashboard, then the sidebar leads to Mon profil", async ({ page }) => {
+    const user = await createUser();
+    await page.goto("/login");
+    await login(page, user.email, user.password);
+
+    await expect(page).toHaveURL(/\/app$/);
+    await expect(page.getByRole("heading", { name: "Tableau de bord" })).toBeVisible();
+    const nav = page.getByRole("navigation", { name: "Navigation principale" });
+    await expect(nav.getByRole("link", { name: "Tableau de bord" })).toHaveAttribute("aria-current", "page");
+
+    await nav.getByRole("link", { name: "Mon profil" }).click();
+    await expect(page).toHaveURL(/\/app\/profile$/);
+    await expect(page.getByRole("heading", { name: "Mon profil" })).toBeVisible();
+    await expect(nav.getByRole("link", { name: "Mon profil" })).toHaveAttribute("aria-current", "page");
+    await expect(nav.getByRole("link", { name: "Tableau de bord" })).not.toHaveAttribute("aria-current");
+  });
+
   test("the profile menu changes the theme", async ({ page }) => {
     const user = await createUser();
     await page.goto("/login");
     await login(page, user.email, user.password);
-    await expect(page).toHaveURL(/\/app\/profile$/);
+    await expect(page).toHaveURL(/\/app$/);
 
     await openProfileSubmenu(page, "Thème");
     await page.getByRole("menuitemradio", { name: "Sombre" }).click();
@@ -105,7 +122,7 @@ test.describe("Rester connecté", () => {
     const user = await createUser();
     await page.goto("/login");
     await login(page, user.email, user.password);
-    await expect(page).toHaveURL(/\/app\/profile$/);
+    await expect(page).toHaveURL(/\/app$/);
 
     const cookies = await sessionCookies(page);
     expect(cookies.length).toBeGreaterThan(0);
@@ -117,7 +134,7 @@ test.describe("Rester connecté", () => {
     const user = await createUser();
     await page.goto("/login");
     await login(page, user.email, user.password, { remember: false });
-    await expect(page).toHaveURL(/\/app\/profile$/);
+    await expect(page).toHaveURL(/\/app$/);
 
     const cookies = await sessionCookies(page);
     expect(cookies.length).toBeGreaterThan(0);
@@ -144,7 +161,7 @@ test.describe("sign-up", () => {
     const email = testEmail();
     await page.goto(await emailLink("signup", email));
 
-    await expect(page).toHaveURL(/\/app\/profile$/);
+    await expect(page).toHaveURL(/\/app$/);
     await expect(page.getByRole("button", { name: "Menu du profil" })).toContainText(email);
 
     const { data: profile } = await adminClient().from("profiles").select("email").eq("email", email).single();
@@ -161,7 +178,7 @@ test.describe("sign-up", () => {
   test("a confirmation link can only be used once", async ({ page }) => {
     const link = await emailLink("signup", testEmail());
     await page.goto(link);
-    await expect(page).toHaveURL(/\/app\/profile$/);
+    await expect(page).toHaveURL(/\/app$/);
     await signOut(page);
 
     await page.goto(link);
@@ -189,13 +206,13 @@ test.describe("forgot password", () => {
     const newPassword = "new-e2e-password-456";
     await page.getByLabel("Nouveau mot de passe").fill(newPassword);
     await page.getByRole("button", { name: "Enregistrer et me connecter" }).click();
-    await expect(page).toHaveURL(/\/app\/profile$/);
+    await expect(page).toHaveURL(/\/app$/);
 
     await signOut(page);
     await login(page, user.email, TEST_PASSWORD);
     await expect(page.locator("main").getByRole("alert")).toHaveText("E-mail ou mot de passe incorrect.");
     await login(page, user.email, newPassword);
-    await expect(page).toHaveURL(/\/app\/profile$/);
+    await expect(page).toHaveURL(/\/app$/);
   });
 
   test("an invalid reset link opens the expired link page", async ({ page }) => {

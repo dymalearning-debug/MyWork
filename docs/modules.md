@@ -15,6 +15,8 @@ Chaque module suit le même schéma : un espace **privé** (gestion) et une part
 
 **Objectif** : renseigner son parcours facilement et le partager, par URL ou par export.
 
+Dans l'espace privé, le CV est la page **« Mon profil »** (`/app/profile`). Le **tableau de bord** (`/app`, l'accueil) en résumera l'activité.
+
 MVP
 - Saisie simple et agréable : identité, titre, résumé, photo, coordonnées, expériences, formations, compétences, langues, projets, liens.
 - Réorganisation des sections et des éléments.

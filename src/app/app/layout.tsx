@@ -16,7 +16,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-svh flex-1">
       <aside className="sticky top-0 flex h-svh w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
         <div className="px-5 pt-6 pb-5">
-          <Link href={HOME_PATH} aria-label="MyWork, page de profil" className="inline-flex">
+          <Link href={HOME_PATH} aria-label="MyWork, tableau de bord" className="inline-flex">
             <Logo className="h-6" />
           </Link>
         </div>

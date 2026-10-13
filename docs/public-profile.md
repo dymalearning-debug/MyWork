@@ -19,10 +19,10 @@ Le squelette prépare la partie publique de tous les modules : l'adresse, la mis
 |---|---|
 | `/<identifiant>` | Profil public, accessible sans connexion |
 | `/<identifiant>/…` | Pages publiques des modules : une par onglet (CV, rendez-vous, board, fichiers…) |
-| `/app/…` | Espace privé, connexion obligatoire. La page de profil privée `/profile` devient `/app/profile` ; `/app` seul y renvoie. |
+| `/app/…` | Espace privé, connexion obligatoire. `/app` est le tableau de bord (l'accueil) ; la page « Mon profil », anciennement `/profile`, est `/app/profile`. |
 | `/login`, `/signup`… | Authentification, inchangée (voir [auth.md](auth.md)) |
 | `/` | La landing page, plus tard. D'ici là, elle renvoie vers l'espace privé (ou vers la connexion). |
-| `/profile` | Ancienne adresse de la page de profil privée : renvoie vers `/app/profile`. |
+| `/profile` | Ancienne adresse de la page « Mon profil » : renvoie vers `/app/profile`. |
 
 - L'adresse suffit à savoir où l'on est : `/app` est privé, le reste est public. Les noms des modules ne peuvent donc pas entrer en conflit avec un identifiant.
 - Une adresse écrite avec des majuscules (`/Ines-Robert`) est ramenée en minuscules.

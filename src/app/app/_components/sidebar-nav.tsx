@@ -1,21 +1,25 @@
 "use client";
 
-import { UserIcon } from "lucide-react";
+import { LayoutDashboardIcon, UserIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { HOME_PATH } from "@/lib/auth/paths";
+import { HOME_PATH, PROFILE_PATH } from "@/lib/auth/paths";
 import { cn } from "@/lib/utils";
 
 // Links of the private space. Module links will be added with the modules.
-const LINKS = [{ href: HOME_PATH, label: "Profil", icon: UserIcon }];
+// The dashboard sits at /app itself: it is only active on that exact address.
+const LINKS = [
+  { href: HOME_PATH, label: "Tableau de bord", icon: LayoutDashboardIcon, exact: true },
+  { href: PROFILE_PATH, label: "Mon profil", icon: UserIcon, exact: false },
+];
 
 export function SidebarNav() {
   const pathname = usePathname();
   return (
     <nav aria-label="Navigation principale" className="flex flex-1 flex-col gap-0.5 p-2">
-      {LINKS.map(({ href, label, icon: Icon }) => {
-        const active = pathname === href || pathname.startsWith(`${href}/`);
+      {LINKS.map(({ href, label, icon: Icon, exact }) => {
+        const active = pathname === href || (!exact && pathname.startsWith(`${href}/`));
         return (
           <Link
             key={href}

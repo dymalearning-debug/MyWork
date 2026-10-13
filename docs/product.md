@@ -137,6 +137,10 @@ Journal des choix validés (date : décision).
   - **notifications en bas à droite** pour chaque action sur le compte (enregistrement, mise en ligne, suppression, plus tard abonnement…), qui disent ce qui a été fait ;
   - pas de raccourci clavier pour l'instant ;
   - suppression du compte par une fonction de la base, pour que la clé secrète Supabase reste réservée aux tests.
+- 2026-10-13 : structure de l'espace privé, en préparation du module CV :
+  - la barre latérale a deux liens : **« Tableau de bord »** puis **« Mon profil »** (et non plus « Profil ») ;
+  - le **tableau de bord** (`/app`) devient l'accueil de l'espace privé : on y arrive après la connexion, ou en ouvrant MyWork. Il donnera une vue d'ensemble rapide de ce qui s'est passé dans les modules et sur le profil ; pour l'instant, un emplacement réservé (« Futures informations sur mon espace. ») ;
+  - **« Mon profil »** (`/app/profile`) sera le CV du freelance : le module CV s'y construira. Pour l'instant, la même page provisoire, titrée « Mon profil ».
 
 ## Questions ouvertes
 

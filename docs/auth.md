@@ -8,7 +8,7 @@ Statut : **développée** (branche `feat/auth`, 2026-10-11). Écarts avec le cad
 - Toute l'application est privée : il faut être connecté pour y accéder. La page d'entrée est la **connexion**.
 - Deux façons de créer un compte et de se connecter : **Google**, ou **e-mail et mot de passe** (avec confirmation de l'e-mail).
 - Option « Rester connecté », mot de passe oublié, déconnexion.
-- Une fois connecté, une interface minimale : une barre latérale avec le logo, un lien vers la page de profil (provisoire) et, en bas, le menu du profil.
+- Une fois connecté, une interface minimale : une barre latérale avec le logo, les liens « Tableau de bord » et « Mon profil » (provisoires) et, en bas, le menu du profil.
 - Tout repose sur **Supabase Auth** : comptes, mots de passe, sessions, envoi des e-mails.
 
 ## Accès aux pages
@@ -101,14 +101,15 @@ Dans les maquettes, l'adresse `ines.robert@exemple.fr` (ou `quentin@exemple.fr`)
   - Un seul bouton rouge par écran. En clair et en sombre, et lisibles sur mobile.
 - **Coque de l'application**, une fois connecté : une **barre latérale** à gauche, volontairement très simple et non repliable, dans l'esprit de l'application de bureau de Claude. Fond `sidebar`, filet à droite.
   - En haut : le logo MyWork complet.
-  - Un seul lien pour l'instant : **Profil**, vers la page de profil. Lien actif : fond `sidebar-accent` et trait rouge de 2 px à gauche. Les liens des modules s'ajouteront avec les modules.
+  - Deux liens pour l'instant : **Tableau de bord** (`/app`, actif seulement sur cette adresse) et **Mon profil** (`/app/profile`), décision du 2026-10-13. Lien actif : fond `sidebar-accent` et trait rouge de 2 px à gauche. Les liens des modules s'ajouteront avec les modules.
   - En bas, sous un filet : le bloc du profil (avatar carré, adresse e-mail, double chevron). Un clic ouvre, juste au-dessus, un menu comme dans l'application de Claude :
     - l'adresse e-mail, en petit ;
     - **Thème** : Clair, Sombre ou Système (par défaut), une coche sur le choix actif. Ce choix pourra plus tard rejoindre les Paramètres ;
     - **Se déconnecter**.
   - Le profil public réorganise ce menu en sous-menus : **Mon profil public** (mise en ligne, copier l'adresse, ouvrir) et **Thème**. Voir [public-profile.md](public-profile.md), *Menu du profil*. Les Paramètres y ajoutent l'entrée **Paramètres**, et le bloc affiche le prénom et le nom à la place de l'e-mail quand ils sont renseignés (voir [settings.md](settings.md)).
 - **Avatar** : la photo Google quand elle existe, sinon l'initiale du prénom, ou de l'adresse e-mail.
-- **Page de profil** : l'accueil de l'espace privé, où l'on arrive après la connexion. Pour l'instant un simple emplacement réservé : l'étiquette « Espace privé », le titre « Page de profil » et « Contenu à venir ». Son contenu viendra plus tard.
+- **Tableau de bord** : l'accueil de l'espace privé, où l'on arrive après la connexion. Pour l'instant un simple emplacement réservé : l'étiquette « Espace privé », le titre « Tableau de bord » et « Futures informations sur mon espace. ». Il donnera plus tard une vue d'ensemble des modules et du profil.
+- **Mon profil** : le futur CV (module CV). Même emplacement réservé, titré « Mon profil », avec « Contenu à venir ».
 - Textes en français, en vouvoiement comme le reste de l'interface. Les messages d'erreur de Supabase, en anglais, sont traduits.
 
 ## E-mails
@@ -179,7 +180,7 @@ Pour les agents qui développeront la fonctionnalité.
 - Next.js 16 : `src/proxy.ts` (l'ancien `middleware`) rafraîchit la session Supabase à chaque requête et redirige les visiteurs non connectés. Il ne suffit pas : chaque page et chaque action serveur revérifie l'utilisateur. Lire d'abord `node_modules/next/dist/docs/01-app/02-guides/authentication.md` et, `cacheComponents` étant activé, `authentication-with-cache-components.md`.
 - Table `profiles` : aucune table n'est exposée à l'API par défaut (décision du 2026-10-07), la migration lui donne donc explicitement accès au rôle `authenticated`.
 - « Vérifiez votre boîte mail » remplace le formulaire d'inscription sur la même page : l'adresse (utilisée par « Renvoyer l'e-mail ») reste dans l'état de la page, jamais dans l'URL.
-- Routes, en anglais comme le code : `/login`, `/signup`, `/forgot-password`, `/reset-password`, `/link-expired` (lien expiré ou déjà utilisé), `/app/profile` (page de profil, anciennement `/profile`, qui y renvoie ; `/` et `/app` y redirigent pour l'instant), et deux routes techniques :
+- Routes, en anglais comme le code : `/login`, `/signup`, `/forgot-password`, `/reset-password`, `/link-expired` (lien expiré ou déjà utilisé), `/app` (tableau de bord, l'accueil ; `/` y redirige pour l'instant), `/app/profile` (Mon profil, anciennement `/profile`, qui y renvoie), et deux routes techniques :
   - `/auth/callback` : retour de Google (échange du code contre une session) ;
   - `/auth/confirm` : liens des e-mails. L'application y ajoute `type=signup` ou `type=recovery` pour savoir où aller ensuite. Deux formes acceptées : un `code` (e-mails par défaut de Supabase, à ouvrir dans le même navigateur) ou un `token_hash` (modèles MyWork et tests, valable dans n'importe quel navigateur).
 - Ces noms sont interdits comme identifiants du profil public (mots réservés, voir [public-profile.md](public-profile.md)).

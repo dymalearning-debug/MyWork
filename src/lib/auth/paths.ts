@@ -1,7 +1,9 @@
 // Page access rules (docs/auth.md and docs/public-profile.md, "Accès aux pages").
 
 export const APP_PATH = "/app";
-export const HOME_PATH = "/app/profile";
+// Home of the private space, reached after login: the dashboard.
+export const HOME_PATH = APP_PATH;
+export const PROFILE_PATH = "/app/profile";
 export const LOGIN_PATH = "/login";
 // The login page announces the deletion of the account (?notice=account-deleted, docs/settings.md).
 export const ACCOUNT_DELETED_NOTICE = "account-deleted";

@@ -16,7 +16,7 @@ const random = () => randomUUID().slice(0, 6);
 async function signIn(page: Page, user: { email: string; password: string }) {
   await page.goto("/login");
   await login(page, user.email, user.password);
-  await expect(page).toHaveURL(/\/app\/profile$/);
+  await expect(page).toHaveURL(/\/app$/);
 }
 
 test.describe("public handle, built by the database", () => {
