@@ -2,7 +2,7 @@
 
 ## Vision
 
-Centraliser dans un seul outil, personnel et personnalisable, les services qu'un freelance paie séparément : CV en ligne, prise de rendez-vous, gestion de tâches, stockage de fichiers. De nouveaux modules pourront s'ajouter au fil du temps.
+Centraliser dans un seul outil, personnel et personnalisable, les services qu'un freelance paie séparément : profil professionnel en ligne (type LinkedIn), prise de rendez-vous, gestion de tâches, stockage de fichiers. De nouveaux modules pourront s'ajouter au fil du temps.
 
 Chaque module comporte :
 - un **espace privé** (back-office) où l'utilisateur gère ses données ;
@@ -59,7 +59,7 @@ Chaque étape correspond au périmètre MVP du module (voir [modules.md](modules
 |---|---|---|
 | 0 | Choix de la stack technique | Fait |
 | 1 | Socle : authentification, compte, squelette du profil public | En cours |
-| 2 | Module **CV** et export | À faire |
+| 2 | Module **Profil** (CV en ligne) et export | En cours : contenu et maquettes validés, développement à faire |
 | 3 | Module **Rendez-vous** (type Calendly) | À faire |
 | 4 | Module **Boards** (type Trello) | À faire |
 | 5 | Module **Drive** (type Google Drive) | À faire |
@@ -141,9 +141,26 @@ Journal des choix validés (date : décision).
   - la barre latérale a deux liens : **« Tableau de bord »** puis **« Mon profil »** (et non plus « Profil ») ;
   - le **tableau de bord** (`/app`) devient l'accueil de l'espace privé : on y arrive après la connexion, ou en ouvrant MyWork. Il donnera une vue d'ensemble rapide de ce qui s'est passé dans les modules et sur le profil ; pour l'instant, un emplacement réservé (« Futures informations sur mon espace. ») ;
   - **« Mon profil »** (`/app/profile`) sera le CV du freelance : le module CV s'y construira. Pour l'instant, la même page provisoire, titrée « Mon profil ».
+- 2026-10-13 : le module CV est renommé **module Profil**. Il se remplit dans « Mon profil » (`/app/profile`) et s'affiche dans l'onglet « Profil » du profil public (`/<identifiant>`), le premier que voit un visiteur : pas d'onglet « CV » à part. Le document exporté (PDF, PNG) reste un CV.
+- 2026-10-13 : contenu du module Profil (détail dans [profile.md](profile.md)) :
+  - rubriques inspirées de LinkedIn, et de Malt pour l'offre freelance : en-tête (photo, nom, titre, localisation, disponibilité), coordonnées et liens, À propos et compétences phares, offre freelance, expériences, formation, certifications, projets, compétences, langues, recommandations ;
+  - **contenu en français seulement** : le multilingue, prévu au MVP (décision du 2026-10-06), est repoussé à plus tard ;
+  - tout est facultatif : ce qui est rempli est public, ce qui est vide n'apparaît pas. Pas de réglage de visibilité champ par champ : le téléphone, s'il est rempli, est public ;
+  - un interrupteur « Je propose mes services en freelance », activé par défaut. Désactivé, l'offre freelance (disponibilité, prestations, mode de travail, TJM) disparaît du formulaire et de la page publique, sans être effacée. Préféré à des champs freelance toujours présents, qu'un non-freelance laisserait vides ;
+  - TJM facultatif, affiché s'il est rempli ;
+  - e-mail de contact distinct de l'adresse de connexion (pré-rempli avec elle), affiché seulement au clic, contre les robots qui ramassent les adresses ;
+  - compétences **sans niveau** (une note qu'on se donne soi-même convainc peu), et 5 compétences phares. La matrice d'attributs (notes sur 20) de la vitrine `/design` est écartée ;
+  - expériences, formations et certifications rangées **par date, automatiquement** ; les sections et les autres listes, à la main ;
+  - prénom et nom modifiables dans « Mon profil » et dans les Paramètres (les mêmes données) ;
+  - recommandations saisies à la main par le propriétaire au MVP. Plus tard, un lien envoyé au client, pour qu'il écrive la sienne ;
+  - écartés : bannière, pronoms, adresse postale, date de naissance, pause de carrière, brevets, cours, résultats aux tests, section « Sélection » et tout le côté réseau social. Plus tard : bénévolat, publications, distinctions, logos des entreprises, secteurs d'activité.
+- 2026-10-13 : maquettes du module Profil validées telles quelles ([Maquettes module Profil](https://claude.ai/artifact/3zqQNUgNHsyofrPAqpxfoN), détail dans [profile.md](profile.md)) :
+  - remplissage : **« Formulaire »**, toutes les sections sur une page, un sommaire à gauche, un seul « Enregistrer » dans une barre en bas. Écartées : « Sur place » (façon LinkedIn, une fenêtre par modification) et « Atelier » (formulaire et aperçu en direct côte à côte) ;
+  - affichage : **« Classique »**, deux colonnes : le parcours à gauche ; l'offre freelance, les compétences, les langues et les liens à droite. Écartées : « Fiche » (une colonne façon fiche technique) et « Vitrine » (projets et prestations d'abord) ;
+  - restent à dessiner pendant le développement : la page publique sur mobile et la mise en page du CV exporté.
 
 ## Questions ouvertes
 
 - Sous-domaine par utilisateur (`<identifiant>.<domaine>`) et domaine personnalisé : plus tard. Le profil public est à `<domaine>/<identifiant>` (décision du 2026-10-12).
-- Noms des sous-pages publiques des modules : en anglais comme les autres routes (`/cv`, `/booking`, `/files`), ou en français pour les visiteurs (`/rendez-vous`, `/fichiers`). À trancher avec le premier module qui en a besoin.
+- Noms des sous-pages publiques des modules : en anglais comme les autres routes (`/booking`, `/files`), ou en français pour les visiteurs (`/rendez-vous`, `/fichiers`). À trancher avec le premier module qui en a besoin.
 - Prix de l'abonnement et taille du quota : plus tard.

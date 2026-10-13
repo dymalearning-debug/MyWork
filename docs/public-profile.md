@@ -18,7 +18,7 @@ Le squelette prépare la partie publique de tous les modules : l'adresse, la mis
 | Adresse | Rôle |
 |---|---|
 | `/<identifiant>` | Profil public, accessible sans connexion |
-| `/<identifiant>/…` | Pages publiques des modules : une par onglet (CV, rendez-vous, board, fichiers…) |
+| `/<identifiant>/…` | Pages publiques des modules : une par onglet (rendez-vous, board, fichiers…) |
 | `/app/…` | Espace privé, connexion obligatoire. `/app` est le tableau de bord (l'accueil) ; la page « Mon profil », anciennement `/profile`, est `/app/profile`. |
 | `/login`, `/signup`… | Authentification, inchangée (voir [auth.md](auth.md)) |
 | `/` | La landing page, plus tard. D'ici là, elle renvoie vers l'espace privé (ou vers la connexion). |
@@ -27,7 +27,7 @@ Le squelette prépare la partie publique de tous les modules : l'adresse, la mis
 - L'adresse suffit à savoir où l'on est : `/app` est privé, le reste est public. Les noms des modules ne peuvent donc pas entrer en conflit avec un identifiant.
 - Une adresse écrite avec des majuscules (`/Ines-Robert`) est ramenée en minuscules.
 - Plus tard, un sous-domaine (`<identifiant>.<domaine>`) ou un domaine personnel pourra renvoyer vers ces mêmes pages, sans les refaire.
-- Noms des sous-pages des modules, en anglais comme les autres routes (`/cv`, `/booking`, `/files`) ou en français pour les visiteurs (`/rendez-vous`, `/fichiers`) : question ouverte, à trancher avec le premier module qui en a besoin.
+- Noms des sous-pages des modules, en anglais comme les autres routes (`/booking`, `/files`) ou en français pour les visiteurs (`/rendez-vous`, `/fichiers`) : question ouverte, à trancher avec le premier module qui en a besoin.
 
 ## Accès aux pages
 
@@ -90,14 +90,14 @@ Dans les maquettes, Inès Robert (`ines-robert`) est un personnage fictif, et `l
 - **En-tête**, avec la lumière de studio et un filet en bas :
   - une photo carrée, une étiquette (le titre professionnel) et le nom en grand (Newsreader, 72 px sur ordinateur, 40 px sur mobile) ;
   - à droite (dessous sur mobile), le bouton rouge de l'action principale, par exemple « Prendre rendez-vous » ;
-  - des **onglets** : « Profil », puis un onglet par module public (CV, Rendez-vous, Board, Fichiers). Onglet actif : texte à l'encre et trait rouge dessous. Sur mobile, les onglets défilent horizontalement.
+  - des **onglets** : « Profil » (le module Profil, voir [modules.md](modules.md)), puis un onglet par autre module public (Rendez-vous, Board, Fichiers). Onglet actif : texte à l'encre et trait rouge dessous. Sur mobile, les onglets défilent horizontalement.
 - Chaque onglet est une page, avec sa propre adresse : `/<identifiant>` pour « Profil », `/<identifiant>/<module>` pour les autres.
 - **Pied de page**, sous un filet : « Créé avec » et le logo MyWork. Le logo n'est pas un lien : il en deviendra un avec la landing page.
 - **Pour l'instant (squelette)** : l'en-tête montre seulement l'étiquette « Espace public » et le titre « Page de profil », sans photo, bouton ni onglets ; dessous, « Contenu à venir. ». Photo, nom, bouton et onglets arriveront avec les modules.
 - **Bandeau « Hors ligne »** (aperçu du propriétaire) : une bande à l'encre en haut de la page (fond `foreground`, texte `background`), avec une icône d'œil barré, « Hors ligne », puis « Vous seul voyez cette page. ».
 - **Page introuvable (404)** : même gabarit, étiquette « Erreur 404 », titre « Page introuvable », puis « Cette adresse ne correspond à aucun profil public. Vérifiez le lien, ou demandez-le à la personne qui vous l'a envoyé. »
 - **Les autres adresses inconnues** (`/app/nimporte-quoi`, une sous-page de profil qui n'existe pas, `/design` en production) prennent le même gabarit, avec « Cette adresse ne correspond à aucune page. Vérifiez le lien, ou demandez-le à la personne qui vous l'a envoyé. » Elles remplacent la page 404 par défaut de Next.js, en anglais.
-- Titre de l'onglet du navigateur et aperçu au partage du lien (Open Graph) provisoires, enrichis avec le CV : `ines-robert · MyWork` pour un profil, `Page introuvable · MyWork` pour la 404, et l'image de partage de MyWork (fond noir, logo).
+- Titre de l'onglet du navigateur et aperçu au partage du lien (Open Graph) provisoires, enrichis avec le module Profil : `ines-robert · MyWork` pour un profil, `Page introuvable · MyWork` pour la 404, et l'image de partage de MyWork (fond noir, logo).
 - Pas de référencement par les moteurs de recherche (`noindex`) tant que la page est vide.
 
 ### Menu du profil
@@ -141,7 +141,7 @@ Pour les agents qui développeront la fonctionnalité.
 - `src/proxy.ts` : la règle devient « `/app` est privé, le reste est public » ; les pages d'authentification gardent leurs règles.
 - **La page publique ignore la connexion** : elle lit toujours les données comme un visiteur anonyme, même quand le propriétaire est connecté. Ce que voit le propriétaire est donc exactement ce que voient ses visiteurs. Et la page ne peut pas afficher une donnée privée par erreur, car la base la refuserait. Seule exception, l'aperçu hors ligne : quand le profil est hors ligne, la page vérifie si le visiteur en est le propriétaire, et lui montre le même contenu que verront les visiteurs une fois le profil en ligne.
 - Identiques pour tous, les pages publiques peuvent être mises en cache. Le cache est renouvelé quand le propriétaire change son profil (mise en ligne, identifiant…).
-  - Pour le squelette, **pas de cache côté serveur** : celui de Next.js par défaut est propre à chaque instance de Vercel, et une mise en ligne pourrait n'apparaître qu'après un délai, ou l'aperçu « Hors ligne » persister. Une seule lecture légère de la base par visite ; à reprendre avec le contenu (CV), par exemple avec `use cache: remote`.
+  - Pour le squelette, **pas de cache côté serveur** : celui de Next.js par défaut est propre à chaque instance de Vercel, et une mise en ligne pourrait n'apparaître qu'après un délai, ou l'aperçu « Hors ligne » persister. Une seule lecture légère de la base par visite ; à reprendre avec le contenu (module Profil), par exemple avec `use cache: remote`.
   - Un profil hors ligne et un identifiant inconnu passent par le même chemin : même page, même code, rien ne trahit l'existence d'un compte.
   - Code de réponse 200 de la « Page introuvable » d'un profil, en production : voir *Accès aux pages*. C'est le comportement documenté de Next.js pour une page envoyée au fil de l'eau (`node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/loading.md`, *Status codes*). En développement, le code est 404 : les tests vérifient seulement que la réponse est la même pour un profil hors ligne et un identifiant inconnu.
 - Mots réservés : une seule liste, dans la base (voir *Données*). Un test vérifie que chaque adresse de premier niveau de l'application y figure : dossiers de `src/app/` (y compris ceux rangés dans un groupe comme `(auth)`), fichiers servis à la racine (`icon.svg`, `opengraph-image.png`…) et dossiers de `public/`.
@@ -174,7 +174,7 @@ Fait le 2026-10-12, dans cet ordre :
 ## Ce que le squelette fournit aux modules
 
 - Un onglet et une sous-page `/<identifiant>/<module>` par module public, avec la même mise en page et les mêmes règles (404 hors ligne, aperçu du propriétaire).
-- L'onglet « Profil » (`/<identifiant>`), page d'accueil du profil, où chaque module pourra ajouter un aperçu de son contenu.
+- L'onglet « Profil » (`/<identifiant>`), page d'accueil du profil : il accueille le module Profil. Les autres modules pourront peut-être y ajouter un aperçu de leur contenu (à décider).
 
 ## Hors périmètre (plus tard)
 

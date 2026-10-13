@@ -109,7 +109,7 @@ Dans les maquettes, l'adresse `ines.robert@exemple.fr` (ou `quentin@exemple.fr`)
   - Le profil public réorganise ce menu en sous-menus : **Mon profil public** (mise en ligne, copier l'adresse, ouvrir) et **Thème**. Voir [public-profile.md](public-profile.md), *Menu du profil*. Les Paramètres y ajoutent l'entrée **Paramètres**, et le bloc affiche le prénom et le nom à la place de l'e-mail quand ils sont renseignés (voir [settings.md](settings.md)).
 - **Avatar** : la photo Google quand elle existe, sinon l'initiale du prénom, ou de l'adresse e-mail.
 - **Tableau de bord** : l'accueil de l'espace privé, où l'on arrive après la connexion. Pour l'instant un simple emplacement réservé : l'étiquette « Espace privé », le titre « Tableau de bord » et « Futures informations sur mon espace. ». Il donnera plus tard une vue d'ensemble des modules et du profil.
-- **Mon profil** : le futur CV (module CV). Même emplacement réservé, titré « Mon profil », avec « Contenu à venir ».
+- **Mon profil** : le futur module Profil (le CV en ligne). Même emplacement réservé, titré « Mon profil », avec « Contenu à venir ».
 - Textes en français, en vouvoiement comme le reste de l'interface. Les messages d'erreur de Supabase, en anglais, sont traduits.
 
 ## E-mails

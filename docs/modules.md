@@ -11,23 +11,28 @@ Chaque module suit le même schéma : un espace **privé** (gestion) et une part
   - *Plus tard* : changement d'e-mail et de mot de passe, abonnement, modules activés, modules visibles sur le profil.
 - *Plus tard* : domaine personnalisé, thèmes, statistiques de visites.
 
-## CV (type LinkedIn)
+## Profil (type LinkedIn)
 
-**Objectif** : renseigner son parcours facilement et le partager, par URL ou par export.
+Anciennement « module CV », renommé le 2026-10-13.
 
-Dans l'espace privé, le CV est la page **« Mon profil »** (`/app/profile`). Le **tableau de bord** (`/app`, l'accueil) en résumera l'activité.
+**Objectif** : présenter son parcours de façon professionnelle et complète, et le partager, par URL ou par export (le CV).
+
+Dans l'espace privé, le module Profil est la page **« Mon profil »** (`/app/profile`), où l'on remplit son profil. Sur le profil public, c'est l'onglet **« Profil »** (`/<identifiant>`), le premier que voit un visiteur. Le **tableau de bord** (`/app`, l'accueil) en résumera l'activité. Spécification détaillée : [profile.md](profile.md).
 
 MVP
-- Saisie simple et agréable : identité, titre, résumé, photo, coordonnées, expériences, formations, compétences, langues, projets, liens.
-- Réorganisation des sections et des éléments.
-- **Multilingue** : contenu saisi en plusieurs langues (au moins FR et EN), avec choix de la langue sur le profil public et à l'export.
-- Vue publique façon profil LinkedIn sur le profil.
-- Export **PDF** et **image (PNG)**.
+- Saisie simple et agréable : en-tête (photo, nom, titre, localisation), coordonnées et liens, présentation, offre freelance (disponibilité, prestations, mode de travail, TJM ; masquable par un interrupteur), expériences, formations, certifications, projets, compétences, langues, recommandations (saisies par le propriétaire).
+- Tout est facultatif : ce qui est rempli est public, ce qui est vide n'apparaît pas.
+- Réorganisation des sections et des éléments (expériences, formations et certifications rangées par date).
+- Contenu en français.
+- Vue publique façon profil LinkedIn, dans l'onglet « Profil » du profil public.
+- Export du CV en **PDF** et en **image (PNG)**.
 
 Plus tard
+- **Multilingue** : contenu saisi en plusieurs langues (au moins FR et EN), avec choix de la langue sur le profil public et à l'export. Prévu au MVP, repoussé le 2026-10-13.
+- Recommandations demandées par lien au client, qui écrit la sienne.
 - Plusieurs modèles de mise en page pour l'export.
 - Import (export LinkedIn, format JSON Resume).
-- Variantes de CV ciblées (par mission, par type de poste).
+- Variantes ciblées du profil et du CV (par mission, par type de poste).
 
 Points d'attention
 - L'export doit être fidèle à l'aperçu : le générer à partir du même rendu HTML.
@@ -104,4 +109,4 @@ Points d'attention
 
 ## Liens entre modules (plus tard)
 
-Tout centraliser n'a d'intérêt que si les modules communiquent. Quelques exemples : un rendez-vous réservé crée une carte dans un board, une carte reçoit des fichiers du Drive en pièces jointes, un projet du CV renvoie vers des fichiers publics.
+Tout centraliser n'a d'intérêt que si les modules communiquent. Quelques exemples : un rendez-vous réservé crée une carte dans un board, une carte reçoit des fichiers du Drive en pièces jointes, un projet du profil renvoie vers des fichiers publics.
