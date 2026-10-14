@@ -59,7 +59,7 @@ Chaque étape correspond au périmètre MVP du module (voir [modules.md](modules
 |---|---|---|
 | 0 | Choix de la stack technique | Fait |
 | 1 | Socle : authentification, compte, squelette du profil public | En cours |
-| 2 | Module **Profil** (CV en ligne) et export | Développé ; reste à vérifier l'export du CV une fois déployé sur Vercel |
+| 2 | Module **Profil** (CV en ligne) et export | Fait (2026-10-14) |
 | 3 | Module **Rendez-vous** (type Calendly) | À faire |
 | 4 | Module **Boards** (type Trello) | À faire |
 | 5 | Module **Drive** (type Google Drive) | À faire |

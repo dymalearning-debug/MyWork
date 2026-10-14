@@ -1,7 +1,7 @@
 # Module Profil
 
 Spécification du module Profil (anciennement « module CV »), étape 2 de la roadmap (voir [product.md](product.md), *Roadmap*).
-Statut : **développé** le 2026-10-13 (contenu et maquettes validés le même jour). Vitrine `/design` et copie claude.ai du design system mises à jour le 2026-10-14. Reste : vérifier l'export du CV une fois déployé sur Vercel.
+Statut : **développé** le 2026-10-13 (contenu et maquettes validés le même jour). Vitrine `/design` et copie claude.ai du design system mises à jour le 2026-10-14. Export du CV vérifié en production le 2026-10-14.
 
 ## En bref
 

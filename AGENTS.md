@@ -25,7 +25,7 @@ Point d'entrée pour tout agent (IA ou humain) qui travaille sur ce dépôt. À 
   - Fait aussi : profil public ([docs/public-profile.md](docs/public-profile.md)) : espace privé déplacé sous `/app`, identifiant public et mise en ligne (fabriqués dans la base), page publique `/<identifiant>` et pages introuvables, menu du profil en sous-menus.
   - Fait aussi : Paramètres ([docs/settings.md](docs/settings.md)) : fenêtre ouverte depuis le menu du profil, prénom et nom, adresse du profil public modifiable, suppression du compte, notifications en bas à droite.
   - Fait aussi : structure de l'espace privé : tableau de bord (`/app`, l'accueil) et « Mon profil » (`/app/profile`, le module Profil).
-  - Reste à faire : vérifier l'export du CV une fois déployé sur Vercel ; contenu du tableau de bord. Plus tard, avec Resend : changement d'e-mail et de mot de passe. Vérifier que les fonctions Vercel tournent bien à Dublin, comme prévu par la stack.
+  - Reste à faire : contenu du tableau de bord. Plus tard, avec Resend : changement d'e-mail et de mot de passe. Faire tourner les fonctions Vercel à Dublin, comme prévu par la stack : elles tournent aujourd'hui à Washington (`iad1`, constaté le 2026-10-14).
 - Stack technique : **TypeScript, Next.js, Tailwind CSS + shadcn/ui, Supabase, Vercel**. Détail et justification dans `docs/product.md`, section *Stack technique*.
 
 ## Code
