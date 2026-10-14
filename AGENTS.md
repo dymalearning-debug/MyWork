@@ -20,12 +20,12 @@ Point d'entrée pour tout agent (IA ou humain) qui travaille sur ce dépôt. À 
 
 ## État actuel
 
-- Phase : étape 1 (socle) en cours ; étape 2 (module Profil) commencée : contenu et maquettes validés ([docs/profile.md](docs/profile.md)), développement à faire.
+- Phase : étape 1 (socle) en cours ; étape 2 (module Profil) développée ([docs/profile.md](docs/profile.md)) : « Mon profil », onglet « Profil » de la page publique, « Me contacter », aperçu au partage, export du CV en PDF et PNG.
   - Fait : application Next.js, déployée automatiquement sur Vercel. Projet Supabase relié au CLI (table `profiles`). Design system validé ([docs/design-system.md](docs/design-system.md)). Authentification ([docs/auth.md](docs/auth.md)) : e-mail et mot de passe, Google, coque de l'espace privé (barre latérale, page de profil provisoire). Tests automatiques (Vitest, Playwright) lancés par GitHub à chaque modification.
   - Fait aussi : profil public ([docs/public-profile.md](docs/public-profile.md)) : espace privé déplacé sous `/app`, identifiant public et mise en ligne (fabriqués dans la base), page publique `/<identifiant>` et pages introuvables, menu du profil en sous-menus.
   - Fait aussi : Paramètres ([docs/settings.md](docs/settings.md)) : fenêtre ouverte depuis le menu du profil, prénom et nom, adresse du profil public modifiable, suppression du compte, notifications en bas à droite.
-  - Fait aussi : structure de l'espace privé : tableau de bord (`/app`, l'accueil) et « Mon profil » (`/app/profile`, futur module Profil), deux emplacements réservés.
-  - Reste à faire : espace privé (module Profil dans « Mon profil », contenu du tableau de bord). Plus tard, avec Resend : changement d'e-mail et de mot de passe. Vérifier que les fonctions Vercel tournent bien à Dublin, comme prévu par la stack.
+  - Fait aussi : structure de l'espace privé : tableau de bord (`/app`, l'accueil) et « Mon profil » (`/app/profile`, le module Profil).
+  - Reste à faire : vérifier l'export du CV une fois déployé sur Vercel ; contenu du tableau de bord. Plus tard, avec Resend : changement d'e-mail et de mot de passe. Vérifier que les fonctions Vercel tournent bien à Dublin, comme prévu par la stack.
 - Stack technique : **TypeScript, Next.js, Tailwind CSS + shadcn/ui, Supabase, Vercel**. Détail et justification dans `docs/product.md`, section *Stack technique*.
 
 ## Code

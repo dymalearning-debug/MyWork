@@ -92,8 +92,44 @@ export async function deleteTestUsers() {
     const { data, error } = await admin.listUsers({ page, perPage: 200 });
     if (error) throw error;
     for (const user of data.users) {
-      if (isTestEmail(user.email)) await admin.deleteUser(user.id);
+      if (!isTestEmail(user.email)) continue;
+      // Their images first: the storage is not emptied with the account (docs/profile.md, "Données").
+      const storage = adminClient().storage.from("profile-images");
+      const { data: files } = await storage.list(user.id, { limit: 1000 });
+      if (files?.length) await storage.remove(files.map((file) => `${user.id}/${file.name}`));
+      await admin.deleteUser(user.id);
     }
     if (data.users.length < 200) break;
   }
+}
+
+// A Supabase client signed in as a test account, as the browser would be: for the database
+// functions that act on the signed-in user (the profile content).
+export async function signedInClient(user: { email: string; password: string }) {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  if (!url || !key) throw new Error("End-to-end tests need the Supabase URL and publishable key (see .env.example).");
+  const client = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+  const { error } = await client.auth.signInWithPassword({ email: user.email, password: user.password });
+  if (error) throw error;
+  return client;
+}
+
+// The profile content of a test account (docs/profile.md), read and changed through the same
+// database functions as "Mon profil": what is not given is kept.
+export async function getProfileContent(user: { email: string; password: string }) {
+  const client = await signedInClient(user);
+  const { data, error } = await client.rpc("get_own_profile_content");
+  if (error) throw error;
+  return data as Record<string, unknown> & { handle: string };
+}
+
+export async function saveProfileContent(user: { email: string; password: string }, changes: Record<string, unknown>) {
+  const client = await signedInClient(user);
+  const { data: current, error: readError } = await client.rpc("get_own_profile_content");
+  if (readError) throw readError;
+  const content = { ...(current as Record<string, unknown>) };
+  for (const key of ["handle", "isOnline", "hasContact"]) delete content[key];
+  const { error } = await client.rpc("save_own_profile", { content: { ...content, ...changes } });
+  if (error) throw error;
 }

@@ -14,8 +14,6 @@ import { LOGIN_PATH } from "./paths";
 export type CurrentUser = {
   id: string;
   email: string;
-  // Google profile photo, when the account was created or linked with Google.
-  avatarUrl: string | null;
 };
 
 export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
@@ -27,12 +25,9 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   const claims = data?.claims;
   if (!claims?.sub) return null;
 
-  const metadata = (claims.user_metadata ?? {}) as Record<string, unknown>;
-  const avatar = metadata.avatar_url ?? metadata.picture;
   return {
     id: claims.sub,
     email: typeof claims.email === "string" ? claims.email : "",
-    avatarUrl: typeof avatar === "string" ? avatar : null,
   };
 });
 

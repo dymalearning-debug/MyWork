@@ -36,7 +36,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 async function CurrentUserMenu() {
   const user = await requireUser();
   const profile = await getOwnProfile(user.id);
-  return <UserMenu email={user.email} avatarUrl={user.avatarUrl} profile={profile} />;
+  return <UserMenu email={user.email} avatarUrl={profile.photoUrl} profile={profile} />;
 }
 
 function UserMenuSkeleton() {

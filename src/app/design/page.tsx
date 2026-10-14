@@ -1,5 +1,6 @@
 import { Bodoni_Moda, Cormorant_Garamond } from "next/font/google"
 import { notFound } from "next/navigation"
+import { Suspense } from "react"
 import {
   ArrowRightIcon,
   CalendarX2Icon,
@@ -11,6 +12,8 @@ import {
 } from "lucide-react"
 
 import { Logo } from "@/components/logo"
+import { ProfilePhoto } from "@/components/profile-photo"
+import { SiteIcon } from "@/components/site-icon"
 import { OfflineBanner, PublicPageHeading } from "@/components/public-page"
 import { StatusDot } from "@/components/status-dot"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -60,15 +63,8 @@ import {
   ToastDemo,
   TooltipDemo,
 } from "./_components/interactive-demos"
-import {
-  AttributeMatrix,
-  BoardPreview,
-  DrivePreview,
-  ExperienceTimeline,
-  ProfilePreview,
-  SidebarPreview,
-  VisibilityBadge,
-} from "./_components/module-previews"
+import { BoardPreview, DrivePreview, SidebarPreview, VisibilityBadge } from "./_components/module-previews"
+import { ProfileBricks } from "./_components/profile-bricks"
 import { EmailPreviews } from "./_components/email-previews"
 import { ModuleHeading, Section, Specimen } from "./_components/showcase"
 
@@ -86,6 +82,19 @@ const SECTIONS = [
   { id: "modules", title: "Briques" },
   { id: "brand", title: "Marque" },
   { id: "emails", title: "E-mails" },
+]
+
+// Sites whose logo is recognized in the links of a profile, and one that is not (a globe).
+const LINK_SITES = [
+  "linkedin.com",
+  "github.com",
+  "malt.fr",
+  "x.com",
+  "instagram.com",
+  "behance.net",
+  "dribbble.com",
+  "youtube.com",
+  "exemple.fr",
 ]
 
 // Alternative heading fonts, loaded on this page only for comparison.
@@ -677,6 +686,22 @@ export default function DesignPage() {
                 <AvatarGroupCount className="text-xs">+4</AvatarGroupCount>
               </AvatarGroup>
             </Specimen>
+            <Specimen label="Photo du profil" hint="Module Profil. Carrée ; sans photo, les initiales sur un carré à l'encre.">
+              <ProfilePhoto url={null} initials="IR" className="size-8 text-sm" />
+              <ProfilePhoto url={null} initials="IR" className="size-22 text-3xl" />
+              <ProfilePhoto url={null} initials="IR" className="size-32 text-[2.75rem]" />
+            </Specimen>
+            <Specimen label="Logos des liens" hint="Module Profil. Reconnus d'après l'adresse, sinon un globe.">
+              {LINK_SITES.map((site) => (
+                <span
+                  key={site}
+                  className="flex items-center gap-2 border border-border px-2.5 py-1.5 text-xs text-muted-foreground"
+                >
+                  <SiteIcon url={`https://${site}`} className="text-foreground" />
+                  {site}
+                </span>
+              ))}
+            </Specimen>
           </Section>
 
           <Section id="navigation" index="08" title="Navigation">
@@ -707,7 +732,7 @@ export default function DesignPage() {
                 <Specimen label="Onglets ligne" className="block">
                   <Tabs defaultValue="cv">
                     <TabsList variant="line">
-                      <TabsTrigger value="cv">CV</TabsTrigger>
+                      <TabsTrigger value="cv">Profil</TabsTrigger>
                       <TabsTrigger value="booking">Rendez-vous</TabsTrigger>
                       <TabsTrigger value="board">Board</TabsTrigger>
                       <TabsTrigger value="files">Fichiers</TabsTrigger>
@@ -716,13 +741,13 @@ export default function DesignPage() {
                 </Specimen>
                 <Specimen
                   label="Page publique"
-                  hint="Bandeau vu par le seul propriétaire d'un profil hors ligne, puis l'en-tête."
+                  hint="Bandeau vu par le seul propriétaire d'un profil hors ligne. L'en-tête titré sert aux pages introuvables ; celui d'un profil est dans les briques du module Profil."
                   className="block"
                 >
                   <div className="border border-border">
                     <OfflineBanner />
                     <div className="bg-spotlight px-6 pt-10">
-                      <PublicPageHeading eyebrow="Espace public" title="Page de profil" />
+                      <PublicPageHeading eyebrow="Erreur 404" title="Page introuvable" />
                     </div>
                   </div>
                 </Specimen>
@@ -857,17 +882,9 @@ export default function DesignPage() {
             title="Briques de l'application"
             description="Les composants assemblés pour chaque module, avec des données fictives."
           >
-            <div>
-              <ModuleHeading module="Socle · Profil public" title="En-tête du profil" />
-              <ProfilePreview />
-            </div>
-            <div>
-              <ModuleHeading module="Module · CV" title="Compétences et parcours" />
-              <div className="space-y-8">
-                <AttributeMatrix />
-                <ExperienceTimeline />
-              </div>
-            </div>
+            <Suspense fallback={<Skeleton className="h-96" />}>
+              <ProfileBricks />
+            </Suspense>
             <div>
               <ModuleHeading module="Module · Rendez-vous" title="Choix d'un créneau" />
               <BookingDemo />

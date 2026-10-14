@@ -59,7 +59,7 @@ Chaque étape correspond au périmètre MVP du module (voir [modules.md](modules
 |---|---|---|
 | 0 | Choix de la stack technique | Fait |
 | 1 | Socle : authentification, compte, squelette du profil public | En cours |
-| 2 | Module **Profil** (CV en ligne) et export | En cours : contenu et maquettes validés, développement à faire |
+| 2 | Module **Profil** (CV en ligne) et export | Développé ; reste à vérifier l'export du CV une fois déployé sur Vercel |
 | 3 | Module **Rendez-vous** (type Calendly) | À faire |
 | 4 | Module **Boards** (type Trello) | À faire |
 | 5 | Module **Drive** (type Google Drive) | À faire |
@@ -158,6 +158,12 @@ Journal des choix validés (date : décision).
   - remplissage : **« Formulaire »**, toutes les sections sur une page, un sommaire à gauche, un seul « Enregistrer » dans une barre en bas. Écartées : « Sur place » (façon LinkedIn, une fenêtre par modification) et « Atelier » (formulaire et aperçu en direct côte à côte) ;
   - affichage : **« Classique »**, deux colonnes : le parcours à gauche ; l'offre freelance, les compétences, les langues et les liens à droite. Écartées : « Fiche » (une colonne façon fiche technique) et « Vitrine » (projets et prestations d'abord) ;
   - restent à dessiner pendant le développement : la page publique sur mobile et la mise en page du CV exporté.
+- 2026-10-13 : module Profil développé (détail dans [profile.md](profile.md), *Précisé pendant le développement*). Choix faits en cours de route, à valider par le porteur du projet :
+  - page publique sur mobile : une colonne, dans l'ordre des sections choisi ;
+  - CV : A4 en deux colonnes, comme la page publique, sans images de projets ni recommandations ; aperçu et téléchargements (PDF, PNG) sous le sommaire de « Mon profil » ;
+  - une seule notification à l'enregistrement, qui résume les changements, plutôt qu'une par action (rien n'est enregistré avant « Enregistrer ») ;
+  - « Ordre des sections » dans un panneau sous le sommaire, plutôt qu'une fenêtre ;
+  - bibliothèques : dnd-kit (glisser-déposer), react-easy-crop (recadrage de la photo), Chromium sans écran (Playwright et @sparticuz/chromium) pour l'export, Simple Icons pour les logos des liens.
 
 ## Questions ouvertes
 

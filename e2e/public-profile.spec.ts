@@ -89,9 +89,9 @@ test.describe("access to the public pages", () => {
 
     const response = await page.goto(`/${handle}`);
     expect(response?.status()).toBe(200);
-    await expect(page.getByRole("heading", { name: "Page de profil" })).toBeVisible();
-    await expect(page.getByText("Espace public")).toBeVisible();
-    await expect(page.getByText("Contenu à venir.")).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: handle })).toBeVisible();
+    // Without a name, the handle; an empty profile says so.
+    await expect(page.getByText("Ce profil est encore vide.")).toBeVisible();
     await expect(page.getByText("Vous seul voyez cette page.")).toHaveCount(0);
     await expect(page).toHaveTitle(`${handle} · MyWork`);
   });
@@ -122,12 +122,12 @@ test.describe("access to the public pages", () => {
     const response = await page.goto(`/${handle}`);
     expect(response?.status()).toBe(200);
     await expect(page.getByRole("status").filter({ hasText: /Hors ligne/i })).toContainText("Vous seul voyez cette page.");
-    await expect(page.getByRole("heading", { name: "Page de profil" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: handle })).toBeVisible();
 
     // Online: the strict view, the same for everyone, without the banner.
     await setProfileOnline(user.id, true);
     await page.reload();
-    await expect(page.getByRole("heading", { name: "Page de profil" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: handle })).toBeVisible();
     await expect(page.getByText("Vous seul voyez cette page.")).toHaveCount(0);
   });
 

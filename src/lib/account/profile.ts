@@ -7,13 +7,14 @@ import type { ProfileSettings } from "./settings";
 // The signed-in user's own profile, for the private space: the sidebar, the profile menu and the
 // Settings. RLS limits every read and change to their own row.
 
-export type OwnProfile = ProfileSettings & { isOnline: boolean };
+// photoUrl: the photo of the profile (docs/profile.md, "En-tête"), also the avatar of the sidebar.
+export type OwnProfile = ProfileSettings & { isOnline: boolean; photoUrl: string | null };
 
 export async function getOwnProfile(userId: string): Promise<OwnProfile> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("profiles")
-    .select("first_name, last_name, handle, is_online")
+    .select("first_name, last_name, handle, is_online, photo_url")
     .eq("id", userId)
     .single();
   if (error) throw new Error(`Own profile read failed: ${error.message}`);
@@ -22,6 +23,7 @@ export async function getOwnProfile(userId: string): Promise<OwnProfile> {
     lastName: data.last_name ?? "",
     handle: data.handle,
     isOnline: data.is_online,
+    photoUrl: data.photo_url,
   };
 }
 

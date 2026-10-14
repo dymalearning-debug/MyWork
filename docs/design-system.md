@@ -10,11 +10,11 @@ Ce fichier dit **où trouver** chaque élément et **comment l'appliquer**. L'hi
 | Tokens : couleurs des deux thèmes, polices, rayons. Utilitaires `bg-spotlight` et `eyebrow` | `src/app/globals.css` |
 | Chargement des polices, thème (clair, sombre, système) | `src/app/layout.tsx` |
 | Composants de base (shadcn/ui, style `base-nova`, sur Base UI), déjà adaptés | `src/components/ui/` |
-| Composants maison : `Logo`, `StatusDot`, `ThemeToggle`, `PublicPage` (gabarit des pages publiques et des pages introuvables, bandeau « Hors ligne ») | `src/components/` |
+| Composants maison : `Logo`, `StatusDot`, `ThemeToggle`, `PublicPage` (gabarit des pages publiques et des pages introuvables, bandeau « Hors ligne »), `ProfilePhoto` (photo carrée ou initiales), `SiteIcon` (logo d'un lien, d'après son adresse) | `src/components/` |
 | **Vitrine** : chaque composant dans les deux thèmes, et une maquette par module | http://localhost:3000/design (`src/app/design/`), en local uniquement (404 en production) |
 | Fichiers du logo (SVG, PNG) | `public/brand/` |
 | Favicon, icône d'application, image de partage | `src/app/` : `icon.svg`, `favicon.ico`, `apple-icon.png`, `opengraph-image.png` |
-| Copie sur claude.ai, pour les maquettes faites avec Claude | design system **MyWork** : https://claude.ai/artifact/T7MhWyh31URAnNAjyGd61b |
+| Copie sur claude.ai, pour les maquettes faites avec Claude | design system **MyWork** : https://claude.ai/artifact/T7MhWyh31URAnNAjyGd61b (dernière synchronisation : 2026-10-14, module Profil) |
 
 En cas d'écart : le code (`globals.css`, composants) fait foi, la page `/design` montre l'usage, la copie claude.ai suit.
 
@@ -63,10 +63,11 @@ Deux polices, pas de police mono : **Newsreader** (`font-heading`) pour les titr
 
 - **Boutons** (`Button`) : `default` (rouge, l'action principale), `contrast` (encre), `outline`, `secondary`, `ghost`, `destructive`, `link`. Tailles `xs`, `sm`, normale, `lg`, `icon`. Icône placée avec `data-icon="inline-start"` ou `"inline-end"`. Une flèche en fin de bouton pour les actions qui font avancer.
 - **Badges** (`Badge`) : `default`, `secondary`, `outline`, `contrast`, `success`, `warning`, `destructive`. Statuts : confirmé = `success`, en attente = `warning`, annulé = `destructive`.
-- **Composants installés** dans `src/components/ui/` : avatar (carré), badge, button, card, checkbox, dialog, dropdown-menu, input, label, progress, radio-group, select, separator, skeleton, sonner (notifications), switch, table, tabs, textarea, tooltip. Icônes : **lucide-react**.
+- **Composants installés** dans `src/components/ui/` : avatar (carré), badge, button, card, checkbox, dialog, dropdown-menu, input, label, native-select (listes déroulantes des formulaires), popover (sans ombre), progress, radio-group, select, separator, skeleton, sonner (notifications), switch, table, tabs, textarea, tooltip. Icônes : **lucide-react**.
 - **`Logo`** : variantes `lockup` (par défaut), `mark` (le carré seul) et `wordmark` (le nom seul). Ne jamais redessiner le logo ni écrire « MyWork » à sa place.
 - **`StatusDot`** : pastille de statut. La pulsation (`pulse`) est réservée à ce qui est en direct.
-- **Maquettes des modules** (en-tête du profil, parcours, matrice de compétences (écartée pour le module Profil), choix d'un créneau, kanban, fichiers, barre latérale, badge de visibilité) : dans `src/app/design/_components/`, avec des données fictives. Pour construire le vrai écran, partir de la maquette et déplacer le composant dans le code du module : ne jamais importer depuis `src/app/design/`.
+- **Maquettes des modules** (choix d'un créneau, kanban, fichiers, barre latérale, badge de visibilité) : dans `src/app/design/_components/`, avec des données fictives. Pour construire le vrai écran, partir de la maquette et déplacer le composant dans le code du module : ne jamais importer depuis `src/app/design/`.
+- **Module Profil** : la vitrine montre ses **vrais composants** (en-tête et onglet « Profil » de la page publique, panneau « Me contacter », champs de « Mon profil », CV), avec un profil fictif (`src/app/design/_components/profile-demo.ts`). Les anciennes maquettes (en-tête, parcours, matrice de compétences) ont été retirées.
 - Autres motifs visibles sur `/design` : message d'information (fond `muted`, filet rouge à gauche), état vide, chargement (`Skeleton`), indicateurs chiffrés, tableaux.
 - **Notifications** (`toast`, Sonner) : **en bas à droite**, après chaque action sur le compte (enregistrement, mise en ligne, suppression…). Un titre court au passé, le détail dessous (voir [settings.md](settings.md), *Notifications*).
 - **Aide contextuelle** : une icône « ? » (`CircleHelpIcon`, encre atténuée) à droite d'un libellé, avec une infobulle (`Tooltip`) au survol ou au focus. Exemple : « Adresse de mon profil public » dans les Paramètres.

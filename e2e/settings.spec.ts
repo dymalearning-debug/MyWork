@@ -127,7 +127,7 @@ test.describe("Settings dialog", () => {
 
     // The profile now answers at its new address only: no redirection from the former one.
     await page.goto(`/${after.toLowerCase()}`);
-    await expect(page.getByRole("heading", { name: "Page de profil" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: after.toLowerCase() })).toBeVisible();
     await page.goto(`/${before}`);
     await expect(page.getByRole("heading", { name: "Page introuvable" })).toBeVisible();
   });

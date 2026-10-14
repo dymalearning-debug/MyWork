@@ -4,6 +4,20 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  // Files read at run time, that the build does not find on its own: Chromium for the export of
+  // the CV (docs/profile.md, "Export du CV"), the font and the logo of the share preview.
+  outputFileTracingIncludes: {
+    "/**/cv/pdf": ["./node_modules/@sparticuz/chromium/bin/**"],
+    "/app/profile/cv/png": ["./node_modules/@sparticuz/chromium/bin/**"],
+    "/**/opengraph-image*": [
+      "./node_modules/@fontsource/newsreader/files/newsreader-latin-500-normal.woff",
+      "./public/brand/mywork-logo-white.svg",
+    ],
+    "/**/opengraph-image*/**": [
+      "./node_modules/@fontsource/newsreader/files/newsreader-latin-500-normal.woff",
+      "./public/brand/mywork-logo-white.svg",
+    ],
+  },
   async redirects() {
     return [
       // Former address of the private profile page, before the private space moved under /app.

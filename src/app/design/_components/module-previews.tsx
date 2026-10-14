@@ -1,10 +1,7 @@
 import {
-  ArrowRightIcon,
   CalendarIcon,
-  DownloadIcon,
   FileArchiveIcon,
   FileTextIcon,
-  FileUserIcon,
   FolderIcon,
   GlobeIcon,
   ImageIcon,
@@ -12,21 +9,17 @@ import {
   Link2Icon,
   ListChecksIcon,
   LockIcon,
-  MapPinIcon,
   PlusIcon,
   SearchIcon,
   SettingsIcon,
-  Share2Icon,
   UploadIcon,
   UserIcon,
 } from "lucide-react"
 
-import { StatusDot } from "@/components/status-dot"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Progress, ProgressLabel, ProgressValue } from "@/components/ui/progress"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 
 import { FileActionsMenu } from "./interactive-demos"
@@ -46,203 +39,6 @@ export function VisibilityBadge({ visibility }: { visibility: Visibility }) {
       <Icon data-icon="inline-start" />
       {label}
     </Badge>
-  )
-}
-
-/* ——— Public profile ——— */
-
-export function ProfilePreview() {
-  return (
-    <div className="bg-spotlight border border-border bg-card">
-      <div className="flex items-center justify-between border-b border-border px-6 py-3">
-        <p className="eyebrow text-muted-foreground">mywork / alex-morgan</p>
-        <p className="eyebrow flex items-center gap-2 text-muted-foreground">
-          <StatusDot pulse /> En ligne
-        </p>
-      </div>
-      <div className="grid gap-10 p-6 md:grid-cols-[auto_1fr] md:p-12">
-        <div className="relative flex size-28 items-center justify-center bg-foreground font-heading text-4xl font-semibold text-background">
-          AM
-        </div>
-        <div className="min-w-0">
-          <h3 className="font-heading text-5xl leading-none font-medium md:text-6xl">
-            Alex Morgan
-          </h3>
-          <p className="mt-3 text-lg">Product designer freelance</p>
-          <ul className="eyebrow mt-5 flex flex-wrap gap-x-6 gap-y-2 text-muted-foreground">
-            <li className="flex items-center gap-1.5">
-              <MapPinIcon className="size-3.5" /> Lyon, France
-            </li>
-            <li>FR · EN</li>
-            <li className="flex items-center gap-2 text-success">
-              <StatusDot /> Disponible dès le 3 novembre
-            </li>
-          </ul>
-          <p className="mt-5 max-w-2xl text-muted-foreground">
-            J&apos;accompagne les équipes produit de l&apos;idée au lancement : recherche
-            utilisateur, prototypes, design systems. Dix ans d&apos;expérience, dont six en
-            freelance.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Button size="lg">
-              Réserver un créneau
-              <ArrowRightIcon data-icon="inline-end" />
-            </Button>
-            <Button size="lg" variant="outline">
-              <DownloadIcon data-icon="inline-start" />
-              Télécharger le CV
-            </Button>
-            <Button size="icon-lg" variant="ghost" aria-label="Partager le profil">
-              <Share2Icon />
-            </Button>
-          </div>
-        </div>
-      </div>
-      <div className="overflow-x-auto border-t border-border px-6 pt-2 md:px-10">
-        <Tabs defaultValue="cv">
-          <TabsList variant="line">
-            <TabsTrigger value="cv">CV</TabsTrigger>
-            <TabsTrigger value="booking">Rendez-vous</TabsTrigger>
-            <TabsTrigger value="board">Board</TabsTrigger>
-            <TabsTrigger value="files">Fichiers</TabsTrigger>
-          </TabsList>
-        </Tabs>
-      </div>
-    </div>
-  )
-}
-
-/* ——— CV: attribute matrix, a nod to the hosts' attribute profiles ——— */
-
-const SKILLS = [
-  { label: "Design system", value: 19 },
-  { label: "Prototypage", value: 18 },
-  { label: "Recherche UX", value: 16 },
-  { label: "Anglais", value: 17 },
-  { label: "Accessibilité", value: 14 },
-  { label: "Front-end", value: 12 },
-  { label: "Stratégie", value: 13 },
-  { label: "Ateliers", value: 15 },
-]
-
-const MAX = 20
-const RADIUS = 110
-
-function point(index: number, value: number, radius = RADIUS) {
-  const angle = (Math.PI * 2 * index) / SKILLS.length - Math.PI / 2
-  const r = (value / MAX) * radius
-  return { x: Math.cos(angle) * r, y: Math.sin(angle) * r }
-}
-
-function polygon(values: number[]) {
-  return values
-    .map((v, i) => point(i, v))
-    .map(({ x, y }) => `${x.toFixed(1)},${y.toFixed(1)}`)
-    .join(" ")
-}
-
-export function AttributeMatrix() {
-  return (
-    <div className="grid items-center gap-8 border border-border bg-card p-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-      <svg
-        viewBox="-230 -150 460 300"
-        className="w-full max-w-md justify-self-center"
-        role="img"
-        aria-label="Matrice des compétences"
-      >
-        {[5, 10, 15, 20].map((level) => (
-          <polygon
-            key={level}
-            points={polygon(SKILLS.map(() => level))}
-            className={cn("fill-none stroke-border", level === MAX && "stroke-foreground/40")}
-            strokeWidth={1}
-          />
-        ))}
-        {SKILLS.map((_, i) => {
-          const end = point(i, MAX)
-          return (
-            <line key={i} x1={0} y1={0} x2={end.x} y2={end.y} className="stroke-border" strokeWidth={1} />
-          )
-        })}
-        <polygon
-          points={polygon(SKILLS.map((s) => s.value))}
-          className="fill-primary/15 stroke-primary"
-          strokeWidth={1.5}
-        />
-        {SKILLS.map((s, i) => {
-          const p = point(i, s.value)
-          return <rect key={s.label} x={p.x - 2.5} y={p.y - 2.5} width={5} height={5} className="fill-primary" />
-        })}
-        {SKILLS.map((s, i) => {
-          const p = point(i, MAX, RADIUS + 14)
-          const anchor = p.x > 5 ? "start" : p.x < -5 ? "end" : "middle"
-          return (
-            <text
-              key={s.label}
-              x={p.x}
-              y={p.y + (p.y > 5 ? 10 : p.y < -5 ? -2 : 3)}
-              textAnchor={anchor}
-              className="fill-muted-foreground text-[9px] tracking-[0.14em] uppercase"
-            >
-              {s.label}
-            </text>
-          )
-        })}
-      </svg>
-
-      <div>
-        <p className="eyebrow text-muted-foreground">Matrice d&apos;attributs · échelle 0–20</p>
-        <ul className="mt-4 space-y-3">
-          {SKILLS.map((s) => (
-            <li key={s.label} className="grid grid-cols-[110px_1fr_36px] items-center gap-3">
-              <span className="truncate text-xs uppercase">{s.label}</span>
-              <span className="flex gap-0.5" aria-hidden>
-                {Array.from({ length: MAX }, (_, i) => (
-                  <span
-                    key={i}
-                    className={cn("h-3 flex-1", i < s.value ? "bg-foreground" : "bg-muted")}
-                  />
-                ))}
-              </span>
-              <span className="text-right text-xs text-muted-foreground tabular-nums">
-                {s.value}/{MAX}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  )
-}
-
-const EXPERIENCES = [
-  {
-    period: "2020 — Auj.",
-    role: "Product designer freelance",
-    company: "Clients directs et agences",
-    text: "Missions de conception produit pour des start-up et des PME : design systems, refontes, tests utilisateurs.",
-  },
-  {
-    period: "2016 — 2020",
-    role: "Lead designer",
-    company: "Agence Mesa",
-    text: "Direction d'une équipe de quatre designers, sur des applications web et mobiles.",
-  },
-]
-
-export function ExperienceTimeline() {
-  return (
-    <ol className="border-l border-border">
-      {EXPERIENCES.map((xp) => (
-        <li key={xp.period} className="relative pb-8 pl-8 last:pb-0">
-          <span className="absolute top-1.5 -left-[5px] size-2.5 border border-foreground bg-background" />
-          <p className="eyebrow text-muted-foreground">{xp.period}</p>
-          <p className="mt-1 font-heading text-xl font-semibold">{xp.role}</p>
-          <p className="text-sm text-muted-foreground">{xp.company}</p>
-          <p className="mt-2 max-w-xl text-sm">{xp.text}</p>
-        </li>
-      ))}
-    </ol>
   )
 }
 
@@ -464,7 +260,6 @@ export function DrivePreview() {
 
 const NAV = [
   { label: "Profil", icon: UserIcon },
-  { label: "CV", icon: FileUserIcon },
   { label: "Rendez-vous", icon: CalendarIcon, active: true, count: 3 },
   { label: "Boards", icon: KanbanIcon },
   { label: "Drive", icon: FolderIcon },

@@ -1,7 +1,7 @@
 # Module Profil
 
 Spécification du module Profil (anciennement « module CV »), étape 2 de la roadmap (voir [product.md](product.md), *Roadmap*).
-Statut : **contenu et maquettes validés** le 2026-10-13. Prochaine étape : le développement.
+Statut : **développé** le 2026-10-13 (contenu et maquettes validés le même jour). Vitrine `/design` et copie claude.ai du design system mises à jour le 2026-10-14. Reste : vérifier l'export du CV une fois déployé sur Vercel.
 
 ## En bref
 
@@ -22,7 +22,7 @@ Validées le 2026-10-13 : [Maquettes module Profil](https://claude.ai/artifact/3
 | « Mon profil » (remplissage) | **B · Formulaire** | A · Sur place (page façon LinkedIn, une fenêtre par modification) ; C · Atelier (formulaire en accordéon et aperçu en direct) |
 | Onglet « Profil » de la page publique (affichage) | **1 · Classique**, réglage « contact » pour le panneau « Me contacter » | 2 · Fiche (une colonne façon fiche technique) ; 3 · Vitrine (projets et prestations d'abord) |
 
-Retenues telles quelles. Restent à dessiner pendant le développement : la version mobile de la page publique et la mise en page du CV exporté.
+Retenues telles quelles. Dessinées pendant le développement : la page publique sur mobile et le CV exporté (voir *Précisé pendant le développement*).
 
 ## Contenu
 
@@ -143,7 +143,7 @@ Le haut de la page publique (voir [public-profile.md](public-profile.md), *Page 
   - quitter la page avec des modifications non enregistrées pose la question « Enregistrer les modifications ? », comme dans les Paramètres ;
   - chaque action est confirmée par une notification en bas à droite (« Expérience ajoutée », « Photo modifiée »…) ;
   - supprimer un élément demande une confirmation.
-- Aperçu du CV et boutons d'export (PDF, PNG) : leur place reste à dessiner avec la mise en page du CV.
+- Aperçu du CV et export : sous le sommaire, un bloc « CV » avec « Aperçu du CV » (nouvel onglet), « Télécharger en PDF » et « Télécharger en PNG ». Le CV reprend le profil **enregistré**.
 - Pour voir son profil comme un visiteur : « Ouvrir mon profil public », dans le menu du profil, y compris hors ligne (aperçu avec le bandeau).
 
 ## Page publique : onglet « Profil »
@@ -208,23 +208,26 @@ Pour les agents qui développeront le module.
 
 ## Mise en œuvre
 
-Ordre proposé :
+Fait le 2026-10-13, dans l'ordre proposé : base de données et stockage, « Mon profil », onglet « Profil » de la page publique (avec « Me contacter » et l'aperçu au partage), export du CV, tests (vérifiés en clair, en sombre et sur mobile).
 
-1. Maquettes : fait, validées le 2026-10-13 (voir *Maquettes*).
-2. Base de données et stockage des images.
-3. « Mon profil », dans cet ordre :
-   - en-tête, coordonnées et À propos ;
-   - offre freelance ;
-   - parcours, projets, compétences, langues, recommandations ;
-   - ordre des sections.
-4. Onglet « Profil » de la page publique, panneau « Me contacter », aperçu au partage.
-5. Export du CV.
-6. Tests, et vérification en clair et en sombre, et sur mobile.
+## Précisé pendant le développement
 
-## À préciser pendant le développement
+- **Page publique sur mobile** : une seule colonne, qui suit l'ordre des sections choisi (les encadrés de droite s'intercalent), les liens en dernier.
+- **CV exporté** : A4, deux colonnes (le parcours à gauche ; offre freelance, compétences, langues et liens à droite), photo en haut à droite, coordonnées en clair sous le nom. Sans les images des projets ni les recommandations. Les expériences d'une même entreprise ne sont pas regroupées.
+- **Ordre des sections** : un panneau qui se déplie sous le sommaire (glisser-déposer, ou clavier : Espace, flèches, Espace), plutôt qu'une fenêtre.
+- **Notifications** : une seule, « Profil enregistré », qui dit ce qui a changé (« Expérience ajoutée, photo modifiée. », trois changements au plus) ; rien n'est enregistré avant « Enregistrer ». Une erreur de saisie est signalée en rouge sous le champ, l'élément se déplie et rien n'est enregistré.
+- **Certification sans date d'expiration** : elle n'expire pas (pas de case à cocher).
+- **Photo** : recadrée en JPEG de 800 × 800 pixels au plus. Les images remplacées ou retirées sont supprimées du stockage à l'enregistrement suivant.
+- **Bibliothèques** : dnd-kit (glisser-déposer), react-easy-crop (recadrage), Playwright et @sparticuz/chromium (navigateur sans écran pour l'export), Simple Icons (logos des liens ; LinkedIn dessiné à part), la police Newsreader de Fontsource (image de partage).
 
-- La page publique sur mobile (ordre des deux colonnes une fois empilées).
-- La mise en page du CV exporté et son contenu exact.
+## Technique (fait)
+
+- Base : migrations `20261013120000_add_profile_module.sql` (colonnes, tables, fonctions `profile_content`, `get_public_profile_content`, `get_public_profile_contact`, `get_own_profile_content`, `save_own_profile`, compartiment `profile-images`) et `20261013130000_fix_profile_month_checks.sql`. Les utilisateurs lisent leurs lignes, mais n'écrivent que par `save_own_profile`, qui remplace tout le profil d'un coup et vérifie les plafonds.
+- Règles partagées (types, dates, tri, liens, nettoyage, validation, texte de la notification) : `src/lib/profile/`, avec leurs tests unitaires.
+- « Mon profil » : `src/app/app/profile/` ; page publique : `src/app/[handle]/(profile)/` et `src/app/[handle]/_components/` ; CV : `src/app/[handle]/cv/` (page A4, `cv/pdf`) et `src/app/app/profile/cv/png`.
+- Export : le navigateur sans écran ouvre la page du CV avec les cookies du visiteur (le propriétaire d'un profil hors ligne obtient son aperçu), sans JavaScript, sur une adresse du déploiement lui-même (jamais une adresse tirée de la requête). Chromium et les fichiers de l'image de partage sont déclarés dans `next.config.ts` (`outputFileTracingIncludes`).
+- Tests : `e2e/profile.spec.ts` (bout en bout) et `src/lib/profile/*.test.ts` (unitaires).
+- La page du CV contient l'e-mail et le téléphone en clair, comme le PDF : c'est un CV. Elle n'est pas indexée et aucun lien de la page publique n'y mène (seulement au PDF).
 
 ## Hors périmètre (plus tard)
 

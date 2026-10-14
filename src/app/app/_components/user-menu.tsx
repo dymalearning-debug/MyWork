@@ -232,7 +232,7 @@ function ThemeSubmenu() {
   );
 }
 
-// The Google photo when there is one, otherwise the initial of the name shown (first name, or
+// The photo of the profile (by default the Google one), otherwise the initial of the name shown (first name, or
 // email address).
 function UserAvatar({ name, avatarUrl }: { name: string; avatarUrl: string | null }) {
   return (
