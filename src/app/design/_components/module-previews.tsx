@@ -7,9 +7,7 @@ import {
   ImageIcon,
   KanbanIcon,
   Link2Icon,
-  ListChecksIcon,
   LockIcon,
-  PlusIcon,
   SearchIcon,
   SettingsIcon,
   UploadIcon,
@@ -39,124 +37,6 @@ export function VisibilityBadge({ visibility }: { visibility: Visibility }) {
       <Icon data-icon="inline-start" />
       {label}
     </Badge>
-  )
-}
-
-/* ——— Board ——— */
-
-type BoardCard = {
-  title: string
-  labels: string[]
-  due?: string
-  dueSoon?: boolean
-  checklist?: [number, number]
-  done?: boolean
-}
-
-const COLUMNS: { title: string; cards: BoardCard[] }[] = [
-  {
-    title: "À faire",
-    cards: [
-      { title: "Maquettes de la page tarifs", labels: ["Design"], due: "18 oct.", checklist: [0, 4] },
-      { title: "Préparer l'atelier client", labels: ["Atelier"] },
-      { title: "Relancer le devis Sweetwater", labels: ["Admin"], due: "21 oct." },
-    ],
-  },
-  {
-    title: "En cours",
-    cards: [
-      { title: "Design system : composants", labels: ["Design", "Front"], checklist: [3, 5] },
-      { title: "Entretiens utilisateurs", labels: ["Recherche"], due: "Demain", dueSoon: true },
-    ],
-  },
-  {
-    title: "Terminé",
-    cards: [
-      { title: "Audit d'accessibilité", labels: ["Recherche"], done: true, checklist: [6, 6] },
-      { title: "Facture de septembre", labels: ["Admin"], done: true },
-    ],
-  },
-]
-
-export function BoardPreview() {
-  return (
-    <div className="border border-border bg-card">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-3">
-        <div className="flex items-center gap-3">
-          <p className="font-heading text-xl font-semibold">Roadmap · Refonte Sweetwater</p>
-          <VisibilityBadge visibility="public" />
-        </div>
-        <Button size="sm" variant="outline">
-          <PlusIcon data-icon="inline-start" />
-          Colonne
-        </Button>
-      </div>
-      <div className="grid gap-4 overflow-x-auto bg-muted p-5 md:grid-cols-3">
-        {COLUMNS.map((column) => (
-          <div key={column.title} className="min-w-56">
-            <div className="mb-3 flex items-center justify-between">
-              <p className="eyebrow">{column.title}</p>
-              <span className="text-xs text-muted-foreground tabular-nums">
-                {String(column.cards.length).padStart(2, "0")}
-              </span>
-            </div>
-            <div className="space-y-3">
-              {column.cards.map((card) => (
-                <div
-                  key={card.title}
-                  tabIndex={0}
-                  className="cursor-grab border border-transparent bg-background p-4 transition-colors outline-none hover:border-foreground/30 focus-visible:border-foreground"
-                >
-                  <div className="flex flex-wrap gap-1.5">
-                    {card.labels.map((label) => (
-                      <Badge key={label} variant="secondary">
-                        {label}
-                      </Badge>
-                    ))}
-                  </div>
-                  <p
-                    className={cn(
-                      "mt-2 text-sm font-medium",
-                      card.done && "text-muted-foreground line-through"
-                    )}
-                  >
-                    {card.title}
-                  </p>
-                  {(card.due || card.checklist) && (
-                    <div className="mt-3 flex items-center gap-4 text-[0.6875rem] text-muted-foreground uppercase tabular-nums">
-                      {card.due && (
-                        <span className={cn("flex items-center gap-1", card.dueSoon && "text-warning")}>
-                          <CalendarIcon className="size-3" />
-                          {card.due}
-                        </span>
-                      )}
-                      {card.checklist && (
-                        <span
-                          className={cn(
-                            "flex items-center gap-1",
-                            card.checklist[0] === card.checklist[1] && "text-success"
-                          )}
-                        >
-                          <ListChecksIcon className="size-3" />
-                          {card.checklist[0]}/{card.checklist[1]}
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))}
-              <button
-                type="button"
-                className="eyebrow flex w-full items-center gap-2 px-1 py-2 text-muted-foreground transition-colors hover:text-foreground"
-              >
-                <PlusIcon className="size-3.5" />
-                Ajouter une carte
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
   )
 }
 

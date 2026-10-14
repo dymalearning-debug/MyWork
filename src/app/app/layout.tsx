@@ -7,7 +7,7 @@ import { getOwnProfile } from "@/lib/account/profile";
 import { HOME_PATH } from "@/lib/auth/paths";
 import { requireUser } from "@/lib/auth/user";
 
-import { SidebarNav } from "./_components/sidebar-nav";
+import { SidebarLinks, SidebarNav } from "./_components/sidebar-nav";
 import { UserMenu } from "./_components/user-menu";
 
 // Shell of the private space: a very simple sidebar, not collapsible (docs/auth.md, "Interface").
@@ -20,7 +20,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <Logo className="h-6" />
           </Link>
         </div>
-        <SidebarNav />
+        <Suspense fallback={<SidebarLinks pathname={null} />}>
+          <SidebarNav />
+        </Suspense>
         <div className="border-t border-sidebar-border p-3">
           {/* The session is read at request time: the rest of the shell does not wait for it. */}
           <Suspense fallback={<UserMenuSkeleton />}>

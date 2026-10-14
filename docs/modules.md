@@ -59,18 +59,20 @@ Points d'attention
 - **Fuseaux horaires** : stocker en UTC, afficher dans le fuseau du visiteur.
 - Concurrence : empêcher deux réservations sur le même créneau.
 
-## Boards (type Trello)
+## Tableaux (type Trello)
 
-**Objectif** : organiser ses tâches dans des tableaux kanban.
+**Objectif** : organiser ses tâches dans des tableaux kanban. Module **uniquement privé** : pas de partie publique (décision du 2026-10-14). Spécification détaillée : [boards.md](boards.md).
 
-MVP
-- Plusieurs boards, avec des colonnes et des cartes (titre, description, étiquettes, échéance, checklist).
-- Glisser-déposer des cartes et des colonnes.
-- Visibilité par board, privée ou publique. Un board public se consulte en lecture seule depuis le profil (roadmap publique, suivi de projets…).
+MVP (revu le 2026-10-14)
+- Plusieurs tableaux dans « Mes tableaux » (`/app/boards`), choisis par une liste déroulante sur le nom du tableau. 5 listes par tableau, 20 cartes par liste.
+- Cartes ajoutées d'un trait dans la liste ; leur fenêtre : description en Markdown léger (Entrée enregistre, Maj+Entrée va à la ligne), checklist visible sur la carte, images.
+- Glisser-déposer des cartes et des listes.
 
 Plus tard
-- Commentaires, pièces jointes (reliées au Drive), archivage, recherche et filtres.
-- Collaboration à plusieurs sur un même board.
+- Étiquettes, échéances (prévues au MVP, repoussées le 2026-10-14), archivage, historique, recherche et filtres.
+- Pièces jointes reliées au Drive.
+
+Écarté (2026-10-14) : tableaux publics ouverts aux visiteurs, commentaires, collaboration à plusieurs.
 
 ## Drive (type Google Drive)
 
@@ -109,4 +111,4 @@ Points d'attention
 
 ## Liens entre modules (plus tard)
 
-Tout centraliser n'a d'intérêt que si les modules communiquent. Quelques exemples : un rendez-vous réservé crée une carte dans un board, une carte reçoit des fichiers du Drive en pièces jointes, un projet du profil renvoie vers des fichiers publics.
+Tout centraliser n'a d'intérêt que si les modules communiquent. Quelques exemples : un rendez-vous réservé crée une carte dans un tableau, une carte reçoit des fichiers du Drive en pièces jointes, un projet du profil renvoie vers des fichiers publics.

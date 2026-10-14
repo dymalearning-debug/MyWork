@@ -93,10 +93,13 @@ export async function deleteTestUsers() {
     if (error) throw error;
     for (const user of data.users) {
       if (!isTestEmail(user.email)) continue;
-      // Their images first: the storage is not emptied with the account (docs/profile.md, "Données").
-      const storage = adminClient().storage.from("profile-images");
-      const { data: files } = await storage.list(user.id, { limit: 1000 });
-      if (files?.length) await storage.remove(files.map((file) => `${user.id}/${file.name}`));
+      // Their images first: the storage is not emptied with the account (docs/profile.md and
+      // docs/boards.md, "Données").
+      for (const bucket of ["profile-images", "board-images"]) {
+        const storage = adminClient().storage.from(bucket);
+        const { data: files } = await storage.list(user.id, { limit: 1000 });
+        if (files?.length) await storage.remove(files.map((file) => `${user.id}/${file.name}`));
+      }
       await admin.deleteUser(user.id);
     }
     if (data.users.length < 200) break;

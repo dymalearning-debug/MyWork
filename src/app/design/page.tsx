@@ -63,7 +63,8 @@ import {
   ToastDemo,
   TooltipDemo,
 } from "./_components/interactive-demos"
-import { BoardPreview, DrivePreview, SidebarPreview, VisibilityBadge } from "./_components/module-previews"
+import { BoardBricks } from "./_components/board-bricks"
+import { DrivePreview, SidebarPreview, VisibilityBadge } from "./_components/module-previews"
 import { ProfileBricks } from "./_components/profile-bricks"
 import { EmailPreviews } from "./_components/email-previews"
 import { ModuleHeading, Section, Specimen } from "./_components/showcase"
@@ -889,10 +890,7 @@ export default function DesignPage() {
               <ModuleHeading module="Module · Rendez-vous" title="Choix d'un créneau" />
               <BookingDemo />
             </div>
-            <div>
-              <ModuleHeading module="Module · Boards" title="Tableau kanban" />
-              <BoardPreview />
-            </div>
+            <BoardBricks />
             <div>
               <ModuleHeading module="Module · Drive" title="Liste de fichiers" />
               <DrivePreview />

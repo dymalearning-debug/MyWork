@@ -46,10 +46,45 @@ Le porteur du projet n'est pas développeur : le code est écrit par des agents 
 | Tests | **Vitest** (tests unitaires et de composants) et **Playwright** (tests de bout en bout dans un vrai navigateur) |
 | Code | **GitHub**, tests automatiques à chaque modification |
 
-- Les bibliothèques de détail (glisser-déposer, dates et fuseaux, génération de PDF…) se choisissent au début de chaque module.
+- Les bibliothèques de détail (glisser-déposer, dates et fuseaux, génération de PDF…) se choisissent au début de chaque module, et s'ajoutent à l'*Inventaire technique* ci-dessous.
 - Dès l'étape 1, des tests de bout en bout simulent les parcours utilisateur importants (inscription, réservation…).
 - Coûts indicatifs (2026, à revérifier) : 0 € pendant le développement, en restant sur les offres gratuites. En usage réel, environ 20 $/mois pour Vercel Pro (l'offre gratuite est réservée à un usage non commercial) et 25 $/mois pour Supabase Pro (un projet gratuit est mis en pause après 7 jours sans activité), plus le nom de domaine.
 - Écartés : no-code (trop limité, dépendance totale), Laravel et Rails (deux langages, moins bien maîtrisés par l'IA), base, authentification et stockage chez trois prestataires distincts (plus de pièces à assembler). Supabase reste du PostgreSQL standard, ce qui permet d'en sortir.
+
+### Inventaire technique
+
+Vue d'ensemble de tout ce qu'utilise l'application, au-delà des grands choix ci-dessus. **Tenue à jour à chaque choix technique** (service, bibliothèque, compartiment de fichiers, réglage). *Prévu* : décidé dans une fiche, pas encore installé.
+
+**Services en ligne**
+
+| Service | Usage | Où le voir | Depuis |
+|---|---|---|---|
+| Supabase, projet **MyWork** (`ulufanywmrporutivwgc`), Irlande, offre gratuite | Base PostgreSQL, comptes, fichiers | Tableau de bord Supabase | Étape 1 |
+| Supabase Auth, fournisseur **Google** | Connexion Google (réglé dans le tableau de bord, pas dans le dépôt) | Supabase, *Authentication* ; Google Cloud | Étape 1 |
+| Supabase Storage, compartiment **`profile-images`** | Photo du profil, images des projets. Public par adresse, un dossier par utilisateur, 5 Mo, JPG/PNG/WebP | Supabase, *Storage* | Étape 2 |
+| Supabase Storage, compartiment **`board-images`** | Images des cartes. **Privé** (affichage par adresses temporaires, une heure), un dossier par utilisateur, 5 Mo, JPG/PNG/WebP/GIF ([boards.md](boards.md)) | Supabase, *Storage* | Étape 3 |
+| **Vercel**, équipe `mywork-8619`, projet `linku` | Hébergement, production à chaque push sur `main`, aperçu par pull request. Fonctions à Washington (`iad1`) aujourd'hui, Dublin prévu | Tableau de bord Vercel | Étape 1 |
+| **GitHub**, dépôt `dymalearning-debug/MyWork` | Code, tests automatiques à chaque modification | GitHub, *Actions* | Étape 1 |
+| **Resend** | E-mails aux couleurs de MyWork. *Prévu* (modèles prêts) | — | Plus tard |
+
+**Bibliothèques** (`package.json`)
+
+| Bibliothèque | Rôle | Depuis |
+|---|---|---|
+| Next.js 16, React 19, TypeScript | Application | Étape 1 |
+| Tailwind CSS v4, shadcn/ui (Base UI), `cn`, `class-variance-authority`, `tw-animate-css` | Interface et design system | Étape 1 |
+| `lucide-react` | Icônes | Étape 1 |
+| `next-themes` | Thème clair, sombre ou système | Étape 1 |
+| `sonner` | Notifications en bas à droite | Étape 1 |
+| `@supabase/supabase-js`, `@supabase/ssr` | Accès à Supabase depuis l'application | Étape 1 |
+| `supabase` (CLI, développement) | Migrations et réglages de la base | Étape 1 |
+| Vitest, Playwright (`@playwright/test`) | Tests unitaires et de bout en bout | Étape 1 |
+| dnd-kit (`@dnd-kit/*`) | Glisser-déposer (sections et listes du profil ; tableaux, listes, cartes et checklist) | Étape 2 |
+| `react-easy-crop` | Recadrage de la photo | Étape 2 |
+| `playwright-core`, `@sparticuz/chromium` | Navigateur sans écran sur Vercel, pour l'export du CV (PDF, PNG) | Étape 2 |
+| `simple-icons` | Logos des liens du profil (LinkedIn dessiné à part) | Étape 2 |
+| `@fontsource/newsreader` | Police de l'image de partage | Étape 2 |
+| `react-markdown`, `remark-gfm`, `remark-breaks` | Affichage de la description des cartes en Markdown limité ([boards.md](boards.md)) : `remark-gfm` fait des adresses des liens, `remark-breaks` garde les retours à la ligne | Étape 3 |
 
 ## Roadmap
 
@@ -60,8 +95,8 @@ Chaque étape correspond au périmètre MVP du module (voir [modules.md](modules
 | 0 | Choix de la stack technique | Fait |
 | 1 | Socle : authentification, compte, squelette du profil public | En cours |
 | 2 | Module **Profil** (CV en ligne) et export | Fait (2026-10-14) |
-| 3 | Module **Rendez-vous** (type Calendly) | À faire |
-| 4 | Module **Boards** (type Trello) | À faire |
+| 3 | Module **Tableaux** (type Trello) | Développé (2026-10-14), décisions à valider |
+| 4 | Module **Rendez-vous** (type Calendly) | À faire |
 | 5 | Module **Drive** (type Google Drive) | À faire |
 | 6 | **Abonnement et paiement**, ouverture SaaS | À faire |
 | 7 | Module **Visio** (type Zoom), relié aux rendez-vous | À faire |
@@ -71,7 +106,7 @@ Chaque étape correspond au périmètre MVP du module (voir [modules.md](modules
 Journal des choix validés (date : décision).
 
 - 2026-10-06 : application web, pensée d'abord pour ordinateur.
-- 2026-10-06 : ordre des modules : CV → Rendez-vous → Boards → Drive → Paiement → Visio.
+- 2026-10-06 : ordre des modules : CV → Rendez-vous → Boards → Drive → Paiement → Visio. Tableaux avancés avant les Rendez-vous le 2026-10-14.
 - 2026-10-06 : usage personnel d'abord, SaaS ensuite, avec un abonnement unique peu cher et un quota de stockage.
 - 2026-10-06 : le MVP Rendez-vous se limite à la réservation. La visio vient après le paiement.
 - 2026-10-06 : le socle (authentification, compte, profil public) est l'étape 1, juste après le choix de la stack.
@@ -164,6 +199,19 @@ Journal des choix validés (date : décision).
   - une seule notification à l'enregistrement, qui résume les changements, plutôt qu'une par action (rien n'est enregistré avant « Enregistrer ») ;
   - « Ordre des sections » dans un panneau sous le sommaire, plutôt qu'une fenêtre ;
   - bibliothèques : dnd-kit (glisser-déposer), react-easy-crop (recadrage de la photo), Chromium sans écran (Playwright et @sparticuz/chromium) pour l'export, Simple Icons pour les logos des liens.
+- 2026-10-14 : module **Tableaux** (anciennement « Boards »), spécifié à partir des souhaits du porteur du projet (détail dans [boards.md](boards.md)) :
+  - il passe en **étape 3**, avant les Rendez-vous ;
+  - **uniquement privé** : ni tableaux publics, ni visiteurs, ni commentaires. Une première version de la fiche, le même jour, ouvrait des tableaux publics aux visiteurs ; abandonnée, l'outil sert à s'organiser seul ;
+  - plusieurs tableaux ; 5 listes par tableau, 20 cartes par liste ;
+  - cartes façon Trello : ajout d'un trait dans la liste, fenêtre avec description (mise en forme légère, Entrée et Maj+Entrée comme dans un chat d'IA), checklist visible sur la carte, images ;
+  - maquettes validées ([Maquettes module Tableaux](https://claude.ai/artifact/2ZD8iW5GEuWmk5MhHZv9E8)) : tableau en direction **« Atelier »** (proche de Trello : listes sur fond gris, cartes blanches) avec la navigation de **« Pupitre »** (une seconde colonne qui liste les tableaux) ; fenêtre de carte « Atelier » (contenu à gauche, actions à droite). Écartées : « Registre » (éditoriale, listes numérotées) et le reste de « Pupitre » (cartes compactes, panneau latéral) ;
+  - les autres choix (12, dont étiquettes et échéances repoussées, une seule checklist par carte, images privées) ont été pris sans le porteur du projet, à sa demande : liste dans [boards.md](boards.md), *Décisions à valider*.
+- 2026-10-14 : module Tableaux développé (détail dans [boards.md](boards.md), *Précisé pendant le développement*). Choix faits en cours de route, à valider par le porteur du projet :
+  - enregistrement depuis le navigateur, directement dans les tables, chaque changement affiché aussitôt et annulé avec un message s'il échoue ; plafonds vérifiés par la base ;
+  - dernier tableau consulté retenu par appareil (cookie) ;
+  - la première image devient la couverture, la suivante la remplace si on la supprime ;
+  - bibliothèques : `react-markdown` avec `remark-gfm` (adresses en liens) et `remark-breaks` (retours à la ligne conservés) pour la description ; dnd-kit pour tous les glisser-déposer.
+- 2026-10-14 : retours du porteur du projet sur le module Tableaux, après essai : la seconde colonne de navigation est retirée, remplacée par une **liste déroulante sur le nom du tableau** (avec « Nouveau tableau ») ; la barre latérale garde donc sa largeur habituelle. Le compteur de la checklist (« 3 / 5 · 60 % ») est retiré de la fenêtre de la carte, et le bouton « Copier le lien » des actions, jugés inutiles. Puis, au second essai : plus de nombre de cartes dans la liste déroulante ni sur les titres des listes ; plus de « 4 / 5 » sur « Ajouter une liste », qui disparaît à 5 listes, avec une notification à l'ajout de la cinquième ; le pourcentage seul au-dessus de la checklist (« 50 % »). Le reste de l'interface lui convient.
 
 ## Questions ouvertes
 

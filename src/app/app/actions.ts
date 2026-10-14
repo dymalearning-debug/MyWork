@@ -13,6 +13,7 @@ import {
 import { ACCOUNT_DELETED_NOTICE, LOGIN_PATH } from "@/lib/auth/paths";
 import { getCurrentUser } from "@/lib/auth/user";
 import { isValidHandle } from "@/lib/public-profile/handle";
+import { removeAllOwnBoardImages } from "@/lib/boards/data";
 import { removeAllOwnImages } from "@/lib/profile/data";
 import { setOwnProfileOnline } from "@/lib/public-profile/own";
 import { createClient } from "@/lib/supabase/server";
@@ -81,12 +82,14 @@ export async function checkHandle(handle: string): Promise<HandleCheck | null> {
 // "Supprimer définitivement" (docs/settings.md): the account and every piece of data linked to it,
 // then this device is signed out and the login page announces the deletion. The deleted user's
 // session is no longer known to Supabase: the sign-out still clears it from this browser.
-// The images of the profile go first: the storage is not emptied by the cascade of the database.
+// The images of the profile and of the boards go first: the storage is not emptied by the cascade
+// of the database.
 export async function deleteAccount(): Promise<{ ok: false }> {
   const user = await getCurrentUser();
   if (!user) return { ok: false };
   try {
     await removeAllOwnImages(user.id);
+    await removeAllOwnBoardImages(user.id);
     await deleteOwnAccount();
   } catch (error) {
     console.error(error);
