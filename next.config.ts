@@ -5,10 +5,11 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   // Files read at run time, that the build does not find on its own: Chromium for the export of
-  // the CV (docs/profile.md, "Export du CV"), the font and the logo of the share preview.
+  // the CV (docs/profile.md, "Export du CV") and the whole of playwright-core, which reads some of its
+  // own files at start-up (browsers.json); the font and the logo of the share preview.
   outputFileTracingIncludes: {
-    "/**/cv/pdf": ["./node_modules/@sparticuz/chromium/bin/**"],
-    "/app/profile/cv/png": ["./node_modules/@sparticuz/chromium/bin/**"],
+    "/**/cv/pdf": ["./node_modules/@sparticuz/chromium/bin/**", "./node_modules/playwright-core/**"],
+    "/app/profile/cv/png": ["./node_modules/@sparticuz/chromium/bin/**", "./node_modules/playwright-core/**"],
     "/**/opengraph-image*": [
       "./node_modules/@fontsource/newsreader/files/newsreader-latin-500-normal.woff",
       "./public/brand/mywork-logo-white.svg",
