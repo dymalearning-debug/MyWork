@@ -82,7 +82,7 @@ MVP (revu le 2026-10-15)
 - Une seule page, « Mes fichiers » (`/app/drive`), sans colonne de navigation : dossiers et sous-dossiers, fil d'Ariane. Envoi, renommage, déplacement, suppression (définitive, sans corbeille), téléchargement.
 - Affichage en liste ou en grille : nom, propriétaire, date de modification, taille, visibilité. Tri par nom ou par date, filtre par type, recherche dans le dossier, pagination.
 - Aperçu des images et des PDF.
-- Visibilité par fichier, privée par défaut ou publique : les fichiers publics se téléchargent depuis l'onglet « Ressources » du profil public.
+- Visibilité par fichier, privée par défaut ou publique : les fichiers publics se téléchargent depuis l'onglet « Ressources » du profil public, où un fichier peut être mis en avant.
 - Indicateur de stockage : espace utilisé (tous les fichiers du compte) par rapport à la capacité de l'offre Supabase.
 
 Plus tard

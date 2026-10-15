@@ -99,7 +99,7 @@ Chaque étape correspond au périmètre MVP du module (voir [modules.md](modules
 | 2 | Module **Profil** (CV en ligne) et export | Fait (2026-10-14) |
 | 3 | Module **Tableaux** (type Trello) | Développé (2026-10-14), décisions à valider |
 | 4 | Module **Rendez-vous** (type Calendly) | À faire |
-| 5 | Module **Drive** (type Google Drive) | Spécifié (2026-10-15), maquettes à faire |
+| 5 | Module **Drive** (type Google Drive) | Spécifié, maquettes validées (2026-10-15) |
 | 6 | **Abonnement et paiement**, ouverture SaaS | À faire |
 | 7 | Module **Visio** (type Zoom), relié aux rendez-vous | À faire |
 
@@ -222,6 +222,11 @@ Journal des choix validés (date : décision).
   - **indicateur de stockage** par rapport à la capacité de l'offre Supabase, avec une infobulle qui rappelle que la photo du profil et les images des tableaux comptent aussi ;
   - sous-pages publiques des modules **en anglais**, comme les autres routes (`/cv`, `/resources`, plus tard `/booking`) : la question ouverte est tranchée ;
   - les autres choix (15, dont « Mes fichiers » dans la barre latérale, pas de corbeille, visibilité sur les fichiers seulement, 50 Mo par fichier, capacité de 1 Go, sous-pages publiques en anglais) ont été pris sans le porteur du projet, à sa demande, puis validés par lui le même jour : liste dans [drive.md](drive.md), *Décisions validées*.
+- 2026-10-15 : maquettes du module Drive validées ([Maquettes module Drive](https://claude.ai/artifact/XN5a5SThzrfYyjdMaN3vdi), détail dans [drive.md](drive.md)) :
+  - « Mes fichiers » en direction **« A · Classeur »**, la plus proche de Google Drive (tableau dense, filtres en boutons, stockage en pied de page), sans le trait rouge à gauche des lignes sélectionnées ;
+  - onglet « Ressources » en direction **« C · Inspecteur »** ;
+  - nouvelle fonction, à l'idée du porteur du projet : une **ressource mise en avant**, affichée en grand en tête de l'onglet « Ressources » plutôt que dans la liste ;
+  - écartées : « B · Catalogue » (éditoriale, types en onglets) et le panneau de détails de « C » pour « Mes fichiers ».
 
 ## Questions ouvertes
 

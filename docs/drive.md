@@ -1,7 +1,7 @@
 # Module Drive
 
 Spécification du module Drive (type Google Drive), étape 5 de la roadmap (voir [product.md](product.md), *Roadmap*).
-Statut : **spécifié** le 2026-10-15, à partir des souhaits du porteur du projet. Maquettes à faire. Les choix marqués *(proposé)* ont été pris sans le porteur du projet, à sa demande, puis **validés** par lui le même jour (voir *Décisions validées*).
+Statut : **spécifié** le 2026-10-15, à partir des souhaits du porteur du projet. Maquettes validées le même jour (voir *Maquettes*). Les choix marqués *(proposé)* ont été pris sans le porteur du projet, à sa demande, puis **validés** par lui le même jour (voir *Décisions validées*).
 
 ## En bref
 
@@ -15,16 +15,16 @@ Statut : **spécifié** le 2026-10-15, à partir des souhaits du porteur du proj
 
 ## Maquettes
 
-À faire avant le développement, dans le style des maquettes des Tableaux, avec le personnage fictif Inès Robert, en clair et en sombre :
+Validées le 2026-10-15 : [Maquettes module Drive](https://claude.ai/artifact/XN5a5SThzrfYyjdMaN3vdi) sur claude.ai (réglage « Tweaks » : thème clair ou sombre, panneau d'envoi, ressource mise en avant). Personnage fictif : Inès Robert.
 
-| Planche | Contenu |
-|---|---|
-| **Liste** | La page en affichage liste : en-tête, barre d'outils, tableau, pagination, indicateur de stockage ; une ligne sélectionnée, le menu « … » ouvert |
-| **Grille** | La même page en grille : dossiers puis fichiers, vignettes d'images |
-| **Envoi** | Le panneau d'envoi en bas à droite, une zone de dépôt survolée, le message « Stockage plein » |
-| **Ressources** | L'onglet « Ressources » du profil public, sur ordinateur et sur mobile |
+| Écran | Planche | Origine |
+|---|---|---|
+| « Mes fichiers » | **Mes fichiers** (interactive : liste et grille, tri, filtre, recherche, sélection, menu « … », public ou privé, mise en avant) | Direction « A · Classeur », la plus proche de Google Drive : tableau dense, filtres « Type » et « Trier » en boutons, stockage en pied de page avec son infobulle. Sans le trait rouge à gauche d'une ligne sélectionnée (retiré à la demande du porteur du projet) |
+| Onglet « Ressources » | **Onglet Ressources** | Direction « C · Inspecteur » : la ressource mise en avant en grand (« À la une »), puis les autres en deux colonnes, avec vignette et bouton de téléchargement |
 
-Point de départ : la maquette « fichiers » de la vitrine `/design` (`src/app/design/_components/module-previews.tsx`), à adapter (elle montre une visibilité « par lien », écartée au MVP).
+Écartées le 2026-10-15 : « B · Catalogue » (grand titre, types en onglets, lignes aérées, stockage en tête) ; le reste de « C · Inspecteur » (panneau de détails à droite de « Mes fichiers ») ; l'onglet « Ressources » de « A » (simple liste) et de « B » (cartes en grille).
+
+Restent à dessiner pendant le développement, dans le style des maquettes : l'aperçu d'un fichier, les petites fenêtres (nouveau dossier, renommer, déplacer, confirmations de suppression), la zone de dépôt survolée, « Stockage plein », et l'onglet « Ressources » sur mobile.
 
 ## Vocabulaire
 
@@ -61,7 +61,7 @@ Un tableau (composant `Table` du design system), une ligne par élément :
 | **Propriétaire** | « moi », avec l'avatar. Une seule valeur possible au MVP : la colonne prépare le partage, plus tard *(proposé)* |
 | **Modifié** | Date courte (« 14 oct. 2026 », l'heure si c'est aujourd'hui), en `tabular-nums`. Triable |
 | **Taille** | « 4,8 Mo » ; « — » pour un dossier, comme Drive |
-| **Visibilité** | Badge « Public » (`contrast`) ; rien pour un fichier privé, pour que le public ressorte *(proposé)* |
+| **Visibilité** | Badge « Public » (`contrast`) ; rien pour un fichier privé, pour que le public ressorte *(proposé)*. Une punaise à côté du fichier mis en avant |
 | (actions) | Le menu « … » de l'élément |
 
 ### Affichage grille
@@ -78,7 +78,7 @@ Un tableau (composant `Table` du design system), une ligne par élément :
 ### Menu « … » d'un élément
 
 - Dossier : Ouvrir, Renommer, Déplacer, Supprimer.
-- Fichier : Aperçu, Télécharger, Renommer, Déplacer, **Rendre public** / **Rendre privé**, Supprimer.
+- Fichier : Aperçu, Télécharger, Renommer, Déplacer, **Rendre public** / **Rendre privé**, puis, pour un fichier public, **Mettre en avant** / **Retirer la mise en avant**, Supprimer.
 - Supprimer en variante `destructive`, en bas, après un séparateur.
 
 ### Sélection multiple
@@ -125,12 +125,26 @@ Un tableau (composant `Table` du design system), une ligne par élément :
 - Rendre un fichier public ou privé : depuis son menu, ou la barre d'actions. Tout de suite, sans confirmation, avec une notification (« Fichier rendu public — visible dans l'onglet Ressources de votre profil »).
 - Un fichier public reste soumis à l'interrupteur du profil : profil hors ligne, personne ne le voit ni ne le télécharge (voir [public-profile.md](public-profile.md), *En ligne ou hors ligne*).
 
+### Ressource mise en avant
+
+Idée du porteur du projet, le 2026-10-15, en choisissant les maquettes.
+
+- Un fichier public peut être **mis en avant** : il s'affiche en grand en tête de l'onglet « Ressources » (« À la une »), et non plus dans la liste des autres.
+- **Un seul** fichier mis en avant à la fois *(proposé)* : en mettre un autre en avant remplace le premier, sans confirmation.
+- Depuis le menu « … » du fichier : « Mettre en avant », ou « Retirer la mise en avant ». L'option n'existe que pour un fichier public. Une notification le confirme (« Fichier mis en avant — affiché en grand dans l'onglet Ressources »).
+- Rendre privé un fichier mis en avant lui retire la mise en avant *(proposé)*.
+- Sans fichier mis en avant, l'onglet « Ressources » montre seulement la liste.
+- Dans « Mes fichiers », une punaise à côté du badge « Public » le signale (liste et grille).
+
 ### L'onglet « Ressources »
 
 - Adresse : `/<identifiant>/resources` *(proposé : en anglais, comme `/cv` et les autres routes, ce qui tranche la question ouverte des noms des sous-pages)*.
 - L'onglet apparaît après « Profil », **seulement s'il y a au moins un fichier public**. Sinon, l'adresse mène à la page introuvable.
-- Contenu : la liste des fichiers publics, **à plat** (sans les dossiers, qui sont l'organisation privée), du plus récent au plus ancien : icône du type, nom, taille, date, bouton « Télécharger » *(proposé)*. Au-delà de 50 fichiers, la même pagination que l'espace privé.
-- Sur mobile : une ligne par fichier, le bouton réduit à son icône.
+- Mise en page « Inspecteur » (planche **Onglet Ressources**), sous l'en-tête du profil :
+  - la **ressource mise en avant**, s'il y en a une : un grand cadre en deux moitiés, l'aperçu (vignette, sinon la grande icône du type) à gauche, et à droite l'étiquette « À la une », le nom en Newsreader, « PDF · 6,1 Mo · 7 oct. 2026 » et le bouton encre « Télécharger » (le rouge reste à « Me contacter ») ;
+  - puis la liste des autres fichiers publics, sous le titre « Autres ressources » (« Ressources » sans mise en avant) et leur nombre : **à plat** (sans les dossiers, qui sont l'organisation privée), du plus récent au plus ancien, en deux colonnes sur ordinateur. Par fichier : vignette ou icône du type, nom, « type · taille · date », et un bouton « Télécharger » réduit à son icône *(proposé)*.
+- Au-delà de 50 fichiers, la même pagination que l'espace privé.
+- Sur mobile : une colonne ; la ressource mise en avant passe l'aperçu au-dessus du texte ; la date disparaît des lignes.
 - Le téléchargement se fait toujours en **pièce jointe** : le fichier est enregistré, jamais ouvert dans le navigateur, ce qui protège les visiteurs d'un fichier piégé *(proposé)*.
 
 ## Tri, filtre, recherche, pagination
@@ -185,11 +199,11 @@ Le type se déduit de l'extension et du type déclaré par le navigateur à l'en
 
 ## Données
 
-- Une table **`drive_items`**, chaque ligne rattachée à l'utilisateur (`user_id`) et supprimée en cascade avec le compte : type (dossier ou fichier), nom, dossier parent (vide pour la racine), et pour un fichier : chemin dans le stockage, taille, type MIME, catégorie (pour le filtre), vignette, visibilité (`private` par défaut ou `public`) ; dates de création et de modification.
+- Une table **`drive_items`**, chaque ligne rattachée à l'utilisateur (`user_id`) et supprimée en cascade avec le compte : type (dossier ou fichier), nom, dossier parent (vide pour la racine), et pour un fichier : chemin dans le stockage, taille, type MIME, catégorie (pour le filtre), vignette, visibilité (`private` par défaut ou `public`), mise en avant (oui ou non ; un seul fichier par utilisateur, et seulement s'il est public, vérifié par la base) ; dates de création et de modification.
 - **RLS** : chacun ne lit et ne modifie que ses propres éléments. Unicité du nom dans un dossier, profondeur et capacité vérifiées **dans la base**.
 - **Fichiers** : Supabase Storage, compartiment **`drive-files`**, **privé**, 50 Mo par fichier, un dossier par utilisateur. Les fichiers y sont rangés **à plat** sous un nom au hasard (`<id utilisateur>/<id>`), comme les images des tableaux : renommer ou déplacer ne touche que la table, jamais le stockage. Vignettes à côté (`<id utilisateur>/<id>-thumb.webp`).
 - **Téléchargement et aperçu** par des adresses temporaires (signées), valables une heure dans l'espace privé, quelques minutes pour les visiteurs, avec le vrai nom du fichier.
-- **Accès des visiteurs** : un accès dédié, ouvert aux visiteurs anonymes, qui liste les seuls fichiers publics d'un profil en ligne (jamais leur dossier ni leur chemin), et une règle du stockage qui leur permet de télécharger un fichier seulement s'il est public et que le profil est en ligne. La clé secrète Supabase n'est pas utilisée.
+- **Accès des visiteurs** : un accès dédié, ouvert aux visiteurs anonymes, qui liste les seuls fichiers publics d'un profil en ligne, avec la mise en avant (jamais leur dossier ni leur chemin), et une règle du stockage qui leur permet de télécharger un fichier seulement s'il est public et que le profil est en ligne. La clé secrète Supabase n'est pas utilisée.
 - **Espace utilisé** : une fonction de la base qui additionne la taille des fichiers du dossier de l'utilisateur dans chaque compartiment (`profile-images`, `board-images`, `drive-files`), et renvoie aussi la capacité.
 - Suppression d'un fichier, d'un dossier ou du compte : l'application retire aussi les fichiers du stockage, comme pour les images des tableaux.
 
@@ -215,6 +229,7 @@ Pour les agents qui développeront le module.
   - liste et grille, choix retenu ; tri par nom et par date, dans les deux sens, dossiers en tête ; filtre par type ; recherche (majuscules, accents) ; pagination au-delà de 50 éléments ;
   - sélection multiple : déplacer, rendre public, supprimer ;
   - rendre un fichier public : il apparaît dans l'onglet « Ressources », téléchargeable sans connexion ; rendu privé, il disparaît, et son ancienne adresse de téléchargement ne marche plus une fois expirée ; profil hors ligne : ni onglet, ni téléchargement ;
+  - mettre un fichier en avant : il passe en grand en tête de l'onglet et quitte la liste ; en mettre un autre en avant remplace le premier ; rendu privé, il perd la mise en avant ;
   - indicateur de stockage : il augmente après un envoi, l'infobulle détaille les trois sources ; capacité dépassée refusée par la base ;
   - sécurité : un utilisateur ne voit, ne télécharge ni ne modifie les fichiers d'un autre ; un visiteur n'obtient jamais un fichier privé ;
   - la suppression du compte efface éléments et fichiers.
@@ -222,7 +237,7 @@ Pour les agents qui développeront le module.
 
 ## Mise en œuvre
 
-1. Maquettes (planches ci-dessus), à valider par le porteur du projet.
+1. Maquettes : validées le 2026-10-15 (voir *Maquettes*).
 2. Base de données et stockage : table, règles, accès des visiteurs, espace utilisé, compartiment privé.
 3. Page « Mes fichiers » : navigation, dossiers, envoi, liste et grille, menu, aperçu.
 4. Tri, filtre, recherche, pagination, sélection multiple, indicateur de stockage.
@@ -248,6 +263,8 @@ Choix pris le 2026-10-15 sans le porteur du projet, à sa demande, puis validés
 13. **Date de modification** changée par l'envoi et le renommage, pas par un déplacement ni un changement de visibilité.
 14. **Vignettes** d'images fabriquées dans le navigateur à l'envoi ; téléchargements publics toujours en pièce jointe.
 15. **Envoi reprenable** (TUS, `tus-js-client`), direct du navigateur vers Supabase, avec un panneau de progression en bas à droite.
+
+Validé aussi par le porteur du projet le 2026-10-15 : maquettes « Mes fichiers » (« A · Classeur ») et « Onglet Ressources » (« C · Inspecteur »), voir *Maquettes* ; la **ressource mise en avant** (son idée). Choix pris pour celle-ci *(proposé)*, à valider : un seul fichier mis en avant à la fois ; retiré si le fichier redevient privé ; bouton « Télécharger » encre ; liste des autres fichiers en deux colonnes.
 
 ## Hors périmètre (plus tard)
 
