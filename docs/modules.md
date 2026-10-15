@@ -76,16 +76,17 @@ Plus tard
 
 ## Drive (type Google Drive)
 
-**Objectif** : stocker et organiser ses fichiers, et en partager certains publiquement.
+**Objectif** : stocker et organiser ses fichiers, et en partager certains publiquement. Spécification détaillée : [drive.md](drive.md).
 
-MVP
-- Dossiers et sous-dossiers. Envoi, renommage, déplacement, suppression (avec corbeille), téléchargement.
+MVP (revu le 2026-10-15)
+- Une seule page, « Mes fichiers » (`/app/drive`), sans colonne de navigation : dossiers et sous-dossiers, fil d'Ariane. Envoi, renommage, déplacement, suppression (définitive, sans corbeille), téléchargement.
+- Affichage en liste ou en grille : nom, propriétaire, date de modification, taille, visibilité. Tri par nom ou par date, filtre par type, recherche dans le dossier, pagination.
 - Aperçu des images et des PDF.
-- Visibilité par fichier ou dossier, privée ou publique (lien de partage et/ou affichage sur le profil).
-- Quota de stockage par utilisateur.
+- Visibilité par fichier, privée par défaut ou publique : les fichiers publics se téléchargent depuis l'onglet « Ressources » du profil public.
+- Indicateur de stockage : espace utilisé (tous les fichiers du compte) par rapport à la capacité de l'offre Supabase.
 
 Plus tard
-- Recherche, liens de partage avec expiration, historique des versions.
+- Corbeille, recherche dans tout le Drive, liens de partage avec expiration, dossiers publics, historique des versions.
 
 Points d'attention
 - Utiliser un stockage objet (type S3) plutôt que le disque du serveur. Les téléchargements passent par des URL signées.

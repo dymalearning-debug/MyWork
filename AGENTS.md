@@ -16,6 +16,7 @@ Point d'entrée pour tout agent (IA ou humain) qui travaille sur ce dépôt. À 
 | [docs/auth.md](docs/auth.md) | Authentification : parcours, e-mails, données utilisateur, configuration Google et Supabase, tests | Avant de travailler sur la connexion, l'inscription ou la coque de l'application |
 | [docs/profile.md](docs/profile.md) | Module Profil (le CV en ligne, étape 2) : contenu de chaque section, « Mon profil », onglet « Profil » de la page publique, export du CV, données, tests | Avant de travailler sur le module Profil ou la page « Mon profil » |
 | [docs/boards.md](docs/boards.md) | Module Tableaux (type Trello, étape 3, uniquement privé) : navigation, tableaux, listes, cartes, description, checklist, images, maquettes, données, tests, décisions à valider | Avant de travailler sur le module Tableaux |
+| [docs/drive.md](docs/drive.md) | Module Drive (type Google Drive, étape 5) : page « Mes fichiers », dossiers, liste et grille, tri, filtre, recherche, pagination, visibilité et onglet « Ressources », indicateur de stockage, données, tests, décisions à valider | Avant de travailler sur le module Drive ou l'onglet « Ressources » |
 | [docs/settings.md](docs/settings.md) | Paramètres : fenêtre, page Profil (nom, adresse du profil public), suppression du compte, notifications, données, tests | Avant de travailler sur les Paramètres, le compte ou les notifications |
 | [docs/design-system.md](docs/design-system.md) | Identité visuelle : où trouver tokens, composants, vitrine `/design` et logos ; règles d'usage | Avant de créer ou modifier un écran ou un composant |
 
@@ -27,6 +28,7 @@ Point d'entrée pour tout agent (IA ou humain) qui travaille sur ce dépôt. À 
   - Fait aussi : Paramètres ([docs/settings.md](docs/settings.md)) : fenêtre ouverte depuis le menu du profil, prénom et nom, adresse du profil public modifiable, suppression du compte, notifications en bas à droite.
   - Fait aussi : structure de l'espace privé : tableau de bord (`/app`, l'accueil) et « Mon profil » (`/app/profile`, le module Profil).
   - Étape 3 (module Tableaux) spécifiée et développée le 2026-10-14 ([docs/boards.md](docs/boards.md)) : « Mes tableaux » (`/app/boards`), choix du tableau sur son nom, listes et cartes en glisser-déposer, fenêtre de la carte (description en Markdown léger, checklist, images privées). Uniquement privé ; des décisions restent à valider par le porteur du projet.
+  - Étape 5 (module Drive) spécifiée le 2026-10-15 ([docs/drive.md](docs/drive.md)) : « Mes fichiers » (`/app/drive`), dossiers, liste ou grille, fichiers publics dans l'onglet « Ressources » du profil public, indicateur de stockage. Décisions validées par le porteur du projet ; maquettes à faire.
   - Reste à faire : contenu du tableau de bord. Plus tard, avec Resend : changement d'e-mail et de mot de passe. Faire tourner les fonctions Vercel à Dublin, comme prévu par la stack : elles tournent aujourd'hui à Washington (`iad1`, constaté le 2026-10-14).
 - Stack technique : **TypeScript, Next.js, Tailwind CSS + shadcn/ui, Supabase, Vercel**. Détail et justification dans `docs/product.md`, section *Stack technique*.
 

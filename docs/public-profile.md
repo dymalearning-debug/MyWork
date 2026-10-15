@@ -18,7 +18,7 @@ Le squelette prépare la partie publique de tous les modules : l'adresse, la mis
 | Adresse | Rôle |
 |---|---|
 | `/<identifiant>` | Profil public, accessible sans connexion |
-| `/<identifiant>/…` | Pages publiques des modules : une par onglet (rendez-vous, fichiers…) |
+| `/<identifiant>/…` | Pages publiques des modules : une par onglet (rendez-vous, ressources…) |
 | `/app/…` | Espace privé, connexion obligatoire. `/app` est le tableau de bord (l'accueil) ; la page « Mon profil », anciennement `/profile`, est `/app/profile`. |
 | `/login`, `/signup`… | Authentification, inchangée (voir [auth.md](auth.md)) |
 | `/` | La landing page, plus tard. D'ici là, elle renvoie vers l'espace privé (ou vers la connexion). |
@@ -27,7 +27,7 @@ Le squelette prépare la partie publique de tous les modules : l'adresse, la mis
 - L'adresse suffit à savoir où l'on est : `/app` est privé, le reste est public. Les noms des modules ne peuvent donc pas entrer en conflit avec un identifiant.
 - Une adresse écrite avec des majuscules (`/Ines-Robert`) est ramenée en minuscules.
 - Plus tard, un sous-domaine (`<identifiant>.<domaine>`) ou un domaine personnel pourra renvoyer vers ces mêmes pages, sans les refaire.
-- Noms des sous-pages des modules, en anglais comme les autres routes (`/booking`, `/files`) ou en français pour les visiteurs (`/rendez-vous`, `/fichiers`) : question ouverte, à trancher avec le premier module qui en a besoin.
+- Noms des sous-pages des modules : en anglais, comme les autres routes (`/cv`, `/resources`, plus tard `/booking`) (décision du 2026-10-15, avec le Drive, voir [drive.md](drive.md)).
 
 ## Accès aux pages
 
@@ -90,7 +90,7 @@ Dans les maquettes, Inès Robert (`ines-robert`) est un personnage fictif, et `l
 - **En-tête**, avec la lumière de studio et un filet en bas :
   - une photo carrée, une étiquette (le titre professionnel) et le nom en grand (Newsreader, 72 px sur ordinateur, 40 px sur mobile) ;
   - à droite (dessous sur mobile), le bouton rouge de l'action principale, par exemple « Prendre rendez-vous » ;
-  - des **onglets** : « Profil » (le module Profil, voir [modules.md](modules.md)), puis un onglet par autre module public (Rendez-vous, Fichiers ; le module Tableaux est privé depuis le 2026-10-14). Onglet actif : texte à l'encre et trait rouge dessous. Sur mobile, les onglets défilent horizontalement.
+  - des **onglets** : « Profil » (le module Profil, voir [modules.md](modules.md)), puis un onglet par autre module public (Rendez-vous, Ressources pour les fichiers publics du Drive ; le module Tableaux est privé depuis le 2026-10-14). Onglet actif : texte à l'encre et trait rouge dessous. Sur mobile, les onglets défilent horizontalement.
 - Chaque onglet est une page, avec sa propre adresse : `/<identifiant>` pour « Profil », `/<identifiant>/<module>` pour les autres.
 - **Pied de page**, sous un filet : « Créé avec » et le logo MyWork. Le logo n'est pas un lien : il en deviendra un avec la landing page.
 - **Pour l'instant (squelette)** : l'en-tête montre seulement l'étiquette « Espace public » et le titre « Page de profil », sans photo, bouton ni onglets ; dessous, « Contenu à venir. ». Photo, nom, bouton et onglets arriveront avec les modules.
@@ -182,7 +182,3 @@ Fait le 2026-10-12, dans cet ordre :
 - Référencement par les moteurs de recherche, avec le contenu et le nom de domaine.
 - Sous-domaine par utilisateur et domaine personnalisé.
 - Thèmes du profil, statistiques de visites.
-
-## Questions ouvertes
-
-- Noms des sous-pages des modules : en anglais ou en français (voir *Adresses*).
