@@ -65,8 +65,9 @@ Vue d'ensemble de tout ce qu'utilise l'application, au-delà des grands choix ci
 | Supabase Storage, compartiment **`board-images`** | Images des cartes. **Privé** (affichage par adresses temporaires, une heure), un dossier par utilisateur, 5 Mo, JPG/PNG/WebP/GIF ([boards.md](boards.md)) | Supabase, *Storage* | Étape 3 |
 | **Vercel**, équipe `mywork-8619`, projet `linku` | Hébergement, production à chaque push sur `main`, aperçu par pull request. Fonctions à Washington (`iad1`) aujourd'hui, Dublin prévu | Tableau de bord Vercel | Étape 1 |
 | **GitHub**, dépôt `dymalearning-debug/MyWork` | Code, tests automatiques à chaque modification | GitHub, *Actions* | Étape 1 |
-| Supabase Storage, compartiment **`drive-files`** | Fichiers du Drive. **Privé** (téléchargement par adresses temporaires ; visiteurs : fichiers publics d'un profil en ligne seulement), un dossier par utilisateur, 50 Mo, tous types sauf exécutables ([drive.md](drive.md)). *Prévu* | Supabase, *Storage* | Étape 5 |
-| **Resend** | E-mails aux couleurs de MyWork. *Prévu* (modèles prêts) | — | Plus tard |
+| Supabase Storage, compartiment **`drive-files`** | Fichiers du Drive et leurs vignettes. **Privé** (téléchargement par adresses temporaires ; visiteurs : fichiers publics d'un profil en ligne seulement), un dossier par utilisateur, 50 Mo, tous types sauf exécutables ([drive.md](drive.md)) | Supabase, *Storage* | Étape 5 |
+| **Resend** | E-mails aux couleurs de MyWork. *Prévu* (modèles prêts ; ceux des rendez-vous, avec leur file d'envoi, à l'étape 4) | — | Plus tard |
+| **LiveKit Cloud**, projet **MyWork** (`p_55iutdslog4`), région UE (Francfort), offre gratuite *Build* | Visio des rendez-vous ([booking.md](booking.md)). Compte créé le 2026-10-16 ; adresse `wss://mywork-2u2z4y18.livekit.cloud`. Clés rangées dans Vercel (`LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`), récupérées dans `.env.local` | cloud.livekit.io | Étape 4 |
 
 **Bibliothèques** (`package.json`)
 
@@ -86,7 +87,9 @@ Vue d'ensemble de tout ce qu'utilise l'application, au-delà des grands choix ci
 | `simple-icons` | Logos des liens du profil (LinkedIn dessiné à part) | Étape 2 |
 | `@fontsource/newsreader` | Police de l'image de partage | Étape 2 |
 | `react-markdown`, `remark-gfm`, `remark-breaks` | Affichage de la description des cartes en Markdown limité ([boards.md](boards.md)) : `remark-gfm` fait des adresses des liens, `remark-breaks` garde les retours à la ligne | Étape 3 |
-| `tus-js-client` | Envoi reprenable des fichiers du Drive, avec progression ([drive.md](drive.md)). *Prévu* | Étape 5 |
+| `tus-js-client` | Envoi reprenable des fichiers du Drive, directement du navigateur vers Supabase, avec progression ([drive.md](drive.md)) | Étape 5 |
+| `date-fns`, `@date-fns/tz` | Dates et fuseaux horaires des rendez-vous. *Prévu* ([booking.md](booking.md)) | Étape 4 |
+| `livekit-server-sdk`, `livekit-client`, `@livekit/components-react` | Visio : jetons d'accès côté serveur, salle dans le navigateur. *Prévu* ([booking.md](booking.md)) | Étape 4 |
 
 ## Roadmap
 
@@ -98,10 +101,10 @@ Chaque étape correspond au périmètre MVP du module (voir [modules.md](modules
 | 1 | Socle : authentification, compte, squelette du profil public | En cours |
 | 2 | Module **Profil** (CV en ligne) et export | Fait (2026-10-14) |
 | 3 | Module **Tableaux** (type Trello) | Développé (2026-10-14), décisions à valider |
-| 4 | Module **Rendez-vous** (type Calendly) | À faire |
-| 5 | Module **Drive** (type Google Drive) | Spécifié, maquettes validées (2026-10-15) |
+| 4 | Module **Rendez-vous** (type Calendly), avec la visio | Spécifié et maquettes validées (2026-10-16), prêt pour le développement |
+| 5 | Module **Drive** (type Google Drive) | Développé (2026-10-15), quelques choix à valider |
 | 6 | **Abonnement et paiement**, ouverture SaaS | À faire |
-| 7 | Module **Visio** (type Zoom), relié aux rendez-vous | À faire |
+| 7 | Module **Visio** (type Zoom) : montée en charge (la visio des rendez-vous arrive à l'étape 4) | À faire |
 
 ## Décisions
 
@@ -227,6 +230,21 @@ Journal des choix validés (date : décision).
   - onglet « Ressources » en direction **« C · Inspecteur »** ;
   - nouvelle fonction, à l'idée du porteur du projet : une **ressource mise en avant**, affichée en grand en tête de l'onglet « Ressources » plutôt que dans la liste ;
   - écartées : « B · Catalogue » (éditoriale, types en onglets) et le panneau de détails de « C » pour « Mes fichiers ».
+- 2026-10-15 : module Drive développé (détail dans [drive.md](drive.md), *Précisé pendant le développement*). Choix faits en cours de route, à valider par le porteur du projet : noms uniques sans tenir compte des majuscules ; changements enregistrés depuis le navigateur puis page relue (pas d'affichage anticipé) ; envois poursuivis d'un dossier à l'autre, 3 à la fois ; la taille réelle d'un fichier relevée par la base à la fin de l'envoi ; téléchargement public par un lien de la page qui fabrique l'adresse temporaire au clic ; dates à l'heure de Paris.
+- 2026-10-16 : module **Rendez-vous**, spécifié à partir des souhaits du porteur du projet (détail dans [booking.md](booking.md)) :
+  - une partie privée (liste des rendez-vous, disponibilités) et une partie publique (prise de rendez-vous) ;
+  - rendez-vous de **30 minutes**, avec une pause entre deux rendez-vous, à la manière de Calendly ;
+  - réservation avec **e-mail obligatoire**, fonction facultative (freelance, RH, dirigeant…), **message obligatoire** ;
+  - **visio LiveKit intégrée dès cette étape** (elle était prévue à l'étape 7, après le paiement : la décision du 2026-10-06 est revue), salle accessible **environ 15 minutes avant** l'heure prévue ; avant, la page dit de revenir plus tard, pour ne pas consommer de minutes ;
+  - **e-mails aux deux parties préparés mais pas envoyés** : Resend et le nom de domaine viendront plus tard ;
+  - **préavis minimum** (4 heures par défaut) et **horizon de réservation** (2 mois par défaut) réglables dès le MVP ;
+  - les autres choix (13, dont pause de 15 minutes, réservations fermées par défaut, lien secret de l'invité, anti-abus) ont été pris sans le porteur du projet, à sa demande, puis validés par lui le même jour : liste dans [booking.md](booking.md), *Décisions validées*.
+- 2026-10-16 : maquettes du module Rendez-vous choisies ([Maquettes module Rendez-vous](https://claude.ai/artifact/Bfm68wvh3ZM7jAvZRjoAio), détail dans [booking.md](booking.md)) :
+  - partie publique (le visiteur qui réserve) en direction **« B · Semainier »** : une semaine en colonnes avec une barre de sélection en bas, et la page de l'invité en « billet » avec compte à rebours ;
+  - partie privée (« Mes rendez-vous ») en direction **« A · Agenda »** : liste groupée par jour ;
+  - écartées : le calendrier du mois à la Calendly (A), l'agenda de la semaine pour « Mes rendez-vous » (B), toute la direction éditoriale « C · Carnet » ; retirées du canevas ;
+  - écrans suivants dessinés dans ces styles et validés tels quels : « Disponibilités », prise de rendez-vous sur mobile, écran de préparation et salle de visio, quatre e-mails (dont l'annulation dans les deux sens). Le module est prêt pour le développement.
+- 2026-10-15 : retours du porteur du projet sur « Mes fichiers », après essai : plus de nombre d'éléments à côté du titre ; dans un dossier, fil d'Ariane discret (texte courant, pas de titre en Newsreader) ; « Télécharger » ferme l'aperçu ; pied de page aligné sur le bloc du profil de la barre latérale.
 
 ## Questions ouvertes
 

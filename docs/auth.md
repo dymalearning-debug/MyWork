@@ -125,7 +125,7 @@ Deux e-mails : **confirmation de l'inscription** et **réinitialisation du mot d
   - polices de secours proches : Georgia pour les titres (à la place de Newsreader), Helvetica ou Arial pour le texte (à la place de Geist), car Gmail et Outlook ne chargent pas les polices web ;
   - logo en image PNG, hébergée sur le site en production ;
   - thème clair par défaut. Le thème sombre dépend de la messagerie (certaines inversent les couleurs d'elles-mêmes).
-- Valeurs fixes : encre `#0e0d0c`, rouge `#cd171e`, texte sur rouge `#fcfcfc`, encre atténuée `#656360`, filet `#e2e1df`, fond autour de l'e-mail `#f6f5f4`.
+- Valeurs fixes : encre `#0e0d0c`, rouge `#cd171e`, texte sur rouge `#fcfcfc`, encre atténuée `#656360`, filet `#e2e1df`, fond autour de l'e-mail `#f6f5f4`, alerte (étiquettes « Annulé » des e-mails de rendez-vous, voir [booking.md](booking.md)) `#a3261f`.
 - Contenu (maquettes `Email-Confirmation` et `Email-Reinitialisation`) : sur fond gris perle, une carte blanche de 560 px à filet fin. Dedans : le logo, un filet, une étiquette, le titre en Georgia, un paragraphe, le bouton rouge, la durée de validité du lien, puis le lien en clair pour le cas où le bouton ne marche pas. Sous la carte : « MyWork — L'espace tout-en-un des freelances ».
   - Confirmation : objet « Confirmez votre adresse e-mail », bouton « Confirmer mon adresse ».
   - Réinitialisation : objet « Réinitialisez votre mot de passe », bouton « Choisir un nouveau mot de passe ».

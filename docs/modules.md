@@ -40,17 +40,17 @@ Points d'attention
 
 ## Rendez-vous (type Calendly)
 
-**Objectif** : permettre aux clients de réserver un créneau depuis le profil public.
+**Objectif** : permettre aux clients de réserver un créneau depuis le profil public, et le tenir en visio. Spécification détaillée : [booking.md](booking.md).
 
-MVP
-- Privé : disponibilités hebdomadaires (plages horaires par jour), exceptions (congés, jours bloqués), types de rendez-vous (nom, durée, description), liste des rendez-vous à venir.
-- Public : affichage des créneaux libres, réservation (nom, e-mail, message).
-- E-mail de confirmation aux deux parties, avec invitation calendrier (`.ics`) et lien d'annulation.
+MVP (revu le 2026-10-16)
+- Privé, « Mes rendez-vous » (`/app/booking`) : liste des rendez-vous (à venir, passés, annulés), annulation ; disponibilités hebdomadaires (plages horaires par jour), exceptions (congés, jours bloqués), réglages à la Calendly (pause après un rendez-vous, préavis minimum, horizon, limite par jour). Un seul type de rendez-vous : visio de 30 minutes.
+- Public, onglet « Rendez-vous » (`/<identifiant>/booking`) : calendrier et créneaux libres dans le fuseau du visiteur, réservation (nom, e-mail, fonction, entreprise, message), lien secret du rendez-vous pour rejoindre la visio ou annuler, `.ics`.
+- Visio LiveKit intégrée (avancée de l'étape 7), salle ouverte 15 minutes avant.
+- E-mails aux deux parties préparés (modèles, file d'envoi) mais pas envoyés, en attendant Resend.
 
 Plus tard
-- Temps tampon entre deux rendez-vous, délai minimum de réservation, limite par jour, rappels.
-- Replanification par le client.
-- Lien de visio automatique (voir module Visio).
+- Envoi des e-mails et rappels (Resend).
+- Replanification par le client, plusieurs types de rendez-vous.
 
 Hors périmètre
 - Synchronisation avec des agendas externes (Google Calendar, Outlook…). Pour éviter un conflit avec un autre engagement, on bloque le créneau à la main (exceptions).
@@ -102,7 +102,7 @@ Points d'attention
 
 ## Visio (type Zoom)
 
-**Objectif** : tenir directement dans l'application le rendez-vous réservé.
+**Objectif** : tenir directement dans l'application le rendez-vous réservé. Intégrée au module Rendez-vous dès l'étape 4 (2026-10-16, voir [booking.md](booking.md), *Visio*) ; l'étape 7 se réduit à la montée en charge.
 
 - Une salle de visio associée à chaque rendez-vous, ouverte aux deux participants à l'heure prévue.
 - Brique retenue : **[LiveKit](https://livekit.io)**, open source (Apache 2.0). Elle fournit des composants React prêts à l'emploi.
