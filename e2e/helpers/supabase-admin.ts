@@ -94,8 +94,8 @@ export async function deleteTestUsers() {
     for (const user of data.users) {
       if (!isTestEmail(user.email)) continue;
       // Their images first: the storage is not emptied with the account (docs/profile.md and
-      // docs/boards.md, "Données").
-      for (const bucket of ["profile-images", "board-images"]) {
+      // docs/boards.md, "Données"), and their Drive files (docs/drive.md).
+      for (const bucket of ["profile-images", "board-images", "drive-files"]) {
         const storage = adminClient().storage.from(bucket);
         const { data: files } = await storage.list(user.id, { limit: 1000 });
         if (files?.length) await storage.remove(files.map((file) => `${user.id}/${file.name}`));

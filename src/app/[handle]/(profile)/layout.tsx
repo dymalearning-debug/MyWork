@@ -1,4 +1,5 @@
 import { OfflineBanner, PublicPage } from "@/components/public-page";
+import { hasPublicResources } from "@/lib/drive/public";
 import { getProfileView } from "@/lib/public-profile/data";
 
 import { ProfileHeader } from "../_components/profile-header";
@@ -11,13 +12,13 @@ export const instant = false;
 
 export default async function PublicProfileLayout({ children, params }: LayoutProps<"/[handle]">) {
   const { handle } = await params;
-  const view = await getProfileView(handle);
+  const [view, showResources] = await Promise.all([getProfileView(handle), hasPublicResources(handle)]);
 
   // Unknown or offline: the page calls notFound(), and not-found.tsx draws the whole page.
   if (!view) return children;
 
   return (
-    <PublicPage banner={view.preview ? <OfflineBanner /> : undefined} header={<ProfileHeader profile={view.profile} />}>
+    <PublicPage banner={view.preview ? <OfflineBanner /> : undefined} header={<ProfileHeader profile={view.profile} showResources={showResources} />}>
       {children}
     </PublicPage>
   );

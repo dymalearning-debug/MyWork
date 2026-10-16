@@ -24,7 +24,7 @@ import type { Card } from "@/lib/boards/types";
 import { useBoardChange, useBoardStore } from "./board-store";
 import { useImageUpload, CardImages } from "./card-images";
 import { ChecklistSection } from "./checklist-section";
-import { ConfirmDialog } from "./confirm-dialog";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DescriptionField } from "./description-field";
 import { InlineText } from "./inline-text";
 

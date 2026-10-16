@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 
 import { useBoardChange, useBoardStore } from "./board-store";
 import { SortableCardTile } from "./card-tile";
-import { ConfirmDialog } from "./confirm-dialog";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { InlineText } from "./inline-text";
 
 // A list of a board (docs/boards.md, "Listes"): 272 px wide, its name (changed with a click), its

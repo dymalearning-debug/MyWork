@@ -28,7 +28,7 @@ async function readPublicProfile(supabase: SupabaseClient, handle: string): Prom
   return (data as PublicProfile | null) ?? null;
 }
 
-function anonymousClient() {
+export function anonymousClient() {
   const { url, publishableKey } = getSupabaseEnv();
   return createSupabaseClient(url, publishableKey, {
     auth: { persistSession: false, autoRefreshToken: false },
@@ -37,7 +37,7 @@ function anonymousClient() {
 
 // Reads as a visitor, then, for an offline profile, as its owner: both take the same path, so that
 // nothing tells an existing account apart from an unknown handle.
-async function readAsVisitorThenOwner<T>(read: (supabase: SupabaseClient) => Promise<T | null>) {
+export async function readAsVisitorThenOwner<T>(read: (supabase: SupabaseClient) => Promise<T | null>) {
   const asVisitor = await read(anonymousClient());
   if (asVisitor) return { value: asVisitor, asOwner: false };
   const asOwner = await read(await createClient());

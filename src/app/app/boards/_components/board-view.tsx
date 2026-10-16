@@ -56,7 +56,7 @@ import { useBoardChange, useBoardStore } from "./board-store";
 import { BoardListColumn } from "./board-list";
 import { BoardSwitcher } from "./board-switcher";
 import { CardFace } from "./card-tile";
-import { ConfirmDialog } from "./confirm-dialog";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { KEYBOARD_CODES, SCREEN_READER_INSTRUCTIONS, sortableCoordinates } from "./dnd";
 import { InlineText } from "./inline-text";
 

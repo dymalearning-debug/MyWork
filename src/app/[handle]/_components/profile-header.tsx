@@ -14,8 +14,17 @@ import { ShareButton } from "./share-button";
 
 // Header of the public page (docs/public-profile.md, "Page publique", and docs/profile.md,
 // "En-tête"): the photo, the professional title as a label, the name, the location, the work modes
-// and the availability; the buttons; the tabs of the modules.
-export function ProfileHeader({ profile }: { profile: PublicProfile }) {
+// and the availability; the buttons; the tabs of the modules. "Ressources" only appears with at least
+// one public file (docs/drive.md, "L'onglet « Ressources »").
+export function ProfileHeader({
+  profile,
+  tab = "profile",
+  showResources = false,
+}: {
+  profile: PublicProfile;
+  tab?: "profile" | "resources";
+  showResources?: boolean;
+}) {
   const name = profileDisplayName(profile);
   const availability = availabilityText(profile);
   const workModes = profile.isFreelance ? profile.workModes.map((mode) => WORK_MODE_LABELS[mode]) : [];
@@ -64,14 +73,25 @@ export function ProfileHeader({ profile }: { profile: PublicProfile }) {
       </div>
 
       <nav aria-label="Onglets du profil" className="-mb-px mt-12 flex gap-8 overflow-x-auto">
-        <a
-          href={path}
-          aria-current="page"
-          className="py-3.5 text-sm whitespace-nowrap text-foreground shadow-[inset_0_-2px_0_var(--primary)]"
-        >
-          Profil
-        </a>
+        <ProfileTab href={path} label="Profil" active={tab === "profile"} />
+        {showResources && <ProfileTab href={`${path}/resources`} label="Ressources" active={tab === "resources"} />}
       </nav>
     </div>
+  );
+}
+
+// A tab: the active one in ink with a red line under it.
+function ProfileTab({ href, label, active }: { href: string; label: string; active: boolean }) {
+  return (
+    <a
+      href={href}
+      aria-current={active ? "page" : undefined}
+      className={cn(
+        "py-3.5 text-sm whitespace-nowrap transition-colors",
+        active ? "text-foreground shadow-[inset_0_-2px_0_var(--primary)]" : "text-muted-foreground hover:text-foreground",
+      )}
+    >
+      {label}
+    </a>
   );
 }

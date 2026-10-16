@@ -64,7 +64,8 @@ import {
   TooltipDemo,
 } from "./_components/interactive-demos"
 import { BoardBricks } from "./_components/board-bricks"
-import { DrivePreview, SidebarPreview, VisibilityBadge } from "./_components/module-previews"
+import { DriveBricks } from "./_components/drive-bricks"
+import { SidebarPreview, VisibilityBadge } from "./_components/module-previews"
 import { ProfileBricks } from "./_components/profile-bricks"
 import { EmailPreviews } from "./_components/email-previews"
 import { ModuleHeading, Section, Specimen } from "./_components/showcase"
@@ -891,10 +892,10 @@ export default function DesignPage() {
               <BookingDemo />
             </div>
             <BoardBricks />
-            <div>
-              <ModuleHeading module="Module · Drive" title="Liste de fichiers" />
-              <DrivePreview />
-            </div>
+            {/* The dates of the list are read at the visit ("14:32" today). */}
+            <Suspense fallback={<Skeleton className="h-96" />}>
+              <DriveBricks />
+            </Suspense>
           </Section>
 
           <Section

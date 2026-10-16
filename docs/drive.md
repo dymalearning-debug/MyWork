@@ -1,7 +1,7 @@
 # Module Drive
 
 Spécification du module Drive (type Google Drive), étape 5 de la roadmap (voir [product.md](product.md), *Roadmap*).
-Statut : **spécifié** le 2026-10-15, à partir des souhaits du porteur du projet. Maquettes validées le même jour (voir *Maquettes*). Les choix marqués *(proposé)* ont été pris sans le porteur du projet, à sa demande, puis **validés** par lui le même jour (voir *Décisions validées*).
+Statut : **spécifié** le 2026-10-15, à partir des souhaits du porteur du projet. Maquettes validées le même jour (voir *Maquettes*). **Développé** le même jour (voir *Précisé pendant le développement*). Les choix marqués *(proposé)* ont été pris sans le porteur du projet, à sa demande, puis **validés** par lui le même jour (voir *Décisions validées*).
 
 ## En bref
 
@@ -24,7 +24,7 @@ Validées le 2026-10-15 : [Maquettes module Drive](https://claude.ai/artifact/XN
 
 Écartées le 2026-10-15 : « B · Catalogue » (grand titre, types en onglets, lignes aérées, stockage en tête) ; le reste de « C · Inspecteur » (panneau de détails à droite de « Mes fichiers ») ; l'onglet « Ressources » de « A » (simple liste) et de « B » (cartes en grille).
 
-Restent à dessiner pendant le développement, dans le style des maquettes : l'aperçu d'un fichier, les petites fenêtres (nouveau dossier, renommer, déplacer, confirmations de suppression), la zone de dépôt survolée, « Stockage plein », et l'onglet « Ressources » sur mobile.
+Dessinés pendant le développement, dans le style des maquettes : l'aperçu d'un fichier, les petites fenêtres (nouveau dossier, renommer, déplacer, confirmations de suppression), la zone de dépôt survolée, « Stockage plein », et l'onglet « Ressources » sur mobile.
 
 ## Vocabulaire
 
@@ -34,7 +34,7 @@ Restent à dessiner pendant le développement, dans le style des maquettes : l'a
 
 - Un quatrième lien dans la barre latérale, **« Mes fichiers »**, sous « Mes tableaux », vers `/app/drive` *(proposé : « Mes fichiers » plutôt que « Mon Drive », nom de Google, et dans la lignée de « Mon profil » et « Mes tableaux »)*.
 - Chaque dossier a son adresse, `/app/drive/<id>`, pour y revenir par un lien ou par le bouton « Précédent » du navigateur.
-- En tête de page, un **fil d'Ariane** : « Mes fichiers › Clients › Acme » (Newsreader pour le dernier). Chaque étape est un lien, et une cible de dépôt pour remonter un élément.
+- En tête de page, un **fil d'Ariane** : « Mes fichiers › Clients › Acme ». À la racine, « Mes fichiers » en titre (Newsreader) ; dans un dossier, toutes les étapes en texte courant, discrètes, la dernière à l'encre (retour du porteur du projet, 2026-10-15). Pas de nombre d'éléments à côté. Chaque étape est un lien, et une cible de dépôt pour remonter un élément.
 - La recherche, le filtre, le tri et la page sont dans l'adresse (`?q=…&type=…&sort=…&page=…`) : un lien ou un rafraîchissement retrouve la même vue *(proposé)*.
 
 ## La page
@@ -199,7 +199,7 @@ Le type se déduit de l'extension et du type déclaré par le navigateur à l'en
 
 ## Données
 
-- Une table **`drive_items`**, chaque ligne rattachée à l'utilisateur (`user_id`) et supprimée en cascade avec le compte : type (dossier ou fichier), nom, dossier parent (vide pour la racine), et pour un fichier : chemin dans le stockage, taille, type MIME, catégorie (pour le filtre), vignette, visibilité (`private` par défaut ou `public`), mise en avant (oui ou non ; un seul fichier par utilisateur, et seulement s'il est public, vérifié par la base) ; dates de création et de modification.
+- Une table **`drive_items`**, chaque ligne rattachée à l'utilisateur (`user_id`) et supprimée en cascade avec le compte : type (dossier ou fichier), nom, nom sans accents ni majuscules (pour la recherche, tenu par la base), dossier parent (vide pour la racine), et pour un fichier : taille, type MIME, catégorie (pour le filtre), vignette (oui ou non), envoi terminé (oui ou non), visibilité (`private` par défaut ou `public`), mise en avant (oui ou non ; un seul fichier par utilisateur, et seulement s'il est public, vérifié par la base) ; dates de création et de modification. Le chemin dans le stockage se déduit de l'utilisateur et de l'élément, il n'est pas enregistré.
 - **RLS** : chacun ne lit et ne modifie que ses propres éléments. Unicité du nom dans un dossier, profondeur et capacité vérifiées **dans la base**.
 - **Fichiers** : Supabase Storage, compartiment **`drive-files`**, **privé**, 50 Mo par fichier, un dossier par utilisateur. Les fichiers y sont rangés **à plat** sous un nom au hasard (`<id utilisateur>/<id>`), comme les images des tableaux : renommer ou déplacer ne touche que la table, jamais le stockage. Vignettes à côté (`<id utilisateur>/<id>-thumb.webp`).
 - **Téléchargement et aperçu** par des adresses temporaires (signées), valables une heure dans l'espace privé, quelques minutes pour les visiteurs, avec le vrai nom du fichier.
@@ -217,7 +217,7 @@ Pour les agents qui développeront le module.
 - Ordre d'un envoi, pour que la capacité soit vérifiée par la base : la ligne de `drive_items` est créée d'abord (la base refuse si la capacité ou les règles sont dépassées), puis le fichier est envoyé ; en cas d'échec ou d'annulation, la ligne est retirée. Une ligne restée sans fichier (onglet fermé en plein envoi) n'est pas affichée, et elle est nettoyée au prochain passage.
 - Recherche, filtre, tri et pagination **côté base** (une requête par page), pour tenir avec beaucoup de fichiers. Recherche sans accents : extension `unaccent`, ou nom normalisé enregistré à côté du nom.
 - Glisser-déposer des éléments sur un dossier : dnd-kit, déjà utilisé ; dépôt de fichiers venus de l'ordinateur : événements natifs du navigateur.
-- Code du module : `src/app/app/drive/` (pages et composants), règles partagées (types et catégories, extensions interdites, tailles, numérotation des doublons, format des tailles et des dates) dans `src/lib/drive/`. Onglet public : `src/app/[handle]/resources/`, et son lien dans `profile-header.tsx`. Lien « Mes fichiers » dans `src/app/app/_components/sidebar-nav.tsx`.
+- Code du module : `src/app/app/drive/` (une seule page pour la racine et les dossiers, `[[...folder]]`, et un gabarit qui garde la file des envois d'un dossier à l'autre), règles partagées (types et catégories, extensions interdites, tailles, numérotation des doublons, format des tailles et des dates) dans `src/lib/drive/`. Onglet public : `src/app/[handle]/resources/` (en dehors du gabarit de l'onglet « Profil », pour que l'adresse sans fichier public soit introuvable en entier) et le téléchargement `src/app/[handle]/resources/[itemId]/` ; son lien dans `profile-header.tsx`. Lien « Mes fichiers » dans `src/app/app/_components/sidebar-nav.tsx`.
 - Page publique : mêmes règles de cache que l'onglet « Profil » (voir [public-profile.md](public-profile.md), *Technique*).
 
 ## Tests
@@ -237,12 +237,29 @@ Pour les agents qui développeront le module.
 
 ## Mise en œuvre
 
-1. Maquettes : validées le 2026-10-15 (voir *Maquettes*).
-2. Base de données et stockage : table, règles, accès des visiteurs, espace utilisé, compartiment privé.
+Toutes les étapes sont faites (2026-10-15) :
+
+1. Maquettes : validées (voir *Maquettes*).
+2. Base de données et stockage : migrations `20261015120000_add_drive_module.sql` et `20261015121000_fix_drive_upload_policy.sql`.
 3. Page « Mes fichiers » : navigation, dossiers, envoi, liste et grille, menu, aperçu.
 4. Tri, filtre, recherche, pagination, sélection multiple, indicateur de stockage.
 5. Onglet « Ressources » du profil public.
-6. Tests ; vérification en clair et en sombre, et l'onglet public sur mobile.
+6. Tests (`e2e/drive.spec.ts`, `src/lib/drive/*.test.ts`) ; vérification en clair et en sombre, et l'onglet public sur mobile.
+
+## Précisé pendant le développement
+
+Choix faits en cours de route (2026-10-15), à valider par le porteur du projet :
+
+- **Noms uniques** dans un dossier **sans tenir compte des majuscules** : « Devis.pdf » et « devis.pdf » ne peuvent pas coexister, et le doublon envoyé devient « Devis (2).pdf ».
+- **Enregistrement** : chaque changement part depuis le navigateur, directement dans la table (la base vérifie droits, noms, niveaux et capacité), puis la page est relue ; une notification dit le résultat. Pas d'affichage anticipé comme dans les Tableaux : les listes du Drive viennent de la base, page par page.
+- **Envois** : 3 fichiers à la fois ; ils continuent quand on change de dossier. Fermer le panneau annule ce qui n'est pas fini. La base relève la **taille réelle** du fichier à la fin de l'envoi, et ne laisse le stockage accepter que le fichier d'une ligne qui l'attend : la capacité ne peut pas être contournée. Une ligne sans fichier est nettoyée au bout d'un jour.
+- **Téléchargement public** : un lien de la page (`/<identifiant>/resources/<id>`) fabrique l'adresse temporaire au moment du clic (une minute) ; la page elle-même ne contient jamais d'adresse qui expire. Les vignettes de l'onglet sont des adresses temporaires d'une heure.
+- **Dates** à l'heure de Paris, pour qu'elles soient les mêmes sur le serveur et dans le navigateur.
+- **Glisser-déposer** d'un élément : à la souris uniquement ; au clavier, « Déplacer » dans le menu « … ». Déplacer un élément sélectionné emporte toute la sélection.
+- **Case « Tout sélectionner »** : cochée seulement quand toute la page l'est.
+- **Dossier vide** : « Ce dossier est vide » (« Aucun fichier pour l'instant » à la racine), avec « Déposez des fichiers ici, ou utilisez « Nouveau » ».
+- **Retours du porteur du projet** (2026-10-15, après essai) : plus de nombre d'éléments à côté du titre ; fil d'Ariane discret dans un dossier ; « Télécharger » ferme l'aperçu ; pied de page de la même hauteur que le bloc du profil en bas de la barre latérale (une seule ligne d'un bord à l'autre de l'écran).
+- **Nom du téléchargement** : supabase-js encode deux fois les noms accentués (« Kit m%C3%A9dia.pdf ») ; l'application ajoute elle-même le nom à l'adresse temporaire.
 
 ## Décisions validées
 

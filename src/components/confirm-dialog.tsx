@@ -10,7 +10,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-// Confirmation before a deletion (board, list, card), like the deletion of the account.
+// Confirmation before a deletion (board, list, card, items of the Drive), like the deletion of the
+// account.
 export function ConfirmDialog({
   open,
   onOpenChange,

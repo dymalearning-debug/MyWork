@@ -68,7 +68,7 @@ Maquettes validées le 2026-10-12 : [Maquettes paramètres](https://claude.ai/ar
 - Table `profiles` : deux colonnes en plus, `first_name` et `last_name` (vides possibles, 100 caractères au plus).
 - Les utilisateurs peuvent modifier leurs nom, prénom, adresse du profil public et état en ligne, sur leur seule ligne (RLS).
 - Adresse du profil public : le format et l'unicité sont des contraintes de la table ; un déclencheur refuse les mots réservés, que les utilisateurs ne peuvent pas lire. La vérification pendant la frappe passe par une fonction de la base (`is_handle_available`).
-- Suppression du compte : une fonction de la base (`delete_own_account`) supprime le compte de l'utilisateur connecté dans Supabase Auth. Le profil, les sessions et les méthodes de connexion partent avec lui (suppression en cascade). La clé secrète Supabase reste réservée aux tests.
+- Suppression du compte : une fonction de la base (`delete_own_account`) supprime le compte de l'utilisateur connecté dans Supabase Auth. Le profil, les sessions et les méthodes de connexion partent avec lui (suppression en cascade). La clé secrète Supabase reste réservée aux tests. Les fichiers stockés (images du profil et des tableaux, fichiers du Drive) sont retirés juste avant, par l'application : la cascade de la base ne vide pas le stockage.
 
 ## Technique
 
@@ -96,5 +96,4 @@ Maquettes validées le 2026-10-12 : [Maquettes paramètres](https://claude.ai/ar
 - Changement d'adresse e-mail, confirmé par e-mail (avec Resend), et changement de mot de passe.
 - Méthodes de connexion (relier ou délier Google).
 - Sections Abonnement et réglages des modules (modules activés, visibles sur le profil).
-- Suppression des fichiers du Drive avec le compte, quand le module existera (le stockage n'est pas supprimé par la cascade de la base).
 - Thème dans les Paramètres (il reste dans le menu du profil).

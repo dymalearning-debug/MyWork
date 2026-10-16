@@ -1,11 +1,12 @@
 "use client";
 
-import { LayoutDashboardIcon, SquareKanbanIcon, UserIcon } from "lucide-react";
+import { FolderIcon, LayoutDashboardIcon, SquareKanbanIcon, UserIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { HOME_PATH, PROFILE_PATH } from "@/lib/auth/paths";
 import { BOARDS_PATH } from "@/lib/boards/rules";
+import { DRIVE_PATH } from "@/lib/drive/rules";
 import { cn } from "@/lib/utils";
 
 // Links of the private space, one per module.
@@ -15,6 +16,7 @@ const LINKS = [
   { href: HOME_PATH, label: "Tableau de bord", icon: LayoutDashboardIcon, exact: true, prefetch: undefined },
   { href: PROFILE_PATH, label: "Mon profil", icon: UserIcon, exact: false, prefetch: undefined },
   { href: BOARDS_PATH, label: "Mes tableaux", icon: SquareKanbanIcon, exact: false, prefetch: false },
+  { href: DRIVE_PATH, label: "Mes fichiers", icon: FolderIcon, exact: false, prefetch: undefined },
 ];
 
 export function SidebarNav() {
