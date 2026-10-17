@@ -44,6 +44,7 @@ Toujours passer par les classes Tailwind des tokens (`bg-primary`, `text-muted-f
 | `warning` | Attention | Échéances proches, statut « en attente » |
 | `chart-1` à `chart-5` | Graphiques | Séries de données, dans cet ordre |
 | `spotlight` | Lumière de studio | Halo de `bg-spotlight`, en haut des grandes zones |
+| `stage`, `stage-foreground` | Scène | Fond fixe (encre) des vidéos de la visio, et son texte, dans les deux thèmes |
 
 ## Typographie
 
@@ -70,6 +71,7 @@ Deux polices, pas de police mono : **Newsreader** (`font-heading`) pour les titr
 - **Module Profil** : la vitrine montre ses **vrais composants** (en-tête et onglet « Profil » de la page publique, panneau « Me contacter », champs de « Mon profil », CV), avec un profil fictif (`src/app/design/_components/profile-demo.ts`). Les anciennes maquettes (en-tête, parcours, matrice de compétences) ont été retirées.
 - **Module Tableaux** : la vitrine montre ses **vraies cartes**, rangées dans des listes (pastilles description, checklist, images), et une description mise en forme, avec un tableau fictif (`src/app/design/_components/board-bricks.tsx`). L'ancienne maquette kanban a été retirée.
 - **Module Drive** : la vitrine montre ses **vrais composants** (liste de « Mes fichiers » avec badge « Public » et punaise de la ressource mise en avant, indicateur de stockage, onglet « Ressources » du profil public), avec des fichiers fictifs (`src/app/design/_components/drive-bricks.tsx`). L'ancienne maquette « Liste de fichiers » a été retirée.
+- **Module Rendez-vous** : la vitrine montre ses **vrais composants** (semainier de l'onglet public, billet de l'invité, liste de « Mes rendez-vous ») avec des données fictives (`src/app/design/_components/booking-bricks.tsx`), et ses quatre e-mails dans la section *E-mails*. L'ancienne maquette « Choix d'un créneau » a été retirée. Les écrans de visio (`src/components/meeting/`) n'y sont pas : ils demandent une caméra et une salle.
 - Autres motifs visibles sur `/design` : message d'information (fond `muted`, filet rouge à gauche), état vide, chargement (`Skeleton`), indicateurs chiffrés, tableaux.
 - **Notifications** (`toast`, Sonner) : **en bas à droite**, après chaque action sur le compte (enregistrement, mise en ligne, suppression…). Un titre court au passé, le détail dessous (voir [settings.md](settings.md), *Notifications*).
 - **Aide contextuelle** : une icône « ? » (`CircleHelpIcon`, encre atténuée) à droite d'un libellé, avec une infobulle (`Tooltip`) au survol ou au focus. Exemple : « Adresse de mon profil public » dans les Paramètres.

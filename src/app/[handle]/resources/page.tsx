@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { OfflineBanner, PublicPage, NOT_FOUND_TITLE } from "@/components/public-page";
+import { isPublicBookingOpen } from "@/lib/booking/public";
 import { getPublicResources } from "@/lib/drive/public";
 import { pageCount } from "@/lib/drive/rules";
 import { profileDisplayName } from "@/lib/profile/content";
@@ -34,14 +35,18 @@ export async function generateMetadata({ params }: PageProps<"/[handle]/resource
 export default async function ResourcesPage({ params, searchParams }: PageProps<"/[handle]/resources">) {
   const { handle } = await params;
   const page = pageOf((await searchParams).page);
-  const [view, resources] = await Promise.all([getProfileView(handle), getPublicResources(handle, page)]);
+  const [view, resources, showBooking] = await Promise.all([
+    getProfileView(handle),
+    getPublicResources(handle, page),
+    isPublicBookingOpen(handle),
+  ]);
   if (!view || !resources || (!resources.featured && resources.total === 0)) notFound();
   if (page > pageCount(resources.total)) notFound();
 
   return (
     <PublicPage
       banner={view.preview ? <OfflineBanner /> : undefined}
-      header={<ProfileHeader profile={view.profile} tab="resources" showResources />}
+      header={<ProfileHeader profile={view.profile} tab="resources" showResources showBooking={showBooking} />}
     >
       <ResourcesTab handle={handle} resources={resources} page={page} />
     </PublicPage>

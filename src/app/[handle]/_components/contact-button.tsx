@@ -13,7 +13,9 @@ import { fetchProfileContact } from "../actions";
 
 // "Me contacter", the red button of the header: a panel with the email and the phone, read only at
 // the first click (docs/profile.md, "Coordonnées"). Each with "Copier", and "Écrire" or "Appeler".
-export function ContactButton({ handle }: { handle: string }) {
+// variant: red when it is the main action of the header; ink next to "Prendre rendez-vous";
+// outline on the "Rendez-vous" tab, where the red stays with "Continuer" (docs/booking.md).
+export function ContactButton({ handle, variant = "default" }: { handle: string; variant?: "default" | "contrast" | "outline" }) {
   const [contact, setContact] = useState<ProfileContact | null>(null);
   const [state, setState] = useState<"idle" | "loading" | "ready" | "failed">("idle");
 
@@ -27,7 +29,7 @@ export function ContactButton({ handle }: { handle: string }) {
 
   return (
     <Popover onOpenChange={(open) => open && void load()}>
-      <PopoverTrigger render={<Button size="lg" />}>
+      <PopoverTrigger render={<Button size="lg" variant={variant} />}>
         Me contacter
         <ArrowRightIcon data-icon="inline-end" />
       </PopoverTrigger>

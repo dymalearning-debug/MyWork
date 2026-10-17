@@ -1,6 +1,8 @@
 import { readFile } from "node:fs/promises"
 import path from "node:path"
 
+import { renderBookingEmail, SAMPLE_EMAILS } from "@/lib/booking/emails/templates"
+
 import { ModuleHeading } from "./showcase"
 
 // The two Supabase Auth email templates (supabase/templates/), rendered as a mail client would,
@@ -35,6 +37,25 @@ export async function EmailPreviews() {
           />
         </div>
       ))}
+      {/* The four emails of the Rendez-vous module (src/lib/booking/emails/), prepared, not sent yet. */}
+      {SAMPLE_EMAILS.map((email) => {
+        const rendered = renderBookingEmail(email.template, email.data, "http://localhost:3000")
+        return (
+          <div key={email.template}>
+            <ModuleHeading module="Module · Rendez-vous" title={email.label} />
+            <p className="mb-3 text-sm text-muted-foreground">
+              Objet : {rendered.subject}
+              {rendered.withIcs && " · Pièce jointe : rendez-vous.ics"}
+            </p>
+            <iframe
+              title={email.label}
+              srcDoc={rendered.html}
+              sandbox=""
+              className="h-[860px] w-full border border-border bg-white"
+            />
+          </div>
+        )
+      })}
     </div>
   )
 }

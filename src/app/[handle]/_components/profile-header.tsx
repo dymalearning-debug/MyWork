@@ -1,9 +1,10 @@
-import { DownloadIcon, MapPinIcon } from "lucide-react";
+import { CalendarIcon, DownloadIcon, MapPinIcon } from "lucide-react";
 
 import { ProfilePhoto } from "@/components/profile-photo";
 import { StatusDot } from "@/components/status-dot";
 import { buttonVariants } from "@/components/ui/button";
 import { availabilityText, profileDisplayName, profileInitials } from "@/lib/profile/content";
+import { publicBookingPath } from "@/lib/booking/rules";
 import { WORK_MODE_LABELS } from "@/lib/profile/types";
 import { publicProfilePath } from "@/lib/public-profile/handle";
 import type { PublicProfile } from "@/lib/public-profile/data";
@@ -15,15 +16,18 @@ import { ShareButton } from "./share-button";
 // Header of the public page (docs/public-profile.md, "Page publique", and docs/profile.md,
 // "En-tête"): the photo, the professional title as a label, the name, the location, the work modes
 // and the availability; the buttons; the tabs of the modules. "Ressources" only appears with at least
-// one public file (docs/drive.md, "L'onglet « Ressources »").
+// one public file (docs/drive.md, "L'onglet « Ressources »"); "Rendez-vous", and the red button
+// "Prendre rendez-vous", while bookings are open (docs/booking.md, "En-tête du profil").
 export function ProfileHeader({
   profile,
   tab = "profile",
   showResources = false,
+  showBooking = false,
 }: {
   profile: PublicProfile;
-  tab?: "profile" | "resources";
+  tab?: "profile" | "booking" | "resources";
   showResources?: boolean;
+  showBooking?: boolean;
 }) {
   const name = profileDisplayName(profile);
   const availability = availabilityText(profile);
@@ -62,8 +66,18 @@ export function ProfileHeader({
           )}
         </div>
         <div className="flex flex-wrap gap-2">
-          {/* With the Rendez-vous module, the red button will become "Prendre rendez-vous". */}
-          {profile.hasContact && <ContactButton handle={profile.handle} />}
+          {showBooking && tab !== "booking" && (
+            <a href={publicBookingPath(profile.handle)} className={buttonVariants({ size: "lg" })}>
+              <CalendarIcon data-icon="inline-start" />
+              Prendre rendez-vous
+            </a>
+          )}
+          {profile.hasContact && (
+            <ContactButton
+              handle={profile.handle}
+              variant={!showBooking ? "default" : tab === "booking" ? "outline" : "contrast"}
+            />
+          )}
           <a href={`${path}/cv/pdf`} download className={buttonVariants({ variant: "outline", size: "lg" })}>
             <DownloadIcon data-icon="inline-start" />
             Télécharger le CV
@@ -74,6 +88,7 @@ export function ProfileHeader({
 
       <nav aria-label="Onglets du profil" className="-mb-px mt-12 flex gap-8 overflow-x-auto">
         <ProfileTab href={path} label="Profil" active={tab === "profile"} />
+        {showBooking && <ProfileTab href={publicBookingPath(profile.handle)} label="Rendez-vous" active={tab === "booking"} />}
         {showResources && <ProfileTab href={`${path}/resources`} label="Ressources" active={tab === "resources"} />}
       </nav>
     </div>

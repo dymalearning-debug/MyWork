@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getOwnProfile } from "@/lib/account/profile";
 import { HOME_PATH } from "@/lib/auth/paths";
 import { requireUser } from "@/lib/auth/user";
+import { hasUnseenBookings } from "@/lib/booking/data";
 
 import { SidebarLinks, SidebarNav } from "./_components/sidebar-nav";
 import { UserMenu } from "./_components/user-menu";
@@ -21,7 +22,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </Link>
         </div>
         <Suspense fallback={<SidebarLinks pathname={null} />}>
-          <SidebarNav />
+          <CurrentSidebarNav />
         </Suspense>
         <div className="border-t border-sidebar-border p-3">
           {/* The session is read at request time: the rest of the shell does not wait for it. */}
@@ -33,6 +34,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <main className="min-w-0 flex-1 bg-spotlight">{children}</main>
     </div>
   );
+}
+
+// The links, with the red dot of "Mes rendez-vous" while bookings are not seen yet.
+async function CurrentSidebarNav() {
+  await requireUser();
+  const bookingDot = await hasUnseenBookings().catch((error: unknown) => {
+    console.error(error);
+    return false;
+  });
+  return <SidebarNav bookingDot={bookingDot} />;
 }
 
 async function CurrentUserMenu() {

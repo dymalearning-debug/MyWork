@@ -42,7 +42,7 @@ Le porteur du projet n'est pas développeur : le code est écrit par des agents 
 | Hébergement | **Vercel**, fonctions en région Dublin, au plus près de la base de données |
 | E-mails transactionnels | **Resend** |
 | Paiement (étape 6) | **Stripe** (Checkout et portail client) |
-| Visio (étape 7) | **LiveKit** |
+| Visio (avancée à l'étape 4) | **LiveKit** |
 | Tests | **Vitest** (tests unitaires et de composants) et **Playwright** (tests de bout en bout dans un vrai navigateur) |
 | Code | **GitHub**, tests automatiques à chaque modification |
 
@@ -66,7 +66,7 @@ Vue d'ensemble de tout ce qu'utilise l'application, au-delà des grands choix ci
 | **Vercel**, équipe `mywork-8619`, projet `linku` | Hébergement, production à chaque push sur `main`, aperçu par pull request. Fonctions à Washington (`iad1`) aujourd'hui, Dublin prévu | Tableau de bord Vercel | Étape 1 |
 | **GitHub**, dépôt `dymalearning-debug/MyWork` | Code, tests automatiques à chaque modification | GitHub, *Actions* | Étape 1 |
 | Supabase Storage, compartiment **`drive-files`** | Fichiers du Drive et leurs vignettes. **Privé** (téléchargement par adresses temporaires ; visiteurs : fichiers publics d'un profil en ligne seulement), un dossier par utilisateur, 50 Mo, tous types sauf exécutables ([drive.md](drive.md)) | Supabase, *Storage* | Étape 5 |
-| **Resend** | E-mails aux couleurs de MyWork. *Prévu* (modèles prêts ; ceux des rendez-vous, avec leur file d'envoi, à l'étape 4) | — | Plus tard |
+| **Resend** | E-mails aux couleurs de MyWork. *Prévu* (modèles prêts, y compris les quatre des rendez-vous et leur file d'envoi `booking_emails`, qui n'envoie rien pour l'instant) | — | Plus tard |
 | **LiveKit Cloud**, projet **MyWork** (`p_55iutdslog4`), région UE (Francfort), offre gratuite *Build* | Visio des rendez-vous ([booking.md](booking.md)). Compte créé le 2026-10-16 ; adresse `wss://mywork-2u2z4y18.livekit.cloud`. Clés rangées dans Vercel (`LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`), récupérées dans `.env.local` | cloud.livekit.io | Étape 4 |
 
 **Bibliothèques** (`package.json`)
@@ -88,8 +88,9 @@ Vue d'ensemble de tout ce qu'utilise l'application, au-delà des grands choix ci
 | `@fontsource/newsreader` | Police de l'image de partage | Étape 2 |
 | `react-markdown`, `remark-gfm`, `remark-breaks` | Affichage de la description des cartes en Markdown limité ([boards.md](boards.md)) : `remark-gfm` fait des adresses des liens, `remark-breaks` garde les retours à la ligne | Étape 3 |
 | `tus-js-client` | Envoi reprenable des fichiers du Drive, directement du navigateur vers Supabase, avec progression ([drive.md](drive.md)) | Étape 5 |
-| `date-fns`, `@date-fns/tz` | Dates et fuseaux horaires des rendez-vous. *Prévu* ([booking.md](booking.md)) | Étape 4 |
-| `livekit-server-sdk`, `livekit-client`, `@livekit/components-react` | Visio : jetons d'accès côté serveur, salle dans le navigateur. *Prévu* ([booking.md](booking.md)) | Étape 4 |
+| `date-fns`, `@date-fns/tz` | Dates et fuseaux horaires des rendez-vous : horaires du propriétaire convertis jour par jour, changements d'heure compris ([booking.md](booking.md)) | Étape 4 |
+| `livekit-server-sdk`, `livekit-client`, `@livekit/components-react` | Visio : jetons d'accès côté serveur, salle dans le navigateur ([booking.md](booking.md)) | Étape 4 |
+| Extensions PostgreSQL `btree_gist` et `pg_cron` (Supabase) | `btree_gist` : contrainte qui interdit deux rendez-vous qui se chevauchent ; `pg_cron` : tâches de la base chaque nuit (rendez-vous effacés un an après leur date, empreintes IP après un jour) | Étape 4 |
 
 ## Roadmap
 
@@ -101,7 +102,7 @@ Chaque étape correspond au périmètre MVP du module (voir [modules.md](modules
 | 1 | Socle : authentification, compte, squelette du profil public | En cours |
 | 2 | Module **Profil** (CV en ligne) et export | Fait (2026-10-14) |
 | 3 | Module **Tableaux** (type Trello) | Développé (2026-10-14), décisions à valider |
-| 4 | Module **Rendez-vous** (type Calendly), avec la visio | Spécifié et maquettes validées (2026-10-16), prêt pour le développement |
+| 4 | Module **Rendez-vous** (type Calendly), avec la visio | Développé (2026-10-16), quelques choix à valider |
 | 5 | Module **Drive** (type Google Drive) | Développé (2026-10-15), quelques choix à valider |
 | 6 | **Abonnement et paiement**, ouverture SaaS | À faire |
 | 7 | Module **Visio** (type Zoom) : montée en charge (la visio des rendez-vous arrive à l'étape 4) | À faire |
@@ -245,6 +246,8 @@ Journal des choix validés (date : décision).
   - écartées : le calendrier du mois à la Calendly (A), l'agenda de la semaine pour « Mes rendez-vous » (B), toute la direction éditoriale « C · Carnet » ; retirées du canevas ;
   - écrans suivants dessinés dans ces styles et validés tels quels : « Disponibilités », prise de rendez-vous sur mobile, écran de préparation et salle de visio, quatre e-mails (dont l'annulation dans les deux sens). Le module est prêt pour le développement.
 - 2026-10-15 : retours du porteur du projet sur « Mes fichiers », après essai : plus de nombre d'éléments à côté du titre ; dans un dossier, fil d'Ariane discret (texte courant, pas de titre en Newsreader) ; « Télécharger » ferme l'aperçu ; pied de page aligné sur le bloc du profil de la barre latérale.
+
+- 2026-10-16 : module Rendez-vous développé, avec la visio (détail dans [booking.md](booking.md), *Précisé pendant le développement*). Choix faits en cours de route, à valider par le porteur du projet : code du lien de l'invité gardé en clair (pour « Copier le lien de l'invité ») ; un rendez-vous reste « À venir » jusqu'à la fermeture de sa salle ; point rouge retiré à l'ouverture du détail ; annulation par l'invité jusqu'au début ; compte à rebours en jours au-delà de 24 heures ; salle de visio assemblée avec les briques de LiveKit plutôt que son écran tout fait ; nouveau token `stage` (fond fixe des vidéos).
 
 ## Questions ouvertes
 

@@ -1,11 +1,12 @@
 "use client";
 
-import { FolderIcon, LayoutDashboardIcon, SquareKanbanIcon, UserIcon } from "lucide-react";
+import { CalendarIcon, FolderIcon, LayoutDashboardIcon, SquareKanbanIcon, UserIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { HOME_PATH, PROFILE_PATH } from "@/lib/auth/paths";
 import { BOARDS_PATH } from "@/lib/boards/rules";
+import { BOOKING_PATH } from "@/lib/booking/rules";
 import { DRIVE_PATH } from "@/lib/drive/rules";
 import { cn } from "@/lib/utils";
 
@@ -17,15 +18,17 @@ const LINKS = [
   { href: PROFILE_PATH, label: "Mon profil", icon: UserIcon, exact: false, prefetch: undefined },
   { href: BOARDS_PATH, label: "Mes tableaux", icon: SquareKanbanIcon, exact: false, prefetch: false },
   { href: DRIVE_PATH, label: "Mes fichiers", icon: FolderIcon, exact: false, prefetch: undefined },
+  { href: BOOKING_PATH, label: "Mes rendez-vous", icon: CalendarIcon, exact: false, prefetch: undefined },
 ];
 
-export function SidebarNav() {
-  return <SidebarLinks pathname={usePathname()} />;
+// bookingDot: the red dot of "Mes rendez-vous", while bookings are not seen yet (docs/booking.md).
+export function SidebarNav({ bookingDot = false }: { bookingDot?: boolean }) {
+  return <SidebarLinks pathname={usePathname()} bookingDot={bookingDot} />;
 }
 
 // The address of a board (/app/boards/<id>) is only known at request time: until then, the links
 // are shown without the active one.
-export function SidebarLinks({ pathname }: { pathname: string | null }) {
+export function SidebarLinks({ pathname, bookingDot = false }: { pathname: string | null; bookingDot?: boolean }) {
   return (
     <nav aria-label="Navigation principale" className="flex flex-1 flex-col gap-0.5 p-2">
       {LINKS.map(({ href, label, icon: Icon, exact, prefetch }) => {
@@ -44,7 +47,10 @@ export function SidebarLinks({ pathname }: { pathname: string | null }) {
             )}
           >
             <Icon className="size-4" />
-            {label}
+            <span className="flex-1">{label}</span>
+            {href === BOOKING_PATH && bookingDot && (
+              <span role="img" aria-label="Nouvelles réservations" className="size-1.5 rounded-full bg-primary" />
+            )}
           </Link>
         );
       })}

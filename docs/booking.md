@@ -1,7 +1,7 @@
 # Module Rendez-vous
 
 Spécification du module Rendez-vous (type Calendly), étape 4 de la roadmap (voir [product.md](product.md), *Roadmap*), avec la **visio** (LiveKit), avancée de l'étape 7.
-Statut : **spécifié** le 2026-10-16, à partir des souhaits du porteur du projet. Les choix marqués *(proposé)* ont été pris sans lui, à sa demande, puis **validés** par lui le même jour (voir *Décisions validées*). Maquettes **validées** le même jour : direction B pour la partie publique, A pour la partie privée (voir *Maquettes*). **Prêt pour le développement.**
+Statut : **spécifié** le 2026-10-16, à partir des souhaits du porteur du projet. Les choix marqués *(proposé)* ont été pris sans lui, à sa demande, puis **validés** par lui le même jour (voir *Décisions validées*). Maquettes **validées** le même jour : direction B pour la partie publique, A pour la partie privée (voir *Maquettes*). **Développé** le 2026-10-16 (voir *Précisé pendant le développement*), pas encore commité ni en production ; quelques choix faits en cours de route restent à valider.
 
 ## En bref
 
@@ -295,6 +295,55 @@ Pour les agents qui développeront le module.
 6. E-mails préparés et file d'envoi.
 7. Visio (après création du compte LiveKit par le porteur du projet).
 8. Tests ; vérification en clair et en sombre, et sur mobile.
+
+Tout est fait (2026-10-16) : migration `supabase/migrations/20261016120000_add_booking_module.sql` appliquée à la base en ligne, 24 tests unitaires (`src/lib/booking/*.test.ts`), 9 parcours de bout en bout (`e2e/booking.spec.ts`).
+
+## Précisé pendant le développement
+
+Choix faits en cours de route, **à valider** par le porteur du projet (marqués ◆), et précisions techniques.
+
+**Où est le code**
+
+- Règles, calcul des créneaux, dates, `.ics`, e-mails : `src/lib/booking/` (`slots.ts` est la fonction pure ; `rules.ts` les valeurs ; `emails/templates.ts` les quatre modèles ; `emails/send-email.ts` le module d'envoi qui n'envoie rien ; `meeting.ts` le jeton LiveKit).
+- Espace privé : `src/app/app/booking/` (`(pages)/` pour la liste et « Disponibilités », `[id]/meet/` pour la salle du propriétaire et son jeton). Public : `src/app/[handle]/booking/` (onglet, `[code]/` page de l'invité, `[code]/ics`, `[code]/meet/` et son jeton). La salle elle-même : `src/components/meeting/`.
+- Vitrine `/design` : les vrais composants (semainier, billet, liste) et les quatre e-mails, avec des données fictives.
+
+**Données**
+
+- ◆ **Code du lien gardé en clair**, pas en empreinte : le propriétaire doit pouvoir « Copier le lien de l'invité » tant que les e-mails ne partent pas, ce qu'une empreinte empêche. Seuls le propriétaire (RLS) et le détenteur du code atteignent la ligne ; le code fait 24 caractères tirés au hasard (144 bits).
+- Le lien contient le code seul ; la **référence courte** (« K7QM-2XR9 ») est tirée au hasard à part.
+- Les horaires sont rangés en **minutes depuis minuit** (9 h = 540) ; un jour particulier garde ses plages dans une liste (vide = indisponible).
+- Chaque rendez-vous garde la fin de sa pause (`blocked_until`), avec la pause réglée au moment de la réservation : c'est elle que vérifie la contrainte anti-chevauchement (extension `btree_gist`). Changer la pause ensuite ne touche pas les rendez-vous déjà pris.
+- Les réservations d'un même propriétaire passent **une à la fois** (verrou dans la base) : la limite par jour tient même si deux visiteurs valident ensemble.
+- La limite de 10 réservations par heure repose sur une **empreinte** de l'adresse IP (jamais l'adresse elle-même), effacée au bout d'un jour. Un robot qui appellerait directement la base, sans passer par l'application, pourrait la contourner ; la limite par e-mail et l'annulation par le propriétaire restent. Accepté au MVP.
+- Tâches planifiées (`pg_cron`, chaque nuit vers 3 h UTC) : suppression des rendez-vous un an après leur date, et des empreintes IP de plus d'un jour.
+- Tout se supprime avec le compte (vérifié par un test).
+
+**Interface**
+
+- ◆ « À venir » garde un rendez-vous jusqu'à la **fermeture de la salle** (30 minutes après la fin), pour que « Rejoindre » reste à portée ; il passe ensuite dans « Passés ».
+- ◆ Le **point rouge** d'un rendez-vous disparaît quand on ouvre son détail ; celui de la barre latérale, quand tous les rendez-vous à venir ont été ouverts.
+- ◆ L'invité peut annuler **jusqu'au début** du rendez-vous ; le propriétaire, jusqu'à la fin.
+- ◆ Compte à rebours au-delà d'un jour : « 3 j 14:42:10 » (la maquette ne montrait que les heures).
+- ◆ Sous le billet, tant que le rendez-vous est à venir, le cadre « Lien du rendez-vous » de la confirmation reste affiché : la page de confirmation et celle du lien ne font qu'une.
+- ◆ « Réserver un autre créneau » n'apparaît que si les réservations sont ouvertes (sinon, l'adresse mènerait à une page introuvable).
+- Dans le semainier, une colonne vide dit « Fermé » si le jour n'a pas d'horaires dans la semaine, « Indisponible » sinon (jour particulier, ou plus de créneau).
+- « Disponibilités » : à la première visite, le fuseau du navigateur est proposé (à enregistrer). L'interrupteur « Réservations ouvertes » s'enregistre avec le reste de la page, par « Enregistrer ».
+- « Ajouter une date » : un calendrier du mois (un an au plus), plusieurs jours d'un coup ; les jours qui se suivent avec les mêmes horaires s'affichent sur une ligne (« 2 – 6 novembre »).
+- Heures écrites « 10:30 », comme dans les maquettes (et non « 10 h 30 »).
+
+**Visio**
+
+- La salle est faite avec les briques de LiveKit (`LiveKitRoom`, `useTracks`, `useTrackToggle`, `useChat`, `VideoTrack`) assemblées à la main selon la maquette, plutôt qu'avec `VideoConference` tout fait, difficile à habiller.
+- Le jeton est délivré par une adresse du serveur (`…/meet/token`), seulement dans la fenêtre ; il porte la configuration de la salle (2 personnes, fermée 5 minutes après le départ du dernier) et vaut jusqu'à sa fermeture. Arrivée l'heure de fermeture, la page quitte la salle d'elle-même.
+- En haut de la salle, à la demande du porteur du projet (2026-10-17) : un retour vers la plateforme (« Mes rendez-vous » pour le propriétaire, « Mon rendez-vous » pour l'invité), qui quitte la salle (on peut y revenir tant qu'elle est ouverte), et « Copier le lien de l'invité » (« Copier le lien » côté invité).
+- ◆ Le minuteur du haut compte le temps passé dans la salle depuis son entrée. La discussion écrite n'est pas conservée après la visio.
+- Sur mobile, le partage d'écran est masqué (les navigateurs mobiles ne le permettent pas).
+- La présence de l'autre participant n'est pas affichée sur l'écran de préparation (il faudrait se connecter à la salle pour la connaître) : « Vous pouvez entrer et attendre … dans la salle ».
+
+**Repéré en passant (hors module)**
+
+- Un lien habillé en bouton à bordure (`buttonVariants({ variant: "outline" })` sans `cn`) perd sa bordure : c'est le cas de « Télécharger le CV » dans l'en-tête du profil public. Corrigé pour les écrans du module, pas ailleurs.
 
 ## Décisions validées
 

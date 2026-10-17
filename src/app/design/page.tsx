@@ -57,18 +57,18 @@ import { cn } from "@/lib/utils"
 
 import {
   AppointmentActionsMenu,
-  BookingDemo,
   DialogDemo,
   FileActionsMenu,
   ToastDemo,
   TooltipDemo,
 } from "./_components/interactive-demos"
 import { BoardBricks } from "./_components/board-bricks"
+import { BookingBricks } from "./_components/booking-bricks"
 import { DriveBricks } from "./_components/drive-bricks"
 import { SidebarPreview, VisibilityBadge } from "./_components/module-previews"
 import { ProfileBricks } from "./_components/profile-bricks"
 import { EmailPreviews } from "./_components/email-previews"
-import { ModuleHeading, Section, Specimen } from "./_components/showcase"
+import { Section, Specimen } from "./_components/showcase"
 
 const SECTIONS = [
   { id: "themes", title: "Thèmes" },
@@ -887,10 +887,7 @@ export default function DesignPage() {
             <Suspense fallback={<Skeleton className="h-96" />}>
               <ProfileBricks />
             </Suspense>
-            <div>
-              <ModuleHeading module="Module · Rendez-vous" title="Choix d'un créneau" />
-              <BookingDemo />
-            </div>
+            <BookingBricks />
             <BoardBricks />
             {/* The dates of the list are read at the visit ("14:32" today). */}
             <Suspense fallback={<Skeleton className="h-96" />}>
@@ -938,7 +935,7 @@ export default function DesignPage() {
             id="emails"
             index="13"
             title="E-mails"
-            description="Les e-mails de Supabase Auth, aux couleurs de MyWork. Prêts, mais pas encore actifs : ils demandent notre propre service d'envoi (Resend). Les messageries ne comprennent ni les variables CSS ni les polices web : couleurs en valeurs fixes, Georgia et Helvetica en secours, logo en image."
+            description="Les e-mails de Supabase Auth et ceux des rendez-vous, aux couleurs de MyWork. Prêts, mais pas encore actifs : ils demandent notre propre service d'envoi (Resend). Les messageries ne comprennent ni les variables CSS ni les polices web : couleurs en valeurs fixes, Georgia et Helvetica en secours, logo en image."
           >
             <EmailPreviews />
           </Section>

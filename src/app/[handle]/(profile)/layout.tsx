@@ -1,4 +1,5 @@
 import { OfflineBanner, PublicPage } from "@/components/public-page";
+import { isPublicBookingOpen } from "@/lib/booking/public";
 import { hasPublicResources } from "@/lib/drive/public";
 import { getProfileView } from "@/lib/public-profile/data";
 
@@ -12,13 +13,17 @@ export const instant = false;
 
 export default async function PublicProfileLayout({ children, params }: LayoutProps<"/[handle]">) {
   const { handle } = await params;
-  const [view, showResources] = await Promise.all([getProfileView(handle), hasPublicResources(handle)]);
+  const [view, showResources, showBooking] = await Promise.all([
+    getProfileView(handle),
+    hasPublicResources(handle),
+    isPublicBookingOpen(handle),
+  ]);
 
   // Unknown or offline: the page calls notFound(), and not-found.tsx draws the whole page.
   if (!view) return children;
 
   return (
-    <PublicPage banner={view.preview ? <OfflineBanner /> : undefined} header={<ProfileHeader profile={view.profile} showResources={showResources} />}>
+    <PublicPage banner={view.preview ? <OfflineBanner /> : undefined} header={<ProfileHeader profile={view.profile} showResources={showResources} showBooking={showBooking} />}>
       {children}
     </PublicPage>
   );
