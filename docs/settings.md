@@ -42,7 +42,7 @@ Maquettes validées le 2026-10-12 : [Maquettes paramètres](https://claude.ai/ar
 
 ### Adresse e-mail
 
-- Affichée, **non modifiable pour l'instant** (décision du 2026-10-12). Un changement devra être confirmé par un e-mail, ce que le service d'envoi actuel ne permet pas : il n'écrit qu'aux membres de l'équipe Supabase (voir [auth.md](auth.md), *E-mails*). À reprendre avec Resend.
+- Affichée, **non modifiable pour l'instant** (décision du 2026-10-12). Un changement devra être confirmé par un e-mail : c'est possible depuis le branchement de Resend (2026-10-18, voir [auth.md](auth.md), *E-mails*), reste à le développer.
 
 ### Adresse du profil public
 
@@ -93,7 +93,7 @@ Maquettes validées le 2026-10-12 : [Maquettes paramètres](https://claude.ai/ar
 
 ## Hors périmètre (plus tard)
 
-- Changement d'adresse e-mail, confirmé par e-mail (avec Resend), et changement de mot de passe.
+- Changement d'adresse e-mail, confirmé par e-mail (Resend est branché), et changement de mot de passe.
 - Méthodes de connexion (relier ou délier Google).
 - Sections Abonnement et réglages des modules (modules activés, visibles sur le profil).
 - Thème dans les Paramètres (il reste dans le menu du profil).

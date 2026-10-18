@@ -206,7 +206,8 @@ password_requirements = ""
 
 [auth.rate_limit]
 # Number of emails that can be sent per hour. Requires auth.email.smtp to be enabled.
-email_sent = 2
+# 30 an hour for the whole site, with Resend (docs/auth.md, "E-mails").
+email_sent = 30
 # Number of SMS messages that can be sent per hour. Requires auth.sms to be enabled.
 sms_sent = 30
 # Number of anonymous sign-ins that can be made per hour per IP address. Requires enable_anonymous_sign_ins = true.
@@ -243,26 +244,26 @@ otp_length = 8
 # Number of seconds before the email OTP expires (defaults to 1 hour).
 otp_expiry = 3600
 
-# Use a production-ready SMTP server
-# [auth.email.smtp]
-# enabled = true
-# host = "smtp.sendgrid.net"
-# port = 587
-# user = "apikey"
-# pass = "env(SENDGRID_API_KEY)"
-# admin_email = "admin@email.com"
-# sender_name = "Admin"
+# Sending service: Resend (docs/auth.md, "E-mails"), on the verified domain hellomywork.com, region
+# Ireland. The password is the Resend API key, read from RESEND_API_KEY (stored in Vercel, pulled
+# into .env.local by `vercel env pull`): run `config push` with it in the environment.
+[auth.email.smtp]
+enabled = true
+host = "smtp.resend.com"
+port = 465
+user = "resend"
+pass = "env(RESEND_API_KEY)"
+admin_email = "noreply@hellomywork.com"
+sender_name = "MyWork"
 
-# MyWork emails, in French (supabase/templates/, previewed on the local /design page): not active yet.
-# The free plan refuses custom templates with Supabase's built-in email service; they will be
-# enabled with our own sending service (Resend). Until then, Supabase's default emails are used.
-# [auth.email.template.confirmation]
-# subject = "Confirmez votre adresse e-mail"
-# content_path = "./supabase/templates/confirmation.html"
-#
-# [auth.email.template.recovery]
-# subject = "Réinitialisez votre mot de passe"
-# content_path = "./supabase/templates/recovery.html"
+# MyWork emails, in French (supabase/templates/, previewed on the local /design page).
+[auth.email.template.confirmation]
+subject = "Confirmez votre adresse e-mail"
+content_path = "./supabase/templates/confirmation.html"
+
+[auth.email.template.recovery]
+subject = "Réinitialisez votre mot de passe"
+content_path = "./supabase/templates/recovery.html"
 
 # Uncomment to customize email template
 # [auth.email.template.invite]

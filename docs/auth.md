@@ -116,9 +116,7 @@ Dans les maquettes, l'adresse `ines.robert@exemple.fr` (ou `quentin@exemple.fr`)
 
 Deux e-mails : **confirmation de l'inscription** et **réinitialisation du mot de passe**.
 
-> **Pour l'instant, ce sont les e-mails par défaut de Supabase (en anglais).** L'offre gratuite refuse les modèles personnalisés tant qu'on utilise le service d'envoi intégré de Supabase (refus constaté le 2026-10-10). Les modèles MyWork décrits ci-dessous sont prêts dans le dépôt et seront activés avec notre propre service d'envoi (Resend).
->
-> Conséquence : le lien des e-mails par défaut doit être ouvert **dans le navigateur qui a fait la demande**. Ouvert ailleurs, le lien de confirmation confirme quand même l'adresse (la page de connexion l'annonce), mais ne connecte pas ; le lien de réinitialisation mène à « Ce lien n'est plus valide ».
+> **Depuis le 2026-10-18, ce sont les modèles MyWork, envoyés par Resend.** Avant, c'étaient les e-mails par défaut de Supabase (en anglais) : l'offre gratuite refuse les modèles personnalisés avec le service d'envoi intégré. Leur lien devait être ouvert dans le navigateur qui avait fait la demande ; celui des modèles MyWork marche partout.
 
 - **Aux couleurs du design system** : logo MyWork, blanc franc et encre, bouton rouge à angles droits pour l'action, filets fins, titre en sérif, beaucoup d'espace. Les messageries imposent quelques adaptations :
   - couleurs écrites en valeurs fixes (hexadécimal), converties depuis les tokens de `src/app/globals.css` : les messageries ne comprennent ni les variables CSS ni le format `oklch` ;
@@ -129,12 +127,9 @@ Deux e-mails : **confirmation de l'inscription** et **réinitialisation du mot d
 - Contenu (maquettes `Email-Confirmation` et `Email-Reinitialisation`) : sur fond gris perle, une carte blanche de 560 px à filet fin. Dedans : le logo, un filet, une étiquette, le titre en Georgia, un paragraphe, le bouton rouge, la durée de validité du lien, puis le lien en clair pour le cas où le bouton ne marche pas. Sous la carte : « MyWork — L'espace tout-en-un des freelances ».
   - Confirmation : objet « Confirmez votre adresse e-mail », bouton « Confirmer mon adresse ».
   - Réinitialisation : objet « Réinitialisez votre mot de passe », bouton « Choisir un nouveau mot de passe ».
-- Les modèles HTML sont versionnés dans le dépôt (`supabase/templates/`) et ajoutés à la vitrine `/design`, pour contrôler leur rendu. Leur déclaration dans `supabase/config.toml` est en commentaire, à réactiver avec Resend.
-- **Service d'envoi** : celui intégré à Supabase, pour l'instant, avec deux limites :
-  - il n'envoie qu'aux membres de l'équipe du projet Supabase. C'est le cas du compte MyWork du porteur du projet, qui utilise la même adresse Gmail que son compte Supabase. Effet de bord utile : personne d'autre ne peut finaliser une inscription par e-mail ;
-  - 2 e-mails par heure au maximum, tous types confondus ;
-  - l'expéditeur affiché est « Supabase Auth » (`noreply@mail.app.supabase.io`). Afficher « MyWork » demande un service d'envoi à soi.
-- Plus tard : **Resend** (prévu dans la stack). Il demande un nom de domaine vérifié : à brancher à l'achat du domaine, avant l'ouverture à d'autres utilisateurs.
+- Les modèles HTML sont versionnés dans le dépôt (`supabase/templates/`), déclarés dans `supabase/config.toml` et ajoutés à la vitrine `/design`, pour contrôler leur rendu.
+- Le bouton mène à `/auth/confirm?token_hash=…&type=…` : l'application donne à Supabase l'adresse `/auth/confirm` **sans paramètre**, le modèle ajoute le reste (un test unitaire le vérifie).
+- **Service d'envoi** : **Resend**, branché à Supabase par SMTP (`smtp.resend.com`, port 465, mot de passe : la clé `RESEND_API_KEY`). Expéditeur « MyWork » (`noreply@hellomywork.com`). 30 e-mails par heure au plus pour tout le site (réglage Supabase `email_sent`). Chaque envoi se suit dans Resend, *Emails*. Voir [product.md](product.md), *Inventaire technique*.
 
 ## Données de l'utilisateur
 
@@ -166,10 +161,11 @@ Le fournisseur Google est réglé **dans le tableau de bord Supabase** (Authenti
 | URL du site | `https://hellomywork.com` |
 | URL de redirection autorisées | `http://localhost:3000/**`, `https://hellomywork.com/**`, `https://linku-nu.vercel.app/**` et les aperçus Vercel `https://*-mywork-8619.vercel.app/**` |
 | Fournisseur Google | Activé |
-| Modèles d'e-mails | Par défaut de Supabase pour l'instant (offre gratuite) ; ceux de MyWork avec Resend |
+| Envoi des e-mails | Resend (SMTP), expéditeur « MyWork », 30 par heure |
+| Modèles d'e-mails | Ceux de MyWork (`supabase/templates/`) |
 | Durée des sessions | Illimitée (réglage par défaut) |
 
-Ces réglages sont versionnés dans `supabase/config.toml` et appliqués au projet en ligne avec `npx supabase config push`, qui affiche les différences et demande confirmation. Le code secret Google y est lu depuis une variable d'environnement.
+Ces réglages sont versionnés dans `supabase/config.toml` et appliqués au projet en ligne avec `npx supabase config push`, qui affiche les différences et demande confirmation. La clé Resend y est lue depuis la variable `RESEND_API_KEY` : lancer la commande avec les variables de `.env.local` chargées (dans Git Bash : `set -a; . ./.env.local; set +a`).
 
 `config push` envoie **tout** le fichier, pas seulement les lignes modifiées. Avant le premier envoi, le fichier (encore aux valeurs par défaut de l'installation) est donc aligné sur les réglages en ligne, pour ne rien écraser par accident ; les changements ci-dessus sont ajoutés ensuite.
 
@@ -218,7 +214,7 @@ Ce qui revient au porteur du projet :
 
 - Landing page publique.
 - Changer d'e-mail ou de mot de passe, gérer les méthodes de connexion : dans les Paramètres, plus tard (avec Resend pour l'e-mail). La suppression du compte (obligation RGPD avant l'ouverture SaaS) y est déjà : voir [settings.md](settings.md).
-- Resend et nom de domaine ; domaine personnalisé Supabase et logo sur l'écran de Google.
+- Domaine personnalisé Supabase et logo sur l'écran de Google.
 - Protection contre les robots (captcha) à l'inscription, avant l'ouverture SaaS.
 - Autres méthodes : autres fournisseurs (Apple, LinkedIn…), lien magique, double authentification, passkeys.
 - Déconnexion de tous les appareils ; détection des mots de passe compromis (offre payante de Supabase).

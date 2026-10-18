@@ -7,12 +7,11 @@ import { createClient } from "@/lib/supabase/server";
 import { REMEMBER_COOKIE, REMEMBER_COOKIE_OPTIONS } from "@/lib/supabase/session-cookies";
 
 // Links of the emails (sign-up confirmation, password reset). Two forms:
-// - Supabase's default emails (used for now): Supabase checks the link, then sends the visitor
-//   here with a one-time `code`. Exchanging it needs a cookie left by the browser that asked
-//   for the email, so the link must be opened in that same browser.
-// - MyWork's own templates (supabase/templates/, with our own email service later) and the
-//   end-to-end tests: a `token_hash` checked here, which works in any browser.
-// The app adds `type=signup` or `type=recovery` to the return address, to know where to go next.
+// - MyWork's own templates (supabase/templates/, sent with Resend) and the end-to-end tests: a
+//   `token_hash` and its `type` (email or recovery), checked here, which works in any browser.
+// - Supabase's default emails (before Resend; such links may still be around): Supabase checks the
+//   link, then sends the visitor here with a one-time `code`, which needs a cookie left by the
+//   browser that asked for the email.
 const LINK_TYPES: EmailOtpType[] = ["email", "signup", "recovery"];
 
 export async function GET(request: NextRequest) {

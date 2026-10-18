@@ -8,7 +8,7 @@ Statut : **spécifié** le 2026-10-16, à partir des souhaits du porteur du proj
 - **Côté public** : un onglet **« Rendez-vous »** sur le profil public. Le visiteur choisit un jour, puis un créneau de **30 minutes**, et remplit un court formulaire : nom, **e-mail** (obligatoire), fonction (facultatif) et **message** (obligatoire).
 - **Côté privé** : une page **« Mes rendez-vous »**, avec la liste des rendez-vous et les **disponibilités** (horaires de la semaine, jours bloqués, quelques réglages).
 - Chaque rendez-vous a sa **salle de visio** (LiveKit), ouverte **15 minutes avant** l'heure prévue. Avant, la page dit de revenir plus tard : aucune minute de visio n'est consommée pour rien.
-- Les **e-mails** (confirmation à l'invité, avis au propriétaire, annulation) sont **préparés mais pas envoyés** : modèles, contenus et file d'envoi sont prêts, l'envoi sera branché avec Resend et le nom de domaine, plus tard.
+- Les **e-mails** (confirmation à l'invité, avis au propriétaire, annulation) partent avec **Resend** depuis le 2026-10-18 (voir *E-mails*).
 - Pas de synchronisation avec un agenda externe (décision du 2026-10-06) : on bloque à la main les jours pris ailleurs.
 
 ## Maquettes
@@ -154,10 +154,9 @@ Après « Continuer », en deux colonnes (maquette B) : à gauche, le **récapit
 
 ### Confirmation
 
-- Une page « Rendez-vous confirmé » (maquette B : la date et l'heure en grand à gauche, le lien dans un cadre en pointillés à droite) : le récapitulatif, et, **tant que les e-mails ne partent pas**, l'essentiel pour ne rien perdre :
+- Une page « Rendez-vous confirmé » (maquette B : la date et l'heure en grand à gauche, le lien dans un cadre en pointillés à droite) : le récapitulatif, et l'essentiel pour ne rien perdre (aussi dans l'e-mail de confirmation) :
   - **« Ajouter à mon agenda »** : un fichier `.ics` (Google Agenda, Outlook, Apple Calendrier), avec le lien de visio dedans ;
   - le **lien du rendez-vous**, à copier, avec « Gardez ce lien : il permet de rejoindre la visio et d'annuler. » ;
-  - une ligne honnête : « Un e-mail de confirmation vous sera envoyé » n'apparaît **pas** tant que l'envoi n'est pas branché.
 - Cette page **est** la page du lien du rendez-vous (voir ci-dessous) : l'invité y est redirigé, son adresse est donc dans l'historique de son navigateur.
 
 ## Page du rendez-vous (lien de l'invité)
@@ -210,9 +209,9 @@ Brique choisie le 2026-10-06 : **LiveKit** (voir [modules.md](modules.md), *Visi
 - La règle des 15 minutes, la fermeture automatique et la salle vide fermée sont là pour tenir dans l'offre gratuite.
 - Région des données : Union européenne (Francfort), choisie à la création du projet.
 
-## E-mails (préparés, pas envoyés)
+## E-mails
 
-Pas de service d'envoi pour l'instant : Resend et le nom de domaine viendront plus tard (hors périmètre). Le module **prépare tout**, pour que le branchement se résume à une clé et un réglage :
+Envoyés par **Resend** depuis le 2026-10-18, depuis `MyWork <noreply@hellomywork.com>` (avant, ils étaient seulement préparés) :
 
 - **Quatre modèles**, aux couleurs du design system (mêmes règles que les e-mails d'authentification, voir [auth.md](auth.md), *E-mails*), versionnés dans le dépôt et visibles dans la vitrine `/design` :
 
@@ -223,8 +222,12 @@ Pas de service d'envoi pour l'instant : Resend et le nom de domaine viendront pl
 | Annulation | L'autre partie | « Rendez-vous annulé : … » | Qui a annulé, le motif ou le message, « Réserver un autre créneau » (pour l'invité) |
 | Annulation | Celui qui annule | Pas d'e-mail : la page le confirme *(proposé)* | — |
 
-- **File d'envoi** : chaque e-mail est enregistré dans une table (`booking_emails`) avec son destinataire, son modèle, ses données et son état. Aujourd'hui, l'état reste **« non envoyé »** : un module d'envoi unique, dont la version actuelle **n'envoie rien** (elle écrit seulement une ligne dans les journaux). Avec Resend, on remplace ce module, puis on envoie (ou on abandonne) ce qui attend.
-- Ce qui compense l'absence d'e-mails en attendant : la page de confirmation (lien et `.ics`) pour l'invité ; la liste « Mes rendez-vous » pour le propriétaire, avec un **point rouge** sur « Mes rendez-vous » dans la barre latérale tant qu'il y a des réservations non consultées *(proposé)*.
+- **File d'envoi** : la base enregistre chaque e-mail dans une table (`booking_emails`) avec son destinataire, son modèle, ses données et son état, dans la même opération que la réservation ou l'annulation. Juste après la réponse au visiteur, le module d'envoi (`send-email.ts`) prend ces e-mails, les met en forme, joint le `.ics` et les confie à Resend.
+- **États** : `pending` (préparé), `sending` (pris par le serveur), puis `sent`, `failed` (avec l'erreur) ou `abandoned` (jamais envoyé : adresse réservée aux tests, ou e-mail préparé avant Resend). Chaque e-mail n'est pris qu'une fois, et seulement dans l'heure qui suit. Pas de nouvel essai automatique après un échec *(proposé)* : le détail se lit dans Resend, *Emails*, et dans les journaux de Vercel.
+- **Sécurité** : la file reste fermée à l'API. Le serveur la lit par deux fonctions de la base qui demandent le **code secret d'envoi** (`BOOKING_EMAILS_SECRET`, dans Vercel seulement ; la base n'en garde que l'empreinte) : l'application n'a pas besoin de la clé secrète Supabase. Changer ce code : le changer dans Vercel et mettre son empreinte SHA-256 dans une nouvelle migration.
+- Sans `RESEND_API_KEY` ou sans `BOOKING_EMAILS_SECRET` (tests sur GitHub), rien ne part et les e-mails restent `pending`.
+- Les adresses réservées aux tests (`example.com`, `.test`, `.invalid`…) ne reçoivent jamais rien, pour ne pas nuire à la réputation du domaine.
+- En plus des e-mails : la page de confirmation (lien et `.ics`) pour l'invité ; un **point rouge** sur « Mes rendez-vous » dans la barre latérale tant qu'il y a des réservations non consultées *(proposé)*.
 - **Rappels** (24 h et 1 h avant) : plus tard, avec Resend *(proposé)*.
 
 ## Protection contre les abus
@@ -233,7 +236,7 @@ Pas de service d'envoi pour l'instant : Resend et le nom de domaine viendront pl
   - un champ piège invisible (« honeypot ») qui écarte les robots simples ;
   - **3 rendez-vous à venir au plus par adresse e-mail** chez un même propriétaire ;
   - **10 réservations par heure au plus** depuis une même adresse IP.
-- L'e-mail n'est pas vérifié (pas d'envoi possible) : un faux rendez-vous peut passer. Le propriétaire l'annule ; c'est accepté au MVP. Avec Resend, l'e-mail de confirmation rendra la vérification possible ; un CAPTCHA (Cloudflare Turnstile) viendra avec le SaaS, si besoin.
+- L'e-mail n'est pas vérifié : un faux rendez-vous peut passer. Le propriétaire l'annule ; c'est accepté au MVP. Resend rend une vérification possible (plus tard) ; un CAPTCHA (Cloudflare Turnstile) viendra avec le SaaS, si besoin.
 
 ## RGPD
 
@@ -255,7 +258,7 @@ Pas de service d'envoi pour l'instant : Resend et le nom de domaine viendront pl
   - réserver (la fonction refait toutes les vérifications : créneau valide, libre, préavis, horizon, limites) ;
   - lire et annuler un rendez-vous à partir de son code.
 - **Pas de double réservation** : une contrainte de la base interdit deux rendez-vous confirmés qui se chevauchent pour un même propriétaire (pause comprise). Si deux visiteurs valident le même créneau à la même seconde, un seul passe ; l'autre reçoit « Ce créneau vient d'être réservé ».
-- La clé secrète Supabase n'est pas utilisée.
+- La clé secrète Supabase n'est pas utilisée (la file d'envoi a son propre code secret, voir *E-mails*).
 
 ## Technique
 
@@ -265,7 +268,7 @@ Pour les agents qui développeront le module.
 - **Dates et fuseaux** : tout est stocké en UTC ; les horaires du propriétaire sont des heures locales de son fuseau, converties jour par jour (changements d'heure). Bibliothèque *(proposé)* : `date-fns` avec `@date-fns/tz`. Le calcul des créneaux est une fonction pure de `src/lib/booking/`, couverte par des tests unitaires, et la même règle est vérifiée par la base à la réservation.
 - **Visio** *(proposé)* : `livekit-server-sdk` côté serveur (fabrique un jeton d'accès de courte durée, seulement dans la fenêtre d'ouverture, pour la salle `booking-<id>`, 2 participants au plus, fermeture après 5 minutes vide), `livekit-client` et `@livekit/components-react` dans le navigateur. Clés LiveKit (`LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`) dans Vercel, jamais dans le navigateur ; `.env.example` mis à jour.
 - **Compte LiveKit Cloud** : créé le 2026-10-16, offre gratuite. Projet **MyWork**, identifiant `p_55iutdslog4`, adresse `wss://mywork-2u2z4y18.livekit.cloud`, région de données **Union européenne (Francfort)** (impossible à changer ensuite), observabilité des agents désactivée (pas d'agents IA). Une clé d'accès existe déjà (*Settings › API keys*) ; ses trois valeurs sont rangées dans Vercel par le porteur du projet et récupérées dans `.env.local` (`vercel env pull`, 2026-10-16). Modèle dans `.env.example`.
-- **E-mails** : modèles en HTML dans `src/lib/booking/emails/` (ou avec la bibliothèque de Resend, React Email, au moment du branchement), un module `send-email.ts` unique dont la version actuelle n'envoie rien. Le `.ics` est fabriqué à la main (format texte simple), sans bibliothèque *(proposé)*.
+- **E-mails** : modèles en HTML dans `src/lib/booking/emails/templates.ts` ; mise en forme et envoi dans `deliver.ts` (logique pure, tests unitaires) ; branchement à la file et à Resend (bibliothèque `resend`, envoi après la réponse avec `after()`, clé d'idempotence par e-mail) dans `send-email.ts` ; fonctions de la base `claim_booking_emails` et `finish_booking_email` (migration `20261018120000_send_booking_emails.sql`). Le `.ics` est fabriqué à la main (format texte simple), sans bibliothèque *(proposé)*.
 - **Tâche planifiée** (suppression au bout d'un an) : `pg_cron` dans Supabase *(proposé)*, plutôt qu'une tâche Vercel.
 - Code du module : `src/app/app/booking/` (liste, disponibilités, salle du propriétaire), `src/app/[handle]/booking/` (onglet, page du rendez-vous, salle de l'invité), règles partagées dans `src/lib/booking/`. Lien « Mes rendez-vous » dans `src/app/app/_components/sidebar-nav.tsx` ; onglet et bouton « Prendre rendez-vous » dans `profile-header.tsx`.
 - Reporter dans `docs/product.md`, *Inventaire technique* : LiveKit Cloud, les bibliothèques retenues, la tâche planifiée.
@@ -358,14 +361,14 @@ Choix pris le 2026-10-16 sans le porteur du projet, à sa demande, puis validés
 7. **Formulaire** : nom ajouté (obligatoire), et entreprise (facultatif), en plus de l'e-mail, de la fonction et du message demandés.
 8. **Lien secret** par rendez-vous pour l'invité, sans compte : rejoindre, ajouter à l'agenda, annuler. Pas de replanification au MVP.
 9. **Visio** : salle ouverte de 15 minutes avant à 30 minutes après la fin prévue, fermée après 5 minutes vide ; écran de préparation ; micro, caméra, partage d'écran, discussion écrite ; pas d'enregistrement.
-10. **E-mails** : quatre modèles et une file d'envoi qui n'envoie rien ; pas d'e-mail à celui qui annule ; rappels plus tard. En attendant : lien et `.ics` sur la page de confirmation, point rouge dans la barre latérale.
+10. **E-mails** : quatre modèles et une file d'envoi (envoi réel avec Resend depuis le 2026-10-18) ; pas d'e-mail à celui qui annule ; rappels plus tard. En plus : lien et `.ics` sur la page de confirmation, point rouge dans la barre latérale.
 11. **Anti-abus** : champ piège, 3 rendez-vous à venir par e-mail, 10 réservations par heure et par adresse IP ; pas de CAPTCHA au MVP.
 12. **RGPD** : rendez-vous passés ou annulés supprimés automatiquement au bout d'un an.
 13. **Bibliothèques** : `date-fns` et `@date-fns/tz` ; `livekit-server-sdk`, `livekit-client`, `@livekit/components-react` ; `.ics` sans bibliothèque ; `pg_cron`.
 
 ## Hors périmètre (plus tard)
 
-- Envoi réel des e-mails (Resend), nom de domaine, rappels avant le rendez-vous.
+- Rappels avant le rendez-vous (avec Resend), vérification de l'e-mail de l'invité.
 - Plusieurs types de rendez-vous, autres durées, rendez-vous en personne ou par téléphone.
 - Replanification par l'invité ou par le propriétaire.
 - Synchronisation avec un agenda externe : écartée (décision du 2026-10-06).

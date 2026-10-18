@@ -45,6 +45,11 @@ async function owner(changes: Parameters<typeof setupBooking>[1] = {}) {
   return { user, handle };
 }
 
+// With Resend configured (.env.local), the emails of the test addresses are taken from the queue and
+// abandoned, never sent; without it (GitHub), they stay "pending".
+const SENDING = !!process.env.RESEND_API_KEY && !!process.env.BOOKING_EMAILS_SECRET;
+const QUEUED = SENDING ? "abandoned" : "pending";
+
 const slotName = (slot: Date, timeZone = PARIS) => `${formatDate(slot, timeZone)}, ${formatTime(slot, timeZone)}`;
 
 test.describe("Rendez-vous", () => {
@@ -178,7 +183,7 @@ test.describe("Rendez-vous", () => {
     await visitor.getByLabel("Objet du rendez-vous").fill("Audit UX de notre parcours d'inscription.");
     await visitor.getByRole("button", { name: "Confirmer le rendez-vous" }).click();
     await expect(visitor.getByText("Cette adresse e-mail n'est pas valide.")).toBeVisible();
-    await visitor.getByLabel("E-mail").fill("marc.dubois@exemple.fr");
+    await visitor.getByLabel("E-mail").fill("marc.dubois@exemple.test");
     await visitor.getByLabel("Fonction").fill("Directeur produit");
     await visitor.getByLabel("Entreprise").fill("Alto");
     await expect(visitor.getByText("Vos informations sont transmises à Inès Robert, uniquement pour ce rendez-vous.")).toBeVisible();
@@ -189,7 +194,6 @@ test.describe("Rendez-vous", () => {
     await expect(visitor.getByText("Rendez-vous confirmé")).toBeVisible();
     await expect(visitor.getByText("Lien du rendez-vous")).toBeVisible();
     await expect(visitor.getByText("Gardez ce lien : il permet de rejoindre la visio et d'annuler.")).toBeVisible();
-    await expect(visitor.getByText("Un e-mail de confirmation vous sera envoyé")).toHaveCount(0);
     await expect(visitor.getByRole("button", { name: "Rejoindre la visio" })).toBeDisabled();
     const icsLink = await visitor.getByRole("link", { name: "Ajouter à l'agenda" }).getAttribute("href");
     const ics = await visitor.request.get(icsLink!);
@@ -199,16 +203,16 @@ test.describe("Rendez-vous", () => {
     expect(icsText).toContain(`DTSTART:${first.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "")}`);
     expect(icsText).toContain("SUMMARY:Rendez-vous avec Inès Robert");
 
-    // Saved, with the two emails prepared and not sent.
+    // Saved, with the two emails (to test addresses: never sent).
     const [booking] = await bookingsOf(user.id);
     expect(booking).toMatchObject({ start_at: expect.any(String), status: "confirmed", is_seen: false, guest_name: "Marc Dubois" });
     expect(new Date(booking.start_at).getTime()).toBe(first.getTime());
-    const emails = await emailsOf(user.id);
-    expect(emails.map((e) => [e.template, e.status])).toEqual([
-      ["guest_confirmation", "pending"],
-      ["owner_new_booking", "pending"],
+    await expect.poll(async () => (await emailsOf(user.id)).map((e) => [e.template, e.status])).toEqual([
+      ["guest_confirmation", QUEUED],
+      ["owner_new_booking", QUEUED],
     ]);
-    expect(emails[0].recipient).toBe("marc.dubois@exemple.fr");
+    const emails = await emailsOf(user.id);
+    expect(emails[0].recipient).toBe("marc.dubois@exemple.test");
     expect(emails[1].recipient).toBe(user.email);
 
     // The slot is gone, and its break with it; the slot right after the break appears.
@@ -230,7 +234,7 @@ test.describe("Rendez-vous", () => {
     await expect(page.getByText("Directeur produit · Alto")).toBeVisible();
     await page.getByRole("button", { name: /^Marc Dubois/ }).click();
     const detail = page.getByRole("dialog", { name: "Marc Dubois" });
-    await expect(detail.getByText("marc.dubois@exemple.fr")).toBeVisible();
+    await expect(detail.getByText("marc.dubois@exemple.test")).toBeVisible();
     await expect(detail.getByText("Audit UX de notre parcours d'inscription.")).toBeVisible();
     await expect(detail.getByRole("button", { name: "Copier le lien de l'invité" })).toBeVisible();
     await page.keyboard.press("Escape");
@@ -238,6 +242,30 @@ test.describe("Rendez-vous", () => {
     await page.reload();
     await expect(page.getByRole("img", { name: "Nouveau" })).toHaveCount(0);
     await expect(nav.getByRole("img", { name: "Nouvelles réservations" })).toHaveCount(0);
+  });
+
+  // A real email, to the test address of Resend (delivered@resend.dev: accepted, delivered nowhere).
+  test("the confirmation is sent to the guest with Resend", async ({ browser }) => {
+    test.skip(!SENDING, "Resend is not configured here (RESEND_API_KEY, BOOKING_EMAILS_SECRET).");
+    const { user, handle } = await owner();
+    const visitor = await (await browser.newContext({ timezoneId: PARIS, locale: "fr-FR" })).newPage();
+    const [first] = await freeSlots(handle);
+
+    await visitor.goto(`/${handle}/booking`);
+    await visitor.getByRole("button", { name: slotName(first) }).click();
+    await visitor.getByRole("button", { name: "Continuer" }).click();
+    await visitor.getByLabel("Nom").fill("Marc Dubois");
+    await visitor.getByLabel("E-mail").fill("delivered@resend.dev");
+    await visitor.getByLabel("Objet du rendez-vous").fill("Audit UX de notre parcours d'inscription.");
+    await visitor.getByRole("button", { name: "Confirmer le rendez-vous" }).click();
+    await expect(visitor.getByText("Rendez-vous confirmé")).toBeVisible();
+
+    await expect
+      .poll(async () => (await emailsOf(user.id)).map((e) => [e.template, e.status, e.recipient]), { timeout: 30_000 })
+      .toEqual([
+        ["guest_confirmation", "sent", "delivered@resend.dev"],
+        ["owner_new_booking", "abandoned", user.email],
+      ]);
   });
 
   test("a slot taken meanwhile, and two visitors at the same second", async ({ page }) => {
@@ -248,7 +276,7 @@ test.describe("Rendez-vous", () => {
     await page.getByRole("button", { name: slotName(first, HOST_ZONE) }).click();
     await page.getByRole("button", { name: "Continuer" }).click();
     await page.getByLabel("Nom").fill("Marc Dubois");
-    await page.getByLabel("E-mail").fill("marc.dubois@exemple.fr");
+    await page.getByLabel("E-mail").fill("marc.dubois@exemple.test");
     await page.getByLabel("Objet du rendez-vous").fill("Un projet.");
     // Someone else takes it first.
     expect((await book(handle, first)).status).toBe("ok");
@@ -367,11 +395,12 @@ test.describe("Rendez-vous", () => {
       ["Alice Martin", "cancelled", "owner", "Un imprévu ce jour-là."],
       ["Bruno Petit", "cancelled", "guest", "Réunion déplacée."],
     ]);
-    const emails = (await emailsOf(user.id)).filter((e) => e.template.endsWith("cancelled"));
-    expect(emails.map((e) => [e.template, e.status, e.recipient])).toEqual([
-      ["guest_cancelled", "pending", expect.stringContaining("@exemple.fr")],
-      ["owner_cancelled", "pending", user.email],
-    ]);
+    await expect
+      .poll(async () => (await emailsOf(user.id)).filter((e) => e.template.endsWith("cancelled")).map((e) => [e.template, e.status, e.recipient]))
+      .toEqual([
+        ["guest_cancelled", QUEUED, expect.stringContaining("@exemple.test")],
+        ["owner_cancelled", QUEUED, user.email],
+      ]);
 
     // A cancelled booking is deleted for good.
     await page.reload();
@@ -483,7 +512,7 @@ test.describe("Rendez-vous", () => {
     expect((await bookingsOf(user.id)).length).toBe(1);
 
     // 3 upcoming bookings at most for one email.
-    const email = `limite.${Date.now()}@exemple.fr`;
+    const email = `limite.${Date.now()}@exemple.test`;
     expect((await book(handle, slots[10], { email })).status).toBe("ok");
     expect((await book(handle, slots[12], { email })).status).toBe("ok");
     expect((await book(handle, slots[14], { email: email.toUpperCase() })).status).toBe("ok");
@@ -502,7 +531,7 @@ test.describe("Rendez-vous", () => {
     await page.getByRole("button", { name: slotName(slot, HOST_ZONE) }).click();
     await page.getByRole("button", { name: "Continuer" }).click();
     await page.getByLabel("Nom").fill("Robot");
-    await page.getByLabel("E-mail").fill("robot@exemple.fr");
+    await page.getByLabel("E-mail").fill("robot@exemple.test");
     await page.getByLabel("Objet du rendez-vous").fill("Spam");
     await page.locator("#guest-website").fill("https://spam.example", { force: true });
     await page.getByRole("button", { name: "Confirmer le rendez-vous" }).click();

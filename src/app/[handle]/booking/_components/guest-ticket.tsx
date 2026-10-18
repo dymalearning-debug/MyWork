@@ -196,7 +196,7 @@ export function GuestTicket({
   );
 }
 
-// The link of the booking, to keep while no email is sent.
+// The link of the booking, to keep (it is also in the confirmation email).
 function KeepLink({ path }: { path: string }) {
   const [copied, setCopied] = useState(false);
   const origin = useOrigin();

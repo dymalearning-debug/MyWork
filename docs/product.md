@@ -67,7 +67,7 @@ Vue d'ensemble de tout ce qu'utilise l'application, au-delà des grands choix ci
 | Nom de domaine **`hellomywork.com`**, acheté chez Vercel (11,25 $/an, échéance le 2027-10-18) | Adresse de la production, reliée au projet `linku`. `www.hellomywork.com` y redirige ; `linku-nu.vercel.app` reste valide | Vercel, *Domains* | 2026-10-18 |
 | **GitHub**, dépôt `dymalearning-debug/MyWork` | Code, tests automatiques à chaque modification | GitHub, *Actions* | Étape 1 |
 | Supabase Storage, compartiment **`drive-files`** | Fichiers du Drive et leurs vignettes. **Privé** (téléchargement par adresses temporaires ; visiteurs : fichiers publics d'un profil en ligne seulement), un dossier par utilisateur, 50 Mo, tous types sauf exécutables ([drive.md](drive.md)) | Supabase, *Storage* | Étape 5 |
-| **Resend** | E-mails aux couleurs de MyWork. *Prévu* (modèles prêts, y compris les quatre des rendez-vous et leur file d'envoi `booking_emails`, qui n'envoie rien pour l'instant) | — | Plus tard |
+| **Resend**, compte du porteur du projet (connexion Google), offre gratuite (3 000 e-mails par mois, 100 par jour) | Envoi de tous les e-mails, depuis `MyWork <noreply@hellomywork.com>` : ceux de la connexion (Supabase, par SMTP) et ceux des rendez-vous (l'application, par l'API). Domaine `hellomywork.com` vérifié, région **Irlande** (`eu-west-1`), suivi des ouvertures et des clics désactivé. Enregistrements DNS (DKIM `resend._domainkey`, `send` et `rsend`, DMARC `_dmarc`) ajoutés chez Vercel. Clé `RESEND_API_KEY` (envoi seulement, ce domaine seulement) rangée dans Vercel ; code secret d'envoi des rendez-vous `BOOKING_EMAILS_SECRET` aussi ([booking.md](booking.md), *E-mails*) | resend.com, *Emails* (chaque envoi et son état) | 2026-10-18 |
 | **LiveKit Cloud**, projet **MyWork** (`p_55iutdslog4`), région UE (Francfort), offre gratuite *Build* | Visio des rendez-vous ([booking.md](booking.md)). Compte créé le 2026-10-16 ; adresse `wss://mywork-2u2z4y18.livekit.cloud`. Clés rangées dans Vercel (`LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`), récupérées dans `.env.local` | cloud.livekit.io | Étape 4 |
 
 **Bibliothèques** (`package.json`)
@@ -91,6 +91,7 @@ Vue d'ensemble de tout ce qu'utilise l'application, au-delà des grands choix ci
 | `tus-js-client` | Envoi reprenable des fichiers du Drive, directement du navigateur vers Supabase, avec progression ([drive.md](drive.md)) | Étape 5 |
 | `date-fns`, `@date-fns/tz` | Dates et fuseaux horaires des rendez-vous : horaires du propriétaire convertis jour par jour, changements d'heure compris ([booking.md](booking.md)) | Étape 4 |
 | `livekit-server-sdk`, `livekit-client`, `@livekit/components-react` | Visio : jetons d'accès côté serveur, salle dans le navigateur ([booking.md](booking.md)) | Étape 4 |
+| `resend` | Envoi des e-mails des rendez-vous par l'API de Resend ([booking.md](booking.md)) | 2026-10-18 |
 | Extensions PostgreSQL `btree_gist` et `pg_cron` (Supabase) | `btree_gist` : contrainte qui interdit deux rendez-vous qui se chevauchent ; `pg_cron` : tâches de la base chaque nuit (rendez-vous effacés un an après leur date, empreintes IP après un jour) | Étape 4 |
 
 ## Roadmap
@@ -247,6 +248,12 @@ Journal des choix validés (date : décision).
   - partie privée (« Mes rendez-vous ») en direction **« A · Agenda »** : liste groupée par jour ;
   - écartées : le calendrier du mois à la Calendly (A), l'agenda de la semaine pour « Mes rendez-vous » (B), toute la direction éditoriale « C · Carnet » ; retirées du canevas ;
   - écrans suivants dessinés dans ces styles et validés tels quels : « Disponibilités », prise de rendez-vous sur mobile, écran de préparation et salle de visio, quatre e-mails (dont l'annulation dans les deux sens). Le module est prêt pour le développement.
+- 2026-10-18 : **Resend** branché (compte créé par le porteur du projet ; le reste décidé sans lui, à sa demande, à valider) :
+  - expéditeur `MyWork <noreply@hellomywork.com>`, sur le domaine principal ; région Irlande ; pas de suivi des ouvertures ni des clics ;
+  - Supabase envoie les e-mails de connexion par Resend : modèles MyWork en français activés, liens valables dans n'importe quel navigateur, **30 e-mails par heure** pour tout le site (au lieu de 2), et plus de limite aux seuls membres de l'équipe Supabase ;
+  - les e-mails des rendez-vous partent pour de vrai ; ceux restés en attente (rendez-vous de test) sont **abandonnés** ;
+  - l'application n'a toujours pas la clé secrète Supabase : elle prend les e-mails dans la file avec un **code secret d'envoi** (`BOOKING_EMAILS_SECRET`, dans Vercel), qui n'ouvre que cette file ;
+  - les adresses réservées aux tests (`example.com`, `.test`…) ne reçoivent jamais rien ; un test de bout en bout envoie un vrai e-mail à l'adresse de test de Resend (`delivered@resend.dev`), seulement sur un poste où Resend est configuré (pas sur GitHub).
 - 2026-10-15 : retours du porteur du projet sur « Mes fichiers », après essai : plus de nombre d'éléments à côté du titre ; dans un dossier, fil d'Ariane discret (texte courant, pas de titre en Newsreader) ; « Télécharger » ferme l'aperçu ; pied de page aligné sur le bloc du profil de la barre latérale.
 
 - 2026-10-16 : module Rendez-vous développé, avec la visio (détail dans [booking.md](booking.md), *Précisé pendant le développement*). Choix faits en cours de route, à valider par le porteur du projet : code du lien de l'invité gardé en clair (pour « Copier le lien de l'invité ») ; un rendez-vous reste « À venir » jusqu'à la fermeture de sa salle ; point rouge retiré à l'ouverture du détail ; annulation par l'invité jusqu'au début ; compte à rebours en jours au-delà de 24 heures ; salle de visio assemblée avec les briques de LiveKit plutôt que son écran tout fait ; nouveau token `stage` (fond fixe des vidéos).

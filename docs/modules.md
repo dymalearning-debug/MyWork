@@ -46,10 +46,10 @@ MVP (revu le 2026-10-16)
 - Privé, « Mes rendez-vous » (`/app/booking`) : liste des rendez-vous (à venir, passés, annulés), annulation ; disponibilités hebdomadaires (plages horaires par jour), exceptions (congés, jours bloqués), réglages à la Calendly (pause après un rendez-vous, préavis minimum, horizon, limite par jour). Un seul type de rendez-vous : visio de 30 minutes.
 - Public, onglet « Rendez-vous » (`/<identifiant>/booking`) : calendrier et créneaux libres dans le fuseau du visiteur, réservation (nom, e-mail, fonction, entreprise, message), lien secret du rendez-vous pour rejoindre la visio ou annuler, `.ics`.
 - Visio LiveKit intégrée (avancée de l'étape 7), salle ouverte 15 minutes avant.
-- E-mails aux deux parties préparés (modèles, file d'envoi) mais pas envoyés, en attendant Resend.
+- E-mails aux deux parties, envoyés par Resend (depuis le 2026-10-18).
 
 Plus tard
-- Envoi des e-mails et rappels (Resend).
+- Rappels avant le rendez-vous (Resend).
 - Replanification par le client, plusieurs types de rendez-vous.
 
 Hors périmètre

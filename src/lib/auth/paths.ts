@@ -8,6 +8,13 @@ export const LOGIN_PATH = "/login";
 // The login page announces the deletion of the account (?notice=account-deleted, docs/settings.md).
 export const ACCOUNT_DELETED_NOTICE = "account-deleted";
 
+// Return address of the email links (sign-up confirmation, password reset): /auth/confirm, which
+// checks the link and opens the session. Without any query: the MyWork templates
+// (supabase/templates/) add "?token_hash=…&type=…" themselves, and the type tells where to go next.
+export function emailLinkTarget(origin: string) {
+  return `${origin}/auth/confirm`;
+}
+
 // Pages a signed-in visitor has no reason to see: sent to the app instead.
 const SIGNED_OUT_ONLY = ["/login", "/signup"];
 
