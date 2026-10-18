@@ -21,7 +21,7 @@ Maquettes validées le 2026-10-12 : [Maquettes paramètres](https://claude.ai/ar
 - **Page Profil**, d'une traite, sans catégories ni texte d'aide :
   - Prénom et Nom côte à côte, facultatifs ;
   - Adresse e-mail, grisée ;
-  - un filet, puis **Adresse de mon profil public**, avec une icône « ? » : au survol, l'infobulle « L'adresse de la page que vous partagez avec vos clients et recruteurs. ». Le champ est précédé de l'adresse du site (`linku-nu.vercel.app/`, ou celle du site où l'on est) ;
+  - un filet, puis **Adresse de mon profil public**, avec une icône « ? » : au survol, l'infobulle « L'adresse de la page que vous partagez avec vos clients et recruteurs. ». Le champ est précédé de l'adresse du site (`hellomywork.com/`, ou celle du site où l'on est) ;
   - tout en bas, à gauche, le bouton « Supprimer le compte » (variante `destructive`).
 - **Pied de la fenêtre** : « Modifications non enregistrées » (pastille `warning`) dès qu'un champ change, puis « Annuler » et « Enregistrer » (le bouton rouge de l'écran).
 

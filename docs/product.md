@@ -64,6 +64,7 @@ Vue d'ensemble de tout ce qu'utilise l'application, au-delà des grands choix ci
 | Supabase Storage, compartiment **`profile-images`** | Photo du profil, images des projets. Public par adresse, un dossier par utilisateur, 5 Mo, JPG/PNG/WebP | Supabase, *Storage* | Étape 2 |
 | Supabase Storage, compartiment **`board-images`** | Images des cartes. **Privé** (affichage par adresses temporaires, une heure), un dossier par utilisateur, 5 Mo, JPG/PNG/WebP/GIF ([boards.md](boards.md)) | Supabase, *Storage* | Étape 3 |
 | **Vercel**, équipe `mywork-8619`, projet `linku` | Hébergement, production à chaque push sur `main`, aperçu par pull request. Fonctions à Washington (`iad1`) aujourd'hui, Dublin prévu | Tableau de bord Vercel | Étape 1 |
+| Nom de domaine **`hellomywork.com`**, acheté chez Vercel (11,25 $/an, échéance le 2027-10-18) | Adresse de la production, reliée au projet `linku`. `www.hellomywork.com` y redirige ; `linku-nu.vercel.app` reste valide | Vercel, *Domains* | 2026-10-18 |
 | **GitHub**, dépôt `dymalearning-debug/MyWork` | Code, tests automatiques à chaque modification | GitHub, *Actions* | Étape 1 |
 | Supabase Storage, compartiment **`drive-files`** | Fichiers du Drive et leurs vignettes. **Privé** (téléchargement par adresses temporaires ; visiteurs : fichiers publics d'un profil en ligne seulement), un dossier par utilisateur, 50 Mo, tous types sauf exécutables ([drive.md](drive.md)) | Supabase, *Storage* | Étape 5 |
 | **Resend** | E-mails aux couleurs de MyWork. *Prévu* (modèles prêts, y compris les quatre des rendez-vous et leur file d'envoi `booking_emails`, qui n'envoie rien pour l'instant) | — | Plus tard |
@@ -122,6 +123,7 @@ Journal des choix validés (date : décision).
 - 2026-10-06 : stack technique : TypeScript, Next.js, Tailwind CSS + shadcn/ui, Supabase, Vercel, Resend, Stripe, GitHub (voir *Stack technique*).
 - 2026-10-06 : données hébergées dans l'UE chez des prestataires américains (Supabase, Vercel), préférés à des hébergeurs 100 % européens pour la simplicité et la maîtrise par l'IA.
 - 2026-10-06 : budget nul pendant le développement (offres gratuites uniquement). Environ 45 $/mois accepté une fois l'outil en usage réel.
+- 2026-10-18 : nom de domaine **`hellomywork.com`**, acheté chez Vercel par le porteur du projet (`mywork.com` et les « mywork » des autres extensions sont pris ; Vercel ne vend pas les `.fr`). Il devient l'adresse de la production ; l'ancienne adresse `linku-nu.vercel.app` reste valide.
 - 2026-10-06 : tests avec les outils standards d'une application Next.js : Vitest (unitaires) et Playwright (bout en bout).
 - 2026-10-07 : le produit s'appelle **MyWork** (remplace le nom provisoire « Linku »).
 - 2026-10-07 : projet Supabase **MyWork** (offre gratuite), en Irlande (West EU) plutôt qu'à Paris : données toujours dans l'UE, écart de rapidité négligeable. RLS activée automatiquement sur chaque nouvelle table, et aucune table exposée à l'API par défaut : l'accès est ouvert table par table, dans les migrations.

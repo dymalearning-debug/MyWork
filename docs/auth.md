@@ -153,7 +153,7 @@ Le fournisseur Google est réglé **dans le tableau de bord Supabase** (Authenti
    - *Branding* : nom MyWork, e-mail d'assistance. Pas de logo pour l'instant, car il déclencherait une vérification de la marque par Google (plusieurs jours).
    - *Audience* : externe, statut **Testing**, avec son adresse comme utilisateur test. Seuls les utilisateurs test peuvent alors utiliser Google : un verrou bienvenu tant que l'application est personnelle. Sans effet sur la durée de connexion à MyWork.
    - *Data access* : `openid`, `email`, `profile`, qui ne demandent aucune vérification par Google.
-   - *Clients* : un client OAuth de type « Application Web ». Origines autorisées : `http://localhost:3000` et `https://linku-nu.vercel.app`. URI de redirection : `https://ulufanywmrporutivwgc.supabase.co/auth/v1/callback`.
+   - *Clients* : un client OAuth de type « Application Web ». Origines autorisées : `http://localhost:3000` et `https://linku-nu.vercel.app` (inutiles ici, la connexion passant par Supabase : `https://hellomywork.com` n'y a donc pas été ajoutée). URI de redirection : `https://ulufanywmrporutivwgc.supabase.co/auth/v1/callback`.
 2. **Supabase** : activer le fournisseur Google avec l'identifiant et le code secret du client OAuth. Le porteur du projet colle lui-même le code secret (Claude ne saisit jamais de secret). Il n'est jamais écrit dans le dépôt.
 3. Limite : l'écran de Google affichera « continuer vers ulufanywmrporutivwgc.supabase.co ». Y afficher MyWork demande un domaine personnalisé chez Supabase, option payante : plus tard.
 
@@ -163,8 +163,8 @@ Le fournisseur Google est réglé **dans le tableau de bord Supabase** (Authenti
 |---|---|
 | Confirmation de l'e-mail | Activée |
 | Longueur minimale du mot de passe | 8 caractères |
-| URL du site | `https://linku-nu.vercel.app` |
-| URL de redirection autorisées | `http://localhost:3000/**`, `https://linku-nu.vercel.app/**` et les aperçus Vercel `https://*-mywork-8619.vercel.app/**` |
+| URL du site | `https://hellomywork.com` |
+| URL de redirection autorisées | `http://localhost:3000/**`, `https://hellomywork.com/**`, `https://linku-nu.vercel.app/**` et les aperçus Vercel `https://*-mywork-8619.vercel.app/**` |
 | Fournisseur Google | Activé |
 | Modèles d'e-mails | Par défaut de Supabase pour l'instant (offre gratuite) ; ceux de MyWork avec Resend |
 | Durée des sessions | Illimitée (réglage par défaut) |

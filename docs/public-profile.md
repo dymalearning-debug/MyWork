@@ -80,7 +80,7 @@ Maquettes validées le 2026-10-12, direction **« Onglets »** : [Maquettes prof
 | Page publique sur mobile | `Page publique — mobile` : mêmes réglages |
 | Menu du profil et ses sous-menus | `Espace privé — menu du profil` : interactive (sous-menus, interrupteur, copier) ; réglage « interrupteur » : rouge (retenu) ou encre |
 
-Dans les maquettes, Inès Robert (`ines-robert`) est un personnage fictif, et `linku-nu.vercel.app` l'adresse actuelle de la production. Le réglage « avec modules » illustre le cadre une fois les modules arrivés : les cadres en pointillés marquent leurs emplacements.
+Dans les maquettes, Inès Robert (`ines-robert`) est un personnage fictif, et `linku-nu.vercel.app` l'adresse de la production à l'époque (aujourd'hui `hellomywork.com`). Le réglage « avec modules » illustre le cadre une fois les modules arrivés : les cadres en pointillés marquent leurs emplacements.
 
 Écartées : « Colonne » (une seule page étroite qui défile, les modules les uns sous les autres) et « Sommaire » (une couverture façon magazine, puis une tuile par module).
 

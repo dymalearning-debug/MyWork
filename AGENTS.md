@@ -48,7 +48,7 @@ Point d'entrée pour tout agent (IA ou humain) qui travaille sur ce dépôt. À 
 - Tests : `npm test` (Vitest, unitaires) et `npm run test:e2e` (Playwright, sur la base en ligne ; comptes de test supprimés à la fin).
 - **Jamais de base de données locale** (ni `npx supabase start`, ni Docker) : développement et production utilisent le même projet Supabase en ligne, jusqu'à la fin du développement (voir `docs/product.md`, *Décisions*).
 - Dépôt GitHub : https://github.com/dymalearning-debug/MyWork (privé).
-- Déploiement : Vercel, équipe `mywork-8619`, projet `linku` (ancien nom du produit). Chaque push sur `main` part en production (https://linku-nu.vercel.app) ; chaque pull request reçoit une URL d'aperçu. Les variables d'environnement sont gérées dans Vercel : `vercel env pull .env.local` régénère le fichier local (CLI Vercel installé sur le poste).
+- Déploiement : Vercel, équipe `mywork-8619`, projet `linku` (ancien nom du produit). Chaque push sur `main` part en production (https://hellomywork.com, nom de domaine acheté chez Vercel ; l'ancienne adresse https://linku-nu.vercel.app reste valide) ; chaque pull request reçoit une URL d'aperçu. Les variables d'environnement sont gérées dans Vercel : `vercel env pull .env.local` régénère le fichier local (CLI Vercel installé sur le poste).
 
 ## Règles de travail
 

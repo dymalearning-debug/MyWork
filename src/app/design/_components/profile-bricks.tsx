@@ -40,7 +40,7 @@ export async function ProfileBricks() {
       <div>
         <ModuleHeading module="Module · Profil" title="CV (A4, toujours en thème clair)" />
         <div className="light overflow-x-auto border border-border bg-muted py-8">
-          <CvSheet profile={DEMO_PROFILE} contact={DEMO_CONTACT} publicAddress="linku-nu.vercel.app/ines-robert" />
+          <CvSheet profile={DEMO_PROFILE} contact={DEMO_CONTACT} publicAddress="hellomywork.com/ines-robert" />
         </div>
       </div>
     </>
