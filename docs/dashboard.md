@@ -1,7 +1,15 @@
 # Tableau de bord
 
 Spécification du tableau de bord (`/app`), l'accueil de l'espace privé : on y arrive après la connexion (voir [product.md](product.md), décision du 2026-10-13).
-Statut : **en cadrage** depuis le 2026-10-18. Deux idées viennent du porteur du projet (les visites du profil, les rendez-vous du jour) ; les autres sont des propositions *(proposé)*, à garder ou à écarter. Pas encore de maquettes. Ce document se complète à mesure que l'application évolue : chaque nouveau module peut y ajouter son bloc.
+Statut : **en cadrage** depuis le 2026-10-18. Deux idées viennent du porteur du projet (les visites du profil, les rendez-vous du jour) ; parmi les propositions, il a gardé les signaux d'intérêt et les rappels, et écarté les raccourcis et le bloc Tableaux et Drive (2026-10-18). Les choix marqués *(proposé)* dans les blocs gardés sont validés. Maquettes proposées le 2026-10-18, à choisir ou à combiner (voir *Maquettes*). Ce document se complète à mesure que l'application évolue : chaque nouveau module peut y ajouter son bloc.
+
+## Maquettes
+
+Proposées le 2026-10-18 : [Maquettes tableau de bord](https://claude.ai/artifact/2CDdmSAV6Big1aR46qknNK) sur claude.ai (réglage « Tweaks » : thème clair ou sombre). Personnage fictif : Inès Robert. Trois directions, avec les mêmes quatre blocs :
+
+- **A · Rapport** : une ligne de rappels en haut, puis un grand bloc Visites (chiffres, courbe, détail par onglet et par provenance), et dessous Rendez-vous et Signaux côte à côte.
+- **B · Journée** : la journée d'abord. Le prochain rendez-vous en grand (compte à rebours, « Rejoindre la visio »), l'agenda d'aujourd'hui et de demain, le fil des signaux ; à droite, une colonne plus étroite avec les rappels et les visites.
+- **C · Mosaïque** : une grille de tuiles séparées par des filets, de grands chiffres en Newsreader, comme une page de catalogue : rendez-vous, visiteurs, courbe, provenance, onglets, rappels, une tuile par signal.
 
 ## En bref
 
@@ -22,7 +30,7 @@ But : savoir si des recruteurs ou des clients potentiels sont venus voir le prof
 - **D'où viennent les visiteurs** : LinkedIn, Google, Malt, accès direct (lien copié, e-mail)… *(proposé)*. C'est souvent l'indice le plus parlant : une visite venue de LinkedIn suit en général un message ou une candidature.
 - Ce qui n'est **pas possible** : savoir *qui* est venu. Un visiteur reste anonyme ; seule une action (rendez-vous, contact, téléchargement, voir le bloc 3) dit qu'il s'est intéressé.
 - Ne sont **pas comptés** : le propriétaire lui-même (connecté), les robots (moteurs de recherche, aperçus de lien de LinkedIn ou de Slack), l'aperçu d'un profil hors ligne.
-- Visiteur « unique » : compté une fois par jour *(proposé)*. Méthode **sans cookie**, à la manière de Plausible : une empreinte du jour (adresse IP + navigateur + un sel qui change chaque jour), jamais l'adresse elle-même, comme l'anti-abus des rendez-vous ([booking.md](booking.md)). Pas de bandeau de cookies à afficher aux visiteurs, et rien qui permette de suivre quelqu'un d'un jour à l'autre (RGPD).
+- Visiteur « unique » : compté **une fois par jour** (validé le 2026-10-18). Méthode **sans cookie**, à la manière de Plausible : une empreinte du jour (adresse IP + navigateur + un sel qui change chaque jour), jamais l'adresse elle-même, comme l'anti-abus des rendez-vous ([booking.md](booking.md)). Pas de bandeau de cookies à afficher aux visiteurs, et rien qui permette de suivre quelqu'un d'un jour à l'autre (RGPD).
 - Tout reste **dans notre base** (Supabase) *(proposé)* ; un service externe (Plausible, Vercel Analytics) a été envisagé : payant ou limité, et pensé pour un seul site, pas pour un compteur par utilisateur une fois en SaaS.
 - Avance d'une idée notée *Plus tard* dans [modules.md](modules.md) et [public-profile.md](public-profile.md) (« statistiques de visites »).
 
@@ -56,15 +64,10 @@ Une courte liste de rappels, qui disparaissent une fois réglés :
 - **profil incomplet** : un pourcentage et les sections manquantes (photo, titre, À propos…), idée notée *Plus tard* dans [profile.md](profile.md) ;
 - **stockage** au-delà de 80 % ([drive.md](drive.md), *Indicateur de stockage*).
 
-### 5. Raccourcis *(proposé)*
+### Écartés (2026-10-18)
 
-- L'adresse du profil public, avec **« Copier l'adresse »** et **« Ouvrir mon profil public »** (déjà dans le menu du profil, mais c'est l'action la plus fréquente avant d'envoyer une candidature).
-- Un mot d'accueil avec le prénom et la date du jour.
-
-### 6. Tableaux et Drive *(proposé, plus léger)*
-
-- **Tableaux** : le dernier tableau consulté, avec ses cartes en cours (la liste du milieu) et l'avancement de leur checklist. Limité tant qu'il n'y a pas d'échéances ([boards.md](boards.md), *Plus tard*).
-- **Drive** : les derniers fichiers ajoutés et l'indicateur de stockage.
+- **Raccourcis** (adresse du profil à copier ou ouvrir, mot d'accueil) : déjà dans le menu du profil.
+- **Tableaux et Drive** (cartes en cours, derniers fichiers) : le tableau de bord se concentre sur le profil public et les rendez-vous.
 
 ## Plus tard
 
@@ -76,7 +79,7 @@ Une courte liste de rappels, qui disparaissent une fois réglés :
 
 ## Questions pour le porteur du projet
 
-1. Quels blocs garder parmi les propositions (3 à 6) ?
-2. Visites : périodes (7 et 30 jours ?) et détail par onglet et par provenance : utiles, ou trop ?
-3. Un visiteur compté une fois par jour : d'accord ?
-4. Ordre des blocs à l'écran : à décider avec les maquettes.
+1. ~~Blocs à garder~~ : signaux d'intérêt et rappels gardés, raccourcis et Tableaux-Drive écartés (2026-10-18).
+2. ~~Visites~~ : 7 et 30 jours, détail par onglet et par provenance, validés (2026-10-18).
+3. ~~Visiteur compté une fois par jour~~ : validé (2026-10-18).
+4. Ordre et disposition des blocs : à choisir parmi trois maquettes.
