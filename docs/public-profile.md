@@ -181,4 +181,4 @@ Fait le 2026-10-12, dans cet ordre :
 - Redirection depuis l'ancien identifiant, après un changement dans les Paramètres : écartée le 2026-10-12 (voir [settings.md](settings.md)).
 - Référencement par les moteurs de recherche, avec le contenu et le nom de domaine.
 - Sous-domaine par utilisateur et domaine personnalisé.
-- Thèmes du profil, statistiques de visites.
+- Thèmes du profil. (Les statistiques de visites sont faites depuis le 2026-10-19 : voir [dashboard.md](dashboard.md).)

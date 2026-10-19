@@ -9,7 +9,8 @@ Chaque module suit le même schéma : un espace **privé** (gestion) et une part
 - **Profil public** : page accessible via une URL unique (`<domaine>/<identifiant>`), qui regroupe les blocs publics des modules activés, un onglet par module. Hors ligne par défaut, mis en ligne depuis le menu du profil. Squelette (adresses, identifiant, mise en ligne, mise en page, menu du profil) détaillé dans [public-profile.md](public-profile.md).
 - **Paramètres** : grande fenêtre ouverte depuis le menu du profil, une section par sujet. Section Profil : prénom, nom, adresse du profil public (l'identifiant), suppression du compte. Détail dans [settings.md](settings.md).
   - *Plus tard* : changement d'e-mail et de mot de passe, abonnement, modules activés, modules visibles sur le profil.
-- *Plus tard* : domaine personnalisé, thèmes, statistiques de visites.
+- *Plus tard* : domaine personnalisé, thèmes.
+- **Tableau de bord** (`/app`) : rendez-vous du jour, visites du profil public, signaux d'intérêt, rappels. Détail dans [dashboard.md](dashboard.md).
 
 ## Profil (type LinkedIn)
 

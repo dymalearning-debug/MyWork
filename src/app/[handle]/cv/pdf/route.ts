@@ -1,5 +1,6 @@
 import type { NextRequest } from "next/server";
 
+import { recordSignal } from "@/lib/dashboard/tracking";
 import { exportCv, exportOrigin } from "@/lib/profile/cv-export";
 import { getProfileView } from "@/lib/public-profile/data";
 
@@ -16,6 +17,8 @@ export async function GET(request: NextRequest, { params }: RouteContext<"/[hand
       origin: exportOrigin(request.nextUrl),
       cookieHeader: request.headers.get("cookie"),
     });
+    // A signal of the dashboard (CV downloaded).
+    await recordSignal(handle, "cv");
     return new Response(new Uint8Array(pdf), {
       headers: {
         "content-type": "application/pdf",

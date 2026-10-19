@@ -10,6 +10,7 @@ import { getProfileView } from "@/lib/public-profile/data";
 
 import { ProfileHeader } from "../_components/profile-header";
 import { ResourcesTab } from "../_components/resources-tab";
+import { VisitTracker } from "../_components/visit-tracker";
 
 // "Ressources" tab of the public profile (docs/drive.md, "L'onglet « Ressources »"): the public
 // files of the Drive. Without any, like an offline profile or an unknown handle, the address leads
@@ -48,6 +49,7 @@ export default async function ResourcesPage({ params, searchParams }: PageProps<
       banner={view.preview ? <OfflineBanner /> : undefined}
       header={<ProfileHeader profile={view.profile} tab="resources" showResources showBooking={showBooking} />}
     >
+      <VisitTracker handle={view.profile.handle} tab="resources" />
       <ResourcesTab handle={handle} resources={resources} page={page} />
     </PublicPage>
   );

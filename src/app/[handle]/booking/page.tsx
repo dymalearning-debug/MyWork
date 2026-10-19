@@ -8,6 +8,7 @@ import { profileDisplayName } from "@/lib/profile/content";
 import { getProfileView } from "@/lib/public-profile/data";
 
 import { ProfileHeader } from "../_components/profile-header";
+import { VisitTracker } from "../_components/visit-tracker";
 import { BookingFlow } from "./_components/booking-flow";
 
 // "Rendez-vous" tab of the public profile (docs/booking.md, "Profil public : onglet
@@ -36,6 +37,7 @@ export default async function BookingTabPage({ params }: PageProps<"/[handle]/bo
       banner={view.preview ? <OfflineBanner /> : undefined}
       header={<ProfileHeader profile={view.profile} tab="booking" showBooking showResources={showResources} />}
     >
+      <VisitTracker handle={view.profile.handle} tab="booking" />
       <BookingFlow
         handle={view.profile.handle}
         ownerName={profileDisplayName(view.profile)}
