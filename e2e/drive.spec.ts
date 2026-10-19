@@ -383,7 +383,10 @@ test.describe("Drive", () => {
       visitor.waitForEvent("download"),
       visitor.getByRole("link", { name: "Télécharger Kit média.pdf" }).click(),
     ]);
-    expect(download.suggestedFilename()).toBe("Kit média.pdf");
+    // The name travels in the address, which the storage turns into the file name
+    // (Content-Disposition: filename*=UTF-8''Kit%20m%C3%A9dia.pdf). Not suggestedFilename(): the
+    // headless Chromium of the tests names any download with an accent "download".
+    expect(new URL(download.url()).searchParams.get("download")).toBe("Kit média.pdf");
 
     // Featured: in large at the top, out of the list. Another one replaces it.
     await openMenu(page, "Kit média.pdf");

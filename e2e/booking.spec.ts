@@ -150,7 +150,7 @@ test.describe("Rendez-vous", () => {
     // Closed again: the tab and the address disappear.
     await page.getByRole("link", { name: "Disponibilités" }).click();
     await page.getByRole("switch").click();
-    await expect(page.getByText("Réservations fermées")).toBeVisible();
+    await expect(page.getByText("Réservations fermées").filter({ visible: true })).toBeVisible();
     await page.getByRole("button", { name: "Enregistrer" }).click();
     await expect(page.getByText("Disponibilités enregistrées")).toBeVisible();
     await visitor.goto(`/${handle}`);
@@ -231,7 +231,7 @@ test.describe("Rendez-vous", () => {
     await nav.getByRole("link", { name: "Mes rendez-vous" }).click();
     await expect(page.getByRole("link", { name: "À venir · 1" })).toBeVisible();
     await expect(page.getByRole("img", { name: "Nouveau" })).toBeVisible();
-    await expect(page.getByText("Directeur produit · Alto")).toBeVisible();
+    await expect(page.getByText("Directeur produit · Alto").filter({ visible: true })).toBeVisible();
     await page.getByRole("button", { name: /^Marc Dubois/ }).click();
     const detail = page.getByRole("dialog", { name: "Marc Dubois" });
     await expect(detail.getByText("marc.dubois@exemple.test")).toBeVisible();

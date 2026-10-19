@@ -92,6 +92,7 @@ Choix faits le 2026-10-19 sans le porteur du projet, à valider :
 - Libellés des tuiles de signaux raccourcis (« Réservations », « Ressources ») pour tenir sur une ligne ; la tuile des ressources donne la plus téléchargée (« Étude de cas.pdf · 6 »).
 - Rappels vides : « Tout est en ordre. ». Profil hors ligne : un rappel en tête.
 - Tuiles visibles dans la vitrine `/design`, avec des données fictives.
+- Le tableau de bord est plus haut que l'écran : le menu du profil et ses sous-menus sont désormais placés par rapport à la fenêtre (comme la barre latérale), pour qu'ils ne bougent ni ne se ferment quand la page défile. Les tests qui trouvaient un texte en double (la page quittée reste cachée dans le document) ne regardent plus que l'élément visible.
 
 ## Tests
 
