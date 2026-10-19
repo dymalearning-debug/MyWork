@@ -195,11 +195,16 @@ test.describe("profile menu, Mon profil public", () => {
   test("the switch keeps its state when the menu is closed and opened again", async ({ page }) => {
     const user = await createUser();
     await signIn(page, user);
-    // Escape closes the submenu, then the menu.
+    // The dashboard, behind the menu, loads its tiles, then reloads them after each switch (its
+    // reminder "Profil hors ligne"): the menu is used once the page is still.
+    const offlineReminder = page.getByRole("region", { name: "Rappels", exact: true }).getByRole("link", { name: "Profil hors ligne" });
+    await expect(offlineReminder).toBeVisible();
+    // Escape closes the submenu, then the menu (both at once when the reloaded page took the focus
+    // away from the submenu).
     const closeMenu = async () => {
       await page.keyboard.press("Escape");
-      await expect(page.getByRole("menu")).toHaveCount(1);
-      await page.keyboard.press("Escape");
+      await expect(page.getByRole("menu")).not.toHaveCount(2);
+      if ((await page.getByRole("menu").count()) > 0) await page.keyboard.press("Escape");
       await expect(page.getByRole("menu")).toHaveCount(0);
     };
 
@@ -208,6 +213,7 @@ test.describe("profile menu, Mon profil public", () => {
       await page.getByRole("menuitemcheckbox").click();
       await expect(page.getByRole("menuitemcheckbox", { name })).toBeVisible();
       await expect.poll(async () => (await getProfile(user.id)).is_online).toBe(name === "Profil en ligne");
+      await expect(offlineReminder).toHaveCount(name === "Profil en ligne" ? 0 : 1);
       await closeMenu();
 
       await openProfileSubmenu(page, "Mon profil public");

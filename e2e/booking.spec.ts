@@ -48,6 +48,7 @@ async function owner(changes: Parameters<typeof setupBooking>[1] = {}) {
 // With Resend configured (.env.local), the emails of the test addresses are taken from the queue and
 // abandoned, never sent; without it (GitHub), they stay "pending".
 const SENDING = !!process.env.RESEND_API_KEY && !!process.env.BOOKING_EMAILS_SECRET;
+const LIVEKIT = !!process.env.LIVEKIT_URL && !!process.env.LIVEKIT_API_KEY && !!process.env.LIVEKIT_API_SECRET;
 const QUEUED = SENDING ? "abandoned" : "pending";
 
 const slotName = (slot: Date, timeZone = PARIS) => `${formatDate(slot, timeZone)}, ${formatTime(slot, timeZone)}`;
@@ -150,7 +151,7 @@ test.describe("Rendez-vous", () => {
     // Closed again: the tab and the address disappear.
     await page.getByRole("link", { name: "Disponibilités" }).click();
     await page.getByRole("switch").click();
-    await expect(page.getByText("Réservations fermées")).toBeVisible();
+    await expect(page.getByText("Réservations fermées").filter({ visible: true })).toBeVisible();
     await page.getByRole("button", { name: "Enregistrer" }).click();
     await expect(page.getByText("Disponibilités enregistrées")).toBeVisible();
     await visitor.goto(`/${handle}`);
@@ -231,7 +232,7 @@ test.describe("Rendez-vous", () => {
     await nav.getByRole("link", { name: "Mes rendez-vous" }).click();
     await expect(page.getByRole("link", { name: "À venir · 1" })).toBeVisible();
     await expect(page.getByRole("img", { name: "Nouveau" })).toBeVisible();
-    await expect(page.getByText("Directeur produit · Alto")).toBeVisible();
+    await expect(page.getByText("Directeur produit · Alto").filter({ visible: true })).toBeVisible();
     await page.getByRole("button", { name: /^Marc Dubois/ }).click();
     const detail = page.getByRole("dialog", { name: "Marc Dubois" });
     await expect(detail.getByText("marc.dubois@exemple.test")).toBeVisible();
@@ -431,6 +432,9 @@ test.describe("Rendez-vous", () => {
     let response = await guestToken(early.code);
     expect(response.status()).toBe(403);
     expect(await response.json()).toMatchObject({ ok: false, reason: "early" });
+
+    // The rest needs LiveKit, which signs the tokens: not configured on GitHub.
+    test.skip(!LIVEKIT, "LiveKit is not configured here (LIVEKIT_URL, LIVEKIT_API_KEY, LIVEKIT_API_SECRET).");
 
     // Inside: a token for the room of this booking, two people at most, until the room closes.
     await visitor.goto(`/${handle}/booking/${open.code}`);

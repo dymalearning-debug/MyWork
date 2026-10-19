@@ -110,6 +110,22 @@ export async function getOwnBookings(filter: BookingFilter, pages = 1): Promise<
   };
 }
 
+// The confirmed bookings starting between two instants (the tile "Rendez-vous" of the dashboard:
+// those of the day, in the owner's time zone, and the next one after), the nearest first.
+export async function getOwnBookingsBetween(from: Date, to: Date, limit = 100): Promise<OwnBooking[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("bookings")
+    .select(BOOKING_COLUMNS)
+    .eq("status", "confirmed")
+    .gte("start_at", from.toISOString())
+    .lt("start_at", to.toISOString())
+    .order("start_at", { ascending: true })
+    .limit(limit);
+  if (error) throw new Error(`Bookings read failed: ${error.message}`);
+  return (data as BookingRow[]).map(toBooking);
+}
+
 export async function getOwnBooking(id: string): Promise<OwnBooking | null> {
   const supabase = await createClient();
   const { data, error } = await supabase.from("bookings").select(BOOKING_COLUMNS).eq("id", id).maybeSingle();

@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 // Supabase admin API, for tests only: creates test accounts and generates email links
 // without sending any email (docs/auth.md, "Tests"). Needs the secret key, which never
@@ -108,7 +108,23 @@ export async function deleteTestUsers() {
 
 // A Supabase client signed in as a test account, as the browser would be: for the database
 // functions that act on the signed-in user (the profile content).
-export async function signedInClient(user: { email: string; password: string }) {
+// Signed in once per account and reused: Supabase limits the sign-ins from one address (those of
+// GitHub run every test), and some tests change the profile many times.
+const signedIn = new Map<string, Promise<SupabaseClient>>();
+
+export function signedInClient(user: { email: string; password: string }): Promise<SupabaseClient> {
+  const cacheKey = `${user.email}\n${user.password}`;
+  let client = signedIn.get(cacheKey);
+  if (!client) {
+    client = signIn(user);
+    signedIn.set(cacheKey, client);
+    // A failed sign-in is not kept: the next call tries again.
+    client.catch(() => signedIn.delete(cacheKey));
+  }
+  return client;
+}
+
+async function signIn(user: { email: string; password: string }) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
   if (!url || !key) throw new Error("End-to-end tests need the Supabase URL and publishable key (see .env.example).");
