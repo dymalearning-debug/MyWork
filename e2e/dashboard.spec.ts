@@ -2,7 +2,7 @@ import { expect, type Browser, type Page, test } from "@playwright/test";
 
 import { login } from "./helpers/auth";
 import { anonymous, placeBooking } from "./helpers/booking";
-import { adminClient, createUser, getProfile, saveProfileContent, setProfileOnline } from "./helpers/supabase-admin";
+import { adminClient, createUser, getProfile, setProfileOnline } from "./helpers/supabase-admin";
 
 // Tableau de bord (docs/dashboard.md): today's bookings, the visits of the public profile (once a
 // day per visitor, never the owner nor an offline profile), the signals and the reminders.
@@ -35,7 +35,8 @@ async function eventsOf(userId: string) {
 
 const tile = (page: Page, name: string) => page.getByRole("region", { name, exact: true });
 
-test("a new account: nothing yet, and the reminders", async ({ page }) => {
+// Few sign-ins: Supabase allows 30 every 5 minutes from one address, for the whole run.
+test("a new account: nothing yet and the reminders; then today's bookings only", async ({ page }) => {
   const user = await createUser({ name: "Inès Robert" });
   await signIn(page, user);
 
@@ -50,6 +51,20 @@ test("a new account: nothing yet, and the reminders", async ({ page }) => {
   await expect(reminders.getByRole("link", { name: "Réservations fermées" })).toHaveAttribute("href", "/app/booking/availability");
   await expect(reminders.getByRole("link", { name: /Profil complet/ })).toHaveAttribute("href", "/app/profile");
   await expect(reminders.getByRole("link", { name: /Stockage/ })).toHaveCount(0);
+
+  // Bookings: only today's, with Rejoindre once the room is open.
+  const now = Date.now();
+  await placeBooking(user.id, new Date(now + 5 * 60_000), { guestName: "Camille Laurent" });
+  await placeBooking(user.id, new Date(now + 26 * 3_600_000), { guestName: "Sarah Benali" });
+  await page.reload();
+  const bookings = tile(page, "Rendez-vous");
+  await expect(bookings).toContainText("1aujourd'hui");
+  await expect(bookings.getByRole("link", { name: /Camille Laurent/ })).toBeVisible();
+  await expect(bookings.getByRole("img", { name: "Nouveau" })).toBeVisible();
+  await expect(bookings.getByRole("link", { name: "Rejoindre" })).toBeVisible();
+  await expect(bookings).not.toContainText("Sarah Benali");
+  // Both bookings are signals of the last 30 days.
+  await expect(tile(page, "Réservations")).toContainText("2");
 });
 
 test("visits: once a day per visitor, per tab; never the owner, nor an offline profile", async ({ browser, page }) => {
@@ -92,7 +107,8 @@ test("visits: once a day per visitor, per tab; never the owner, nor an offline p
 test("signals: Me contacter, and the rules of the database", async ({ browser, page }) => {
   const user = await createUser({ name: "Inès Robert" });
   const { handle } = await getProfile(user.id);
-  await saveProfileContent(user, { contactEmail: "ines.robert@exemple.test" });
+  const { error } = await adminClient().from("profiles").update({ contact_email: "ines.robert@exemple.test" }).eq("id", user.id);
+  if (error) throw error;
   await setProfileOnline(user.id, true);
 
   const visitor = await visitAs(browser, "203.0.113.20", `/${handle}`);
@@ -125,21 +141,4 @@ test("signals: Me contacter, and the rules of the database", async ({ browser, p
   await expect(tile(page, "Ressources")).toContainText("0");
 
   await visitor.context.close();
-});
-
-test("today's bookings: only today's, with Rejoindre once the room is open", async ({ page }) => {
-  const user = await createUser({ name: "Inès Robert" });
-  const now = Date.now();
-  await placeBooking(user.id, new Date(now + 5 * 60_000), { guestName: "Camille Laurent" });
-  await placeBooking(user.id, new Date(now + 26 * 3_600_000), { guestName: "Sarah Benali" });
-
-  await signIn(page, user);
-  const bookings = tile(page, "Rendez-vous");
-  await expect(bookings).toContainText("1aujourd'hui");
-  await expect(bookings.getByRole("link", { name: /Camille Laurent/ })).toBeVisible();
-  await expect(bookings.getByRole("img", { name: "Nouveau" })).toBeVisible();
-  await expect(bookings.getByRole("link", { name: "Rejoindre" })).toBeVisible();
-  await expect(bookings).not.toContainText("Sarah Benali");
-  // Both bookings are signals of the last 30 days.
-  await expect(tile(page, "Réservations")).toContainText("2");
 });

@@ -366,7 +366,9 @@ test.describe("Drive", () => {
     const visitor = await browser.newPage();
     await visitor.goto(`/${handle}`);
     await expect(visitor.getByRole("navigation", { name: "Onglets du profil" }).getByRole("link")).toHaveText(["Profil"]);
-    expect((await visitor.goto(`/${handle}/resources`))?.status()).toBe(404);
+    // "Page introuvable", with the code 200 in production (docs/public-profile.md, "Code de réponse").
+    await visitor.goto(`/${handle}/resources`);
+    await expect(visitor.getByRole("heading", { name: "Page introuvable" })).toBeVisible();
 
     // Made public from its menu: listed, and downloaded without signing in, under its name.
     await openMenu(page, "Kit média.pdf");
@@ -417,7 +419,9 @@ test.describe("Drive", () => {
     // Offline: neither the tab nor the downloads.
     const kit = (await itemsOf(user.id)).find((item) => item.name === "Kit média.pdf")!;
     await setProfileOnline(user.id, false);
-    expect((await visitor.goto(`/${handle}/resources`))?.status()).toBe(404);
+    // "Page introuvable", with the code 200 in production (docs/public-profile.md, "Code de réponse").
+    await visitor.goto(`/${handle}/resources`);
+    await expect(visitor.getByRole("heading", { name: "Page introuvable" })).toBeVisible();
     expect((await visitor.request.get(`/${handle}/resources/${kit.id}`, { maxRedirects: 0 })).status()).toBe(404);
     const { error: signError } = await anonymous().storage.from("drive-files").createSignedUrl(`${user.id}/${kit.id}`, 60);
     expect(signError).not.toBeNull();

@@ -48,6 +48,7 @@ async function owner(changes: Parameters<typeof setupBooking>[1] = {}) {
 // With Resend configured (.env.local), the emails of the test addresses are taken from the queue and
 // abandoned, never sent; without it (GitHub), they stay "pending".
 const SENDING = !!process.env.RESEND_API_KEY && !!process.env.BOOKING_EMAILS_SECRET;
+const LIVEKIT = !!process.env.LIVEKIT_URL && !!process.env.LIVEKIT_API_KEY && !!process.env.LIVEKIT_API_SECRET;
 const QUEUED = SENDING ? "abandoned" : "pending";
 
 const slotName = (slot: Date, timeZone = PARIS) => `${formatDate(slot, timeZone)}, ${formatTime(slot, timeZone)}`;
@@ -431,6 +432,9 @@ test.describe("Rendez-vous", () => {
     let response = await guestToken(early.code);
     expect(response.status()).toBe(403);
     expect(await response.json()).toMatchObject({ ok: false, reason: "early" });
+
+    // The rest needs LiveKit, which signs the tokens: not configured on GitHub.
+    test.skip(!LIVEKIT, "LiveKit is not configured here (LIVEKIT_URL, LIVEKIT_API_KEY, LIVEKIT_API_SECRET).");
 
     // Inside: a token for the room of this booking, two people at most, until the room closes.
     await visitor.goto(`/${handle}/booking/${open.code}`);
