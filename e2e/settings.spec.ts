@@ -84,6 +84,8 @@ test.describe("Settings dialog", () => {
 
     // Emptied: no name any more, the sidebar shows the email address again.
     const again = await openSettings(page);
+    // The notification goes: it would cover the "Enregistrer" button.
+    await expect(page.getByText("Paramètres enregistrés")).toBeHidden();
     await again.getByLabel("Prénom").fill("");
     await again.getByLabel("Nom", { exact: true }).fill("");
     await again.getByRole("button", { name: "Enregistrer" }).click();

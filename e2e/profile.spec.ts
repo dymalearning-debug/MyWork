@@ -360,6 +360,8 @@ test.describe("first and last name, shared with the Settings", () => {
     await expect(page.getByRole("button", { name: "Menu du profil" })).toContainText(`Jeanne Martin${r}`);
 
     let dialog = await openSettings(page);
+    // The notification goes: it would cover the "Enregistrer" button of the Settings.
+    await expect(page.getByText("Profil enregistré", { exact: true })).toBeHidden();
     await expect(dialog.getByLabel("Prénom")).toHaveValue("Jeanne");
     await dialog.getByLabel("Nom", { exact: true }).fill(`Durand${r}`);
     await dialog.getByRole("button", { name: "Enregistrer" }).click();

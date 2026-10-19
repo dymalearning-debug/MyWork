@@ -107,7 +107,12 @@ export function UserMenu({
           <PublicProfileSubmenu handle={profile.handle} online={online} onOnlineChange={toggleOnline} />
           <DropdownMenuItem
             className={ROW}
-            onClick={() => setSettings((current) => ({ open: true, key: current.key + 1 }))}
+            onClick={() => {
+              // The notifications of earlier actions go: shown above the dialog, at the bottom
+              // right, they would cover its "Enregistrer" button.
+              toast.dismiss();
+              setSettings((current) => ({ open: true, key: current.key + 1 }));
+            }}
           >
             <SettingsIcon />
             Paramètres

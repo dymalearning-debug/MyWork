@@ -62,6 +62,7 @@ Maquettes validées le 2026-10-12 : [Maquettes paramètres](https://claude.ai/ar
 
 - **En bas à droite** de l'écran (Sonner, déjà en place), après chaque action sur le compte : enregistrement des Paramètres, mise en ligne ou hors ligne du profil (« Profil mis en ligne », « Profil mis hors ligne »), suppression du compte. Plus tard : abonnement, actions des modules.
 - Un titre court au passé, et le détail en dessous. Une erreur dit quoi faire (« Réessayez. »).
+- À l'ouverture des Paramètres, les notifications encore affichées disparaissent : placées au-dessus de la fenêtre, en bas à droite, elles cachaient le bouton « Enregistrer » pendant quelques secondes (plus longtemps si la souris restait dessus, ce qui les fige).
 
 ## Données
 
