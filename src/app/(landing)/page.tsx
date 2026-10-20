@@ -5,6 +5,7 @@ import type { ComponentType } from "react";
 
 import { buttonVariants } from "@/components/ui/button";
 
+import { Faq } from "./_components/faq";
 import { Features } from "./_components/features";
 import { Hero } from "./_components/hero";
 import { LANDING_COLUMN, LandingFooter, LandingHeader } from "./_components/landing-shell";
@@ -12,15 +13,15 @@ import { Pricing } from "./_components/pricing";
 import { ReplacedTools } from "./_components/replaced-tools";
 import { LANDING_SECTIONS } from "./_components/sections";
 
-// Landing page, at the address of the site (docs/landing.md). Skeleton: every block has its place
-// and its anchor; each one is built in turn, from its validated mockup. Done: the hero, the features,
-// the replaced tools, the pricing.
+// Landing page, at the address of the site (docs/landing.md): the hero, then the blocks listed in
+// sections.ts (each built from its validated mockup), then the last call to action.
 
-// Built blocks, by anchor; the others show their title until their turn comes.
-const BLOCKS: Partial<Record<string, ComponentType<{ id: string; eyebrow: string; title: string }>>> = {
+// Blocks, by anchor.
+const BLOCKS: Record<string, ComponentType<{ id: string; eyebrow: string; title: string }>> = {
   fonctionnalites: Features,
   "outils-remplaces": ReplacedTools,
   tarif: Pricing,
+  faq: Faq,
 };
 
 export const metadata: Metadata = {
@@ -38,28 +39,7 @@ export default function LandingPage() {
         {LANDING_SECTIONS.map((section, index) => {
           const eyebrow = `${String(index + 2).padStart(2, "0")} · ${section.label}`;
           const Block = BLOCKS[section.id];
-          if (Block) {
-            return <Block key={section.id} id={section.id} eyebrow={eyebrow} title={section.title} />;
-          }
-          return (
-            <section
-              key={section.id}
-              id={section.id}
-              aria-labelledby={`${section.id}-title`}
-              className="scroll-mt-16 border-t border-border"
-            >
-              <div className={`${LANDING_COLUMN} py-[clamp(4rem,10vw,7rem)]`}>
-                <p className="eyebrow text-muted-foreground tabular-nums">{eyebrow}</p>
-                <h2
-                  id={`${section.id}-title`}
-                  className="mt-3 font-heading text-[clamp(2rem,5vw,3rem)] leading-tight font-medium"
-                >
-                  {section.title}
-                </h2>
-                <p className="mt-4 text-sm text-muted-foreground">Bloc à construire.</p>
-              </div>
-            </section>
-          );
+          return <Block key={section.id} id={section.id} eyebrow={eyebrow} title={section.title} />;
         })}
         <FinalCall />
       </main>

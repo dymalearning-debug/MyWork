@@ -6,7 +6,7 @@ Statut : **spécifiée** le 2026-10-19, à partir des souhaits du porteur du pro
 ## En bref
 
 - `hellomywork.com` (`/`) affiche la landing page, au lieu de renvoyer vers la connexion.
-- **Une seule page**, en blocs : en-tête, hero, fonctionnalités, outils remplacés, tarif, FAQ, appel final, pied de page. Retirés le 2026-10-20 : « Un seul lien », « Comment ça marche », « Qui est derrière MyWork ». Reste à faire : la FAQ.
+- **Une seule page**, en blocs : en-tête, hero, fonctionnalités, outils remplacés, tarif, FAQ, appel final, pied de page. Retirés le 2026-10-20 : « Un seul lien », « Comment ça marche », « Qui est derrière MyWork ». Tous les blocs sont construits (2026-10-20).
 - Cible de cette première version : les **freelances**. D'autres métiers viendront plus tard, avec leurs propres pages.
 - Acquisition : la **chaîne YouTube** du porteur du projet, un peu de publicité plus tard. La page est pensée pour un visiteur qui arrive d'une vidéo, déjà un peu convaincu.
 - La FAQ sert aussi aux **moteurs de recherche et aux IA** (ChatGPT, Claude, Perplexity…) : textes rendus côté serveur, données structurées, fichier `llms.txt`.
@@ -41,6 +41,13 @@ Tarif : **approche B · Deux formules retenue** le 2026-10-20 par le porteur du 
 |---|---|
 | A · Carte unique *(écartée)* | En-tête centré ; une seule carte en deux colonnes : à gauche, une bascule « Mensuel / Annuel (2 mois offerts) » qui change le prix (5 €/mois ou 50 €/an, 60 € barré), le bouton rouge « Essayer 7 jours » ; à droite, « Tout est inclus ». Dessous, l'essai en trois étapes : aujourd'hui, pendant 7 jours, le 8e jour. Un seul bouton, le choix de la formule se fait dans la carte |
 | **B · Deux formules** *(retenue)* | En-tête en deux colonnes ; trois cartes côte à côte : « Mensuel » (bouton à contour), « Annuel » mise en avant (filet noir, « 2 mois offerts », bouton rouge), « Inclus dans les deux formules ». Dessous, un bandeau sur l'essai de 7 jours. Les deux prix se comparent d'un coup d'œil ; sur mobile, l'annuelle passe en premier |
+
+FAQ : **approche B · Thèmes retenue** le 2026-10-20 par le porteur du projet, parmi deux (cinquième rangée du canevas). Mêmes dix questions sur les deux.
+
+| Approche | Idée |
+|---|---|
+| A · Liste *(écartée)* | En-tête à gauche, qui reste visible pendant le défilement ; à droite, les dix questions numérotées, l'une sous l'autre, séparées par un filet |
+| **B · Thèmes** *(retenue)* | En-tête centré ; quatre cases en damier (« MyWork », « Tarif et abonnement », « Vos clients », « Vos données »), chacune avec ses questions. Plus court, se parcourt par sujet |
 
 ## Souhaits du porteur du projet (2026-10-19)
 
@@ -187,6 +194,14 @@ Textes (2026-10-20) :
 
 ### FAQ
 
+**Sur la page** (2026-10-20, choisies par le porteur du projet parmi un premier jet de 39) : dix questions en quatre thèmes. *MyWork* : Qu'est-ce que MyWork ? · Quels outils MyWork remplace-t-il ? · Qu'est-ce que le profil public ? *Tarif et abonnement* : Combien coûte MyWork ? · Comment fonctionne l'essai gratuit ? · Puis-je arrêter quand je veux ? *Vos clients* : Mes clients doivent-ils créer un compte pour réserver ? · MyWork se synchronise-t-il avec Google Agenda ou Outlook ? *Vos données* : Combien d'espace de stockage ai-je ? · Où sont hébergées mes données ? Les réponses sont dans `faq.tsx`. Points à confirmer avant le lancement :
+
+- « Puis-je arrêter quand je veux ? » suppose que l'abonnement s'arrête **à la fin de la période déjà payée**, sans remboursement au prorata *(proposé)*.
+- « Où sont hébergées mes données ? » dit « Union européenne (Irlande) » : vrai pour la base et les fichiers, mais les fonctions Vercel tournent encore à Washington. Les passer à Dublin avant le lancement.
+- La ligne « Une autre question ? Écrivez-nous » est **masquée** tant qu'aucune adresse de contact n'existe (`CONTACT_EMAIL` dans `faq.tsx`).
+
+Liste de départ (2026-10-19), gardée en réserve :
+
 Questions en titres (`<h3>`), réponses courtes et **factuelles**, qui se suffisent à elles-mêmes (une IA peut en citer une seule). Toutes visibles dans la page, sans accordéon fermé *(proposé : plus lisible pour les robots ; une version repliable reste possible si le texte est bien présent dans le HTML)*. **À tenir à jour à chaque changement du produit** : une FAQ fausse fait plus de tort qu'une FAQ absente.
 
 1. **Qu'est-ce que MyWork ?** Une application web pour freelances qui réunit un profil professionnel public, la prise de rendez-vous avec visio, des tableaux de tâches et un espace de fichiers, pour 5 € par mois.
@@ -239,20 +254,21 @@ Questions en titres (`<h3>`), réponses courtes et **factuelles**, qui se suffis
 Ossature en place le 2026-10-19 (`src/app/(landing)/`) ; les blocs se construisent un par un, chacun d'après sa maquette validée.
 
 - **En-tête** (`landing-shell.tsx`) : logo, ancres « Fonctionnalités », « Tarif », « FAQ » (masquées sur mobile), « Se connecter » (masqué sur petit écran) et « Essayer 7 jours » ; « Ouvrir mon espace » pour un visiteur connecté (`header-actions.tsx`). Boutons de l'en-tête **à l'encre** : le rouge revient au bouton principal de chaque bloc (un seul rouge par écran).
-- **Blocs** : liste ordonnée dans `sections.ts` (ancre en français, libellé, titre, présence dans l'en-tête). Les autres blocs affichent leur titre et « Bloc à construire » ; appel final sur fond `stage`.
+- **Blocs** : liste ordonnée dans `sections.ts` (ancre en français, libellé, titre, présence dans l'en-tête). Chaque bloc a son composant (table `BLOCKS` de `page.tsx`) ; appel final sur fond `stage`.
 - **Hero** (`hero.tsx`, 2026-10-20), d'après la maquette A · Vitrine : à gauche l'étiquette « Pour les freelances », le titre, le sous-titre, « Essayer 7 jours » (le seul bouton rouge) et les trois réassurances ; à droite (`hero-showcase.tsx`) le profil public fictif d'Inès Robert dans une fenêtre de navigateur, avec ses onglets « Profil », « Rendez-vous », « Ressources » cliquables (onglets Base UI, utilisables au clavier) et l'adresse qui suit l'onglet. Sur mobile, la vitrine passe sous le texte, sans la colonne « Offre freelance » ni « Me contacter ».
 - **Fonctionnalités** (`features.tsx`, 2026-10-20), d'après la maquette B · Alternance : l'en-tête du bloc (étiquette, titre, chapeau), puis une rangée par module, texte et fenêtre alternant de côté ; le texte est écrit une seule fois, dans un tableau de quatre modules. Les fenêtres (`feature-windows.tsx`) montrent l'espace privé (`/app/profile`, `/app/booking`, `/app/boards`, `/app/drive`) avec des données fictives, cachées aux lecteurs d'écran : le texte à côté dit la même chose. Étiquettes Public ou Privé : composant `Badge`. Écarts avec la maquette : **sans ombre portée** (règle du design system) ; le menu « Exporter le CV » est placé au-dessus de la colonne « Offre freelance » au lieu de la recouvrir ; trois rendez-vous au lieu de quatre (le quatrième était coupé). Sur mobile, le texte passe au-dessus de sa fenêtre ; les fenêtres perdent le bouton « Exporter le CV », la colonne « Offre freelance », deux colonnes du tableau, la recherche et les tailles des fichiers.
 - **Outils remplacés** (`replaced-tools.tsx`, 2026-10-20), d'après la maquette B · Tableau : en-tête centré, rangée des cinq logos qui mène au carré MyWork (décorative), tableau Besoin / Outil habituel / Prix courant / Dans MyWork avec la ligne du total, note sur les prix et « Essayer 7 jours » (le seul rouge de l'écran). Les cinq outils sont écrits une seule fois et servent au tableau et à sa version mobile. Écarts avec la maquette : colonne MyWork sur fond uni (`muted`) plutôt qu'en lumière de studio, qui faisait des taches cellule par cellule ; sur tablette, la colonne « Besoin » passe sous le nom de l'outil ; **sur téléphone, le tableau devient une liste** (outil, usage, prix, puis « Dans MyWork : … »), et le total deux cases « Séparément » et « Avec MyWork ».
 - **Tarif** (`pricing.tsx`, 2026-10-20), d'après la maquette B · Deux formules : en-tête en deux colonnes, cartes « Mensuel » (bouton à contour) et « Annuel » (filet encre, lumière de studio, « 2 mois offerts », 60 € barré, le seul bouton rouge ; en premier sur mobile), « Inclus dans les deux formules », bandeau de l'essai. Les deux boutons mènent à `/signup` (libellés accessibles « Essayer 7 jours, formule mensuelle / annuelle ») ; la formule choisie sera transmise à l'inscription avec le paiement (étape 6).
+- **FAQ** (`faq.tsx`, 2026-10-20), d'après la maquette B · Thèmes : en-tête centré, quatre cases en damier sur deux colonnes (une sur deux en `muted` sur mobile), questions en `<h3>`, toujours dépliées. La même liste fabrique les données structurées `FAQPage` (JSON-LD dans le bloc) : une seule source, pas d'écart possible entre la page et les données.
 - « Voir un profil en exemple » est **masqué** tant que l'adresse du profil public du porteur du projet n'est pas renseignée (`EXAMPLE_PROFILE_PATH` dans `hero.tsx`) : mieux vaut pas de bouton qu'un lien vers une page introuvable.
 - **Pied de page** : logo, « © 2026 MyWork », interrupteur de thème. Pages légales, contact et chaîne YouTube viendront avec leurs blocs.
 - Le pied de page « Créé avec MyWork » des pages publiques (profil, page introuvable, page de l'invité) mène désormais à la landing.
-- Pas encore : `robots.txt`, `sitemap.xml`, `llms.txt`, données structurées (avec la FAQ), Vercel Web Analytics (au lancement).
-- **Attention** : chaque push sur `main` part en production. Tant que les blocs ne sont pas construits, publier l'ossature affiche des « Bloc à construire » sur `hellomywork.com`.
+- Pas encore : `robots.txt`, `sitemap.xml`, `llms.txt`, données structurées `SoftwareApplication` et `Organization` (celles de la FAQ sont faites), Vercel Web Analytics (au lancement).
+- **Attention** : chaque push sur `main` part en production. Tous les blocs sont construits ; restent avant la promotion les pages légales, le paiement (étape 6) et les points à confirmer de la FAQ.
 
 ## Tests
 
-`e2e/landing.spec.ts` couvre les trois premiers points ci-dessous (2026-10-19), les onglets du hero, qui changent l'adresse affichée, le lien « Fonctionnalités » de l'en-tête, qui mène au bloc et à ses quatre modules, le tableau des outils remplacés (cinq logos, total, lien vers l'inscription) et le tarif (deux formules, essai, liens vers l'inscription) (2026-10-20).
+`e2e/landing.spec.ts` couvre les trois premiers points ci-dessous (2026-10-19), les onglets du hero, qui changent l'adresse affichée, le lien « Fonctionnalités » de l'en-tête, qui mène au bloc et à ses quatre modules, le tableau des outils remplacés (cinq logos, total, lien vers l'inscription) le tarif (deux formules, essai, liens vers l'inscription) et la FAQ (lien de l'en-tête, dix questions, les mêmes dans le JSON-LD avec leurs réponses) (2026-10-20).
 
 - Un visiteur non connecté qui ouvre `/` voit la landing (plus de redirection vers `/login`) ; « Se connecter » mène à `/login`, « Essayer 7 jours » à `/signup`.
 - Un utilisateur connecté voit « Ouvrir mon espace », qui mène à `/app`.

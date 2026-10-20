@@ -87,6 +87,24 @@ test.describe("landing page", () => {
     await expect(page).toHaveURL(/\/signup$/);
   });
 
+  test("the FAQ shows its questions, with the same ones in the structured data", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("navigation", { name: "Sections de la page" }).getByRole("link", { name: "FAQ" }).click();
+    await expect(page).toHaveURL(/\/#faq$/);
+    const block = page.getByRole("region", { name: "Questions fréquentes" });
+    await expect(block).toBeInViewport();
+    const shown = await block.getByRole("heading", { level: 3 }).allTextContents();
+    expect(shown).toHaveLength(10);
+
+    // Every displayed question is in the FAQPage data, with its answer, and nothing else.
+    const jsonLd = JSON.parse((await block.locator('script[type="application/ld+json"]').textContent()) ?? "{}");
+    expect(jsonLd["@type"]).toBe("FAQPage");
+    expect(jsonLd.mainEntity.map((entry: { name: string }) => entry.name)).toEqual(shown);
+    for (const entry of jsonLd.mainEntity) {
+      await expect(block.getByText(entry.acceptedAnswer.text, { exact: true })).toBeVisible();
+    }
+  });
+
   test("a signed-in visitor still sees the landing page, with a link to the app", async ({ page }) => {
     const user = await createUser();
     await page.goto("/login");
