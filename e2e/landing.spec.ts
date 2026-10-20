@@ -70,6 +70,23 @@ test.describe("landing page", () => {
     await expect(page).toHaveURL(/\/signup$/);
   });
 
+  test("the pricing block offers the monthly and the yearly plan, both leading to sign-up", async ({ page }) => {
+    await page.goto("/#tarif");
+    const block = page.getByRole("region", { name: "Un seul abonnement, tout compris" });
+    await expect(block.getByRole("article", { name: "Mensuel" })).toContainText("5 €/mois");
+    const yearly = block.getByRole("article", { name: "Annuel" });
+    await expect(yearly).toContainText("50 €/an");
+    await expect(yearly).toContainText("2 mois offerts");
+    await expect(block).toContainText("7 jours d'essai gratuit");
+
+    await block.getByRole("link", { name: "Essayer 7 jours, formule mensuelle" }).press("Enter");
+    await expect(page).toHaveURL(/\/signup$/);
+
+    await page.goto("/#tarif");
+    await page.getByRole("link", { name: "Essayer 7 jours, formule annuelle" }).press("Enter");
+    await expect(page).toHaveURL(/\/signup$/);
+  });
+
   test("a signed-in visitor still sees the landing page, with a link to the app", async ({ page }) => {
     const user = await createUser();
     await page.goto("/login");

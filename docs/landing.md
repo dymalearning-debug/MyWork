@@ -6,7 +6,7 @@ Statut : **spécifiée** le 2026-10-19, à partir des souhaits du porteur du pro
 ## En bref
 
 - `hellomywork.com` (`/`) affiche la landing page, au lieu de renvoyer vers la connexion.
-- **Une seule page**, en blocs : en-tête, hero, fonctionnalités, outils remplacés, tarif, FAQ, appel final, pied de page. Retirés le 2026-10-20 : « Un seul lien », « Comment ça marche », « Qui est derrière MyWork ». Restent à faire : tarif et FAQ.
+- **Une seule page**, en blocs : en-tête, hero, fonctionnalités, outils remplacés, tarif, FAQ, appel final, pied de page. Retirés le 2026-10-20 : « Un seul lien », « Comment ça marche », « Qui est derrière MyWork ». Reste à faire : la FAQ.
 - Cible de cette première version : les **freelances**. D'autres métiers viendront plus tard, avec leurs propres pages.
 - Acquisition : la **chaîne YouTube** du porteur du projet, un peu de publicité plus tard. La page est pensée pour un visiteur qui arrive d'une vidéo, déjà un peu convaincu.
 - La FAQ sert aussi aux **moteurs de recherche et aux IA** (ChatGPT, Claude, Perplexity…) : textes rendus côté serveur, données structurées, fichier `llms.txt`.
@@ -34,6 +34,13 @@ Outils remplacés : **approche B · Tableau retenue** le 2026-10-20 par le porte
 |---|---|
 | A · Avant / après *(écartée)* | Deux panneaux côte à côte : « Aujourd'hui », les cinq outils avec leur logo, leur usage et leur prix, puis « 5 comptes, 5 factures, 5 liens » et ≈ 30 à 45 € ; une flèche ; « Avec MyWork », les quatre modules, « 1 compte, 1 facture, 1 lien », 5 € et le bouton « Essayer 7 jours ». Se lit en un coup d'œil |
 | **B · Tableau** *(retenue)* | En-tête centré, puis la rangée des cinq logos qui mène au carré MyWork ; dessous, un tableau Besoin / Outil habituel / Prix courant / Dans MyWork (colonne MyWork éclairée), avec la ligne du total ; la note sur les prix et le bouton « Essayer 7 jours » en bas. Plus factuel, proche du tableau de la fiche |
+
+Tarif : **approche B · Deux formules retenue** le 2026-10-20 par le porteur du projet, parmi deux (quatrième rangée du canevas). Mêmes textes (voir *Tarif*), réglage « thème » sur chacune.
+
+| Approche | Idée |
+|---|---|
+| A · Carte unique *(écartée)* | En-tête centré ; une seule carte en deux colonnes : à gauche, une bascule « Mensuel / Annuel (2 mois offerts) » qui change le prix (5 €/mois ou 50 €/an, 60 € barré), le bouton rouge « Essayer 7 jours » ; à droite, « Tout est inclus ». Dessous, l'essai en trois étapes : aujourd'hui, pendant 7 jours, le 8e jour. Un seul bouton, le choix de la formule se fait dans la carte |
+| **B · Deux formules** *(retenue)* | En-tête en deux colonnes ; trois cartes côte à côte : « Mensuel » (bouton à contour), « Annuel » mise en avant (filet noir, « 2 mois offerts », bouton rouge), « Inclus dans les deux formules ». Dessous, un bandeau sur l'essai de 7 jours. Les deux prix se comparent d'un coup d'œil ; sur mobile, l'annuelle passe en premier |
 
 ## Souhaits du porteur du projet (2026-10-19)
 
@@ -160,7 +167,17 @@ Points d'honnêteté *(proposé)* :
 
 ### Tarif
 
-Une seule carte : **5 € par mois**, ou **50 € par an** (deux mois offerts) *(proposé)*. Tout est inclus : les quatre modules, la visio, **10 Go** de stockage *(proposé)*, le profil public. « 7 jours d'essai, puis 5 € par mois. Sans engagement : vous arrêtez quand vous voulez. »
+Deux formules, **5 € par mois** ou **50 € par an** (deux mois offerts), sans autre différence (porteur du projet, 2026-10-20). Tout est inclus : les quatre modules, la visio, **10 Go** de stockage, le profil public. 7 jours d'essai dans les deux cas, une fois l'abonnement pris. Un bouton d'inscription « Essayer 7 jours » vers `/signup`.
+
+Textes (2026-10-20) :
+
+- Titre : *Un seul abonnement, tout compris*
+- Intro : *Les deux formules donnent accès à tout MyWork. Seule différence : à l'année, deux mois sont offerts.* (maquette A : *Tout MyWork, sans option ni palier : vous choisissez seulement de payer au mois ou à l'année.*)
+- Mensuel : *5 € /mois. Payé chaque mois. Sans engagement : vous arrêtez quand vous voulez.* Sous le bouton : *Puis 5 € par mois.*
+- Annuel, étiquette *2 mois offerts* : *50 € /an* (*60 €* barré). *Payé en une fois pour l'année, soit 4,17 € par mois.* Sous le bouton : *Puis 50 € pour un an.*
+- Tout est inclus : *Profil public à votre nom, export du CV en PDF et en image* · *Prise de rendez-vous en ligne, sans compte pour vos clients* · *Visio intégrée aux rendez-vous, depuis le navigateur* · *Tableaux de tâches, listes et cartes* · *10 Go de fichiers, avec vos documents publics* · *Données hébergées en Europe*
+- L'essai, en bandeau sous les formules : *7 jours d'essai gratuit, quelle que soit la formule. Vous choisissez votre formule et enregistrez votre carte à l'inscription. Rien n'est prélevé avant le 8e jour, un e-mail vous prévient avant, et une résiliation pendant l'essai ne coûte rien.* (Maquette A, en trois étapes : *Aujourd'hui : vous créez votre compte, choisissez votre formule et enregistrez votre carte.* · *Pendant 7 jours : vous essayez tout MyWork. Rien n'est prélevé, et un e-mail vous prévient avant la fin de l'essai.* · *Le 8e jour : premier prélèvement, sauf si vous avez résilié : dans ce cas, vous ne payez rien.*)
+- À trancher avant le lancement : afficher « TTC » ou « HT » selon le régime de TVA retenu (les abonnés sont des professionnels).
 
 **Abonnement dès l'inscription** (décision du porteur du projet, 2026-10-19) : ni offre gratuite, ni essai sans paiement. Créer son compte, c'est choisir sa formule (mensuelle ou annuelle) et enregistrer sa carte (Stripe Checkout). Les **7 premiers jours sont un essai** : rien n'est prélevé avant le 8e jour, et une résiliation pendant l'essai ne coûte rien. Un e-mail prévient avant le premier prélèvement. Conséquences : moins d'inscriptions, mais des inscrits décidés ; l'inscription publique attend le paiement (étape 6), et la promotion sur YouTube aussi.
 
@@ -226,6 +243,7 @@ Ossature en place le 2026-10-19 (`src/app/(landing)/`) ; les blocs se construise
 - **Hero** (`hero.tsx`, 2026-10-20), d'après la maquette A · Vitrine : à gauche l'étiquette « Pour les freelances », le titre, le sous-titre, « Essayer 7 jours » (le seul bouton rouge) et les trois réassurances ; à droite (`hero-showcase.tsx`) le profil public fictif d'Inès Robert dans une fenêtre de navigateur, avec ses onglets « Profil », « Rendez-vous », « Ressources » cliquables (onglets Base UI, utilisables au clavier) et l'adresse qui suit l'onglet. Sur mobile, la vitrine passe sous le texte, sans la colonne « Offre freelance » ni « Me contacter ».
 - **Fonctionnalités** (`features.tsx`, 2026-10-20), d'après la maquette B · Alternance : l'en-tête du bloc (étiquette, titre, chapeau), puis une rangée par module, texte et fenêtre alternant de côté ; le texte est écrit une seule fois, dans un tableau de quatre modules. Les fenêtres (`feature-windows.tsx`) montrent l'espace privé (`/app/profile`, `/app/booking`, `/app/boards`, `/app/drive`) avec des données fictives, cachées aux lecteurs d'écran : le texte à côté dit la même chose. Étiquettes Public ou Privé : composant `Badge`. Écarts avec la maquette : **sans ombre portée** (règle du design system) ; le menu « Exporter le CV » est placé au-dessus de la colonne « Offre freelance » au lieu de la recouvrir ; trois rendez-vous au lieu de quatre (le quatrième était coupé). Sur mobile, le texte passe au-dessus de sa fenêtre ; les fenêtres perdent le bouton « Exporter le CV », la colonne « Offre freelance », deux colonnes du tableau, la recherche et les tailles des fichiers.
 - **Outils remplacés** (`replaced-tools.tsx`, 2026-10-20), d'après la maquette B · Tableau : en-tête centré, rangée des cinq logos qui mène au carré MyWork (décorative), tableau Besoin / Outil habituel / Prix courant / Dans MyWork avec la ligne du total, note sur les prix et « Essayer 7 jours » (le seul rouge de l'écran). Les cinq outils sont écrits une seule fois et servent au tableau et à sa version mobile. Écarts avec la maquette : colonne MyWork sur fond uni (`muted`) plutôt qu'en lumière de studio, qui faisait des taches cellule par cellule ; sur tablette, la colonne « Besoin » passe sous le nom de l'outil ; **sur téléphone, le tableau devient une liste** (outil, usage, prix, puis « Dans MyWork : … »), et le total deux cases « Séparément » et « Avec MyWork ».
+- **Tarif** (`pricing.tsx`, 2026-10-20), d'après la maquette B · Deux formules : en-tête en deux colonnes, cartes « Mensuel » (bouton à contour) et « Annuel » (filet encre, lumière de studio, « 2 mois offerts », 60 € barré, le seul bouton rouge ; en premier sur mobile), « Inclus dans les deux formules », bandeau de l'essai. Les deux boutons mènent à `/signup` (libellés accessibles « Essayer 7 jours, formule mensuelle / annuelle ») ; la formule choisie sera transmise à l'inscription avec le paiement (étape 6).
 - « Voir un profil en exemple » est **masqué** tant que l'adresse du profil public du porteur du projet n'est pas renseignée (`EXAMPLE_PROFILE_PATH` dans `hero.tsx`) : mieux vaut pas de bouton qu'un lien vers une page introuvable.
 - **Pied de page** : logo, « © 2026 MyWork », interrupteur de thème. Pages légales, contact et chaîne YouTube viendront avec leurs blocs.
 - Le pied de page « Créé avec MyWork » des pages publiques (profil, page introuvable, page de l'invité) mène désormais à la landing.
@@ -234,7 +252,7 @@ Ossature en place le 2026-10-19 (`src/app/(landing)/`) ; les blocs se construise
 
 ## Tests
 
-`e2e/landing.spec.ts` couvre les trois premiers points ci-dessous (2026-10-19), les onglets du hero, qui changent l'adresse affichée, le lien « Fonctionnalités » de l'en-tête, qui mène au bloc et à ses quatre modules, et le tableau des outils remplacés (cinq logos, total, lien vers l'inscription) (2026-10-20).
+`e2e/landing.spec.ts` couvre les trois premiers points ci-dessous (2026-10-19), les onglets du hero, qui changent l'adresse affichée, le lien « Fonctionnalités » de l'en-tête, qui mène au bloc et à ses quatre modules, le tableau des outils remplacés (cinq logos, total, lien vers l'inscription) et le tarif (deux formules, essai, liens vers l'inscription) (2026-10-20).
 
 - Un visiteur non connecté qui ouvre `/` voit la landing (plus de redirection vers `/login`) ; « Se connecter » mène à `/login`, « Essayer 7 jours » à `/signup`.
 - Un utilisateur connecté voit « Ouvrir mon espace », qui mène à `/app`.

@@ -8,17 +8,19 @@ import { buttonVariants } from "@/components/ui/button";
 import { Features } from "./_components/features";
 import { Hero } from "./_components/hero";
 import { LANDING_COLUMN, LandingFooter, LandingHeader } from "./_components/landing-shell";
+import { Pricing } from "./_components/pricing";
 import { ReplacedTools } from "./_components/replaced-tools";
 import { LANDING_SECTIONS } from "./_components/sections";
 
 // Landing page, at the address of the site (docs/landing.md). Skeleton: every block has its place
 // and its anchor; each one is built in turn, from its validated mockup. Done: the hero, the features,
-// the replaced tools.
+// the replaced tools, the pricing.
 
 // Built blocks, by anchor; the others show their title until their turn comes.
 const BLOCKS: Partial<Record<string, ComponentType<{ id: string; eyebrow: string; title: string }>>> = {
   fonctionnalites: Features,
   "outils-remplaces": ReplacedTools,
+  tarif: Pricing,
 };
 
 export const metadata: Metadata = {
