@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 
@@ -54,9 +55,11 @@ export default async function GuestBookingPage({ params }: PageProps<"/[handle]/
             photoUrl: booking.owner.photoUrl,
           }}
         />
-        <footer className="mt-auto flex items-center justify-center gap-2.5 pt-6 text-xs text-muted-foreground">
-          <span>Créé avec</span>
-          <Logo className="h-4 text-foreground" />
+        <footer className="mt-auto flex justify-center pt-6 text-xs text-muted-foreground">
+          <Link href="/" className="inline-flex items-center gap-2.5 transition-colors hover:text-foreground">
+            <span>Créé avec</span>
+            <Logo className="h-4 text-foreground" />
+          </Link>
         </footer>
       </main>
     </div>

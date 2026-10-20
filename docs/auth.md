@@ -19,7 +19,7 @@ Statut : **développée** (branche `feat/auth`, 2026-10-11). Écarts avec le cad
 | Non connecté | Une page d'authentification | Affichée |
 | Connecté | Connexion ou inscription | Redirigé vers l'accueil de l'application |
 
-- Restent publiques : les pages d'authentification, le **profil public** `/<identifiant>` (c'est sa raison d'être ; règles d'accès dans [public-profile.md](public-profile.md)) et, plus tard, la landing page.
+- Restent publiques : les pages d'authentification, le **profil public** `/<identifiant>` (c'est sa raison d'être ; règles d'accès dans [public-profile.md](public-profile.md)) et la landing page `/` ([landing.md](landing.md)).
 - La vitrine `/design` reste accessible sans connexion, en local uniquement.
 
 ## Parcours

@@ -1,4 +1,5 @@
 import { EyeOffIcon } from "lucide-react";
+import Link from "next/link";
 
 import { Logo } from "@/components/logo";
 
@@ -26,9 +27,11 @@ export function PublicPage({
       <main className={`${COLUMN} flex-1 pt-12 pb-16`}>{children}</main>
       <footer className="border-t border-border">
         <div className={`${COLUMN} flex items-center gap-2 pt-6 pb-8 text-xs text-muted-foreground`}>
-          {/* Not a link until there is a landing page. */}
-          <span>Créé avec</span>
-          <Logo className="h-4 text-foreground" />
+          {/* Each shared profile leads its visitors to the landing page (docs/landing.md). */}
+          <Link href="/" className="inline-flex items-center gap-2 transition-colors hover:text-foreground">
+            <span>Créé avec</span>
+            <Logo className="h-4 text-foreground" />
+          </Link>
         </div>
       </footer>
     </div>

@@ -21,11 +21,6 @@ test.describe("page access", () => {
     await expect(page.getByRole("heading", { name: "Mon profil" })).toBeVisible();
   });
 
-  test("the site address leads to the login page", async ({ page }) => {
-    await page.goto("/");
-    await expect(page).toHaveURL(/\/login$/);
-    await expect(page.getByRole("heading", { name: "Connexion" })).toBeVisible();
-  });
 
   test("a signed-in visitor is sent from login and sign-up to the app", async ({ page }) => {
     const user = await createUser();

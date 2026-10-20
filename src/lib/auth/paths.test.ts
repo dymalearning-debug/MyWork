@@ -26,14 +26,15 @@ describe("safeNextPath", () => {
 });
 
 describe("page access", () => {
-  it("makes /app and the site address private", () => {
-    for (const path of ["/", "/app", "/app/profile", "/app/boards/42"]) {
+  it("makes /app private", () => {
+    for (const path of ["/app", "/app/profile", "/app/boards/42"]) {
       expect(isPrivatePath(path), path).toBe(true);
     }
   });
 
-  it("keeps everything else public: profiles, authentication pages", () => {
+  it("keeps everything else public: landing page, profiles, authentication pages", () => {
     for (const path of [
+      "/",
       "/ines-robert",
       "/ines-robert/cv",
       "/apple",

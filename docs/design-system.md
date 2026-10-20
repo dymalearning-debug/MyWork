@@ -29,7 +29,7 @@ En cas d'écart : le code (`globals.css`, composants) fait foi, la page `/design
 
 ## Couleurs
 
-Toujours passer par les classes Tailwind des tokens (`bg-primary`, `text-muted-foreground`, `border-border`…), jamais de couleur en dur : c'est ce qui fait fonctionner les deux thèmes.
+Toujours passer par les classes Tailwind des tokens (`bg-primary`, `text-muted-foreground`, `border-border`…), jamais de couleur en dur : c'est ce qui fait fonctionner les deux thèmes. Seule exception : les logos d'autres marques (bloc « Outils remplacés » de la landing), dans leurs couleurs officielles.
 
 | Token | Nom | Usage |
 |---|---|---|

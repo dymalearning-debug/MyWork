@@ -23,10 +23,9 @@ function matches(pathname: string, prefixes: string[]) {
 }
 
 // The address tells where we are: /app is private, everything else is public
-// (public profiles, authentication pages). The site address "/" leads to the private space
-// until there is a landing page, so it is treated as private too.
+// (landing page, public profiles, authentication pages).
 export function isPrivatePath(pathname: string) {
-  return pathname === "/" || matches(pathname, [APP_PATH]);
+  return matches(pathname, [APP_PATH]);
 }
 
 export function isSignedOutOnlyPath(pathname: string) {

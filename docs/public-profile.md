@@ -21,7 +21,7 @@ Le squelette prépare la partie publique de tous les modules : l'adresse, la mis
 | `/<identifiant>/…` | Pages publiques des modules : une par onglet (rendez-vous, ressources…) |
 | `/app/…` | Espace privé, connexion obligatoire. `/app` est le tableau de bord (l'accueil) ; la page « Mon profil », anciennement `/profile`, est `/app/profile`. |
 | `/login`, `/signup`… | Authentification, inchangée (voir [auth.md](auth.md)) |
-| `/` | La landing page, plus tard. D'ici là, elle renvoie vers l'espace privé (ou vers la connexion). |
+| `/` | La landing page ([landing.md](landing.md)), publique, pour les visiteurs comme pour les connectés. |
 | `/profile` | Ancienne adresse de la page « Mon profil » : renvoie vers `/app/profile`. |
 
 - L'adresse suffit à savoir où l'on est : `/app` est privé, le reste est public. Les noms des modules ne peuvent donc pas entrer en conflit avec un identifiant.
@@ -92,7 +92,7 @@ Dans les maquettes, Inès Robert (`ines-robert`) est un personnage fictif, et `l
   - à droite (dessous sur mobile), le bouton rouge de l'action principale, par exemple « Prendre rendez-vous » ;
   - des **onglets** : « Profil » (le module Profil, voir [modules.md](modules.md)), puis un onglet par autre module public (Rendez-vous, Ressources pour les fichiers publics du Drive ; le module Tableaux est privé depuis le 2026-10-14). Onglet actif : texte à l'encre et trait rouge dessous. Sur mobile, les onglets défilent horizontalement.
 - Chaque onglet est une page, avec sa propre adresse : `/<identifiant>` pour « Profil », `/<identifiant>/<module>` pour les autres.
-- **Pied de page**, sous un filet : « Créé avec » et le logo MyWork. Le logo n'est pas un lien : il en deviendra un avec la landing page.
+- **Pied de page**, sous un filet : « Créé avec » et le logo MyWork. « Créé avec MyWork » est un lien vers la landing page (depuis le 2026-10-19).
 - **Pour l'instant (squelette)** : l'en-tête montre seulement l'étiquette « Espace public » et le titre « Page de profil », sans photo, bouton ni onglets ; dessous, « Contenu à venir. ». Photo, nom, bouton et onglets arriveront avec les modules.
 - **Bandeau « Hors ligne »** (aperçu du propriétaire) : une bande à l'encre en haut de la page (fond `foreground`, texte `background`), avec une icône d'œil barré, « Hors ligne », puis « Vous seul voyez cette page. ».
 - **Page introuvable (404)** : même gabarit, étiquette « Erreur 404 », titre « Page introuvable », puis « Cette adresse ne correspond à aucun profil public. Vérifiez le lien, ou demandez-le à la personne qui vous l'a envoyé. »

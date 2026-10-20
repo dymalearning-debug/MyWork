@@ -19,7 +19,7 @@ export async function proxy(request: NextRequest) {
 
   if (!isSignedIn && isPrivatePath(pathname)) {
     return redirectKeepingCookies(request, response, LOGIN_PATH, {
-      next: pathname === "/" ? null : `${pathname}${search}`,
+      next: `${pathname}${search}`,
     });
   }
 
