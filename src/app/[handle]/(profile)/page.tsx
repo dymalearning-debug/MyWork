@@ -6,6 +6,7 @@ import { profileDisplayName } from "@/lib/profile/content";
 import { getProfileView } from "@/lib/public-profile/data";
 
 import { ProfileTab } from "../_components/profile-sections";
+import { VisitTracker } from "../_components/visit-tracker";
 
 // Waits for the profile, like the layout.
 export const instant = false;
@@ -37,5 +38,10 @@ export default async function PublicProfilePage({ params }: PageProps<"/[handle]
   const view = await getProfileView(handle);
   if (!view) notFound();
 
-  return <ProfileTab profile={view.profile} />;
+  return (
+    <>
+      <VisitTracker handle={view.profile.handle} tab="profile" />
+      <ProfileTab profile={view.profile} />
+    </>
+  );
 }

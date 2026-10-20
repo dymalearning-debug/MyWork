@@ -129,7 +129,7 @@ Deux e-mails : **confirmation de l'inscription** et **réinitialisation du mot d
   - Réinitialisation : objet « Réinitialisez votre mot de passe », bouton « Choisir un nouveau mot de passe ».
 - Les modèles HTML sont versionnés dans le dépôt (`supabase/templates/`), déclarés dans `supabase/config.toml` et ajoutés à la vitrine `/design`, pour contrôler leur rendu.
 - Le bouton mène à `/auth/confirm?token_hash=…&type=…` : l'application donne à Supabase l'adresse `/auth/confirm` **sans paramètre**, le modèle ajoute le reste (un test unitaire le vérifie).
-- **Service d'envoi** : **Resend**, branché à Supabase par SMTP (`smtp.resend.com`, port 465, mot de passe : la clé `RESEND_API_KEY`). Expéditeur « MyWork » (`noreply@hellomywork.com`). 30 e-mails par heure au plus pour tout le site (réglage Supabase `email_sent`). Chaque envoi se suit dans Resend, *Emails*. Voir [product.md](product.md), *Inventaire technique*.
+- **Service d'envoi** : **Resend**, branché à Supabase par SMTP (`smtp.resend.com`, port 465, mot de passe : la clé `RESEND_API_KEY`). Expéditeur « MyWork » (`noreply@hellomywork.com`). 30 e-mails par heure au plus pour tout le site (réglage Supabase `email_sent`). Connexions et inscriptions : 100 toutes les 5 minutes par adresse IP (`sign_in_sign_ups`, relevé de 30 le 2026-10-19 : les tests de bout en bout se connectent plus souvent que cela depuis la seule adresse de GitHub). Chaque envoi se suit dans Resend, *Emails*. Voir [product.md](product.md), *Inventaire technique*.
 
 ## Données de l'utilisateur
 

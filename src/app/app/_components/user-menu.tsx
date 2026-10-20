@@ -99,7 +99,9 @@ export function UserMenu({
           <span className="min-w-0 flex-1 truncate text-sm">{name}</span>
           <ChevronsUpDownIcon className="size-4 shrink-0 text-muted-foreground" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent side="top" sideOffset={8} className="rounded-none">
+        {/* Placed in the window, like the sidebar it hangs from: when the page scrolls (the
+            dashboard is taller than the screen), the menu and its submenus stay under the pointer. */}
+        <DropdownMenuContent side="top" sideOffset={8} positionMethod="fixed" className="rounded-none">
           <p className="truncate px-2.5 py-2 text-xs text-muted-foreground">{email}</p>
           <DropdownMenuSeparator />
           <PublicProfileSubmenu handle={profile.handle} online={online} onOnlineChange={toggleOnline} />
@@ -168,7 +170,7 @@ function PublicProfileSubmenu({
         <GlobeIcon />
         Mon profil public
       </DropdownMenuSubTrigger>
-      <DropdownMenuSubContent className={cn(SUBMENU, "w-64")} sideOffset={9} alignOffset={-5}>
+      <DropdownMenuSubContent className={cn(SUBMENU, "w-64")} sideOffset={9} alignOffset={-5} positionMethod="fixed">
         <MenuPrimitive.CheckboxItem
           checked={online}
           onCheckedChange={onOnlineChange}
@@ -210,7 +212,7 @@ function ThemeSubmenu() {
         <ContrastIcon />
         Thème
       </DropdownMenuSubTrigger>
-      <DropdownMenuSubContent className={cn(SUBMENU, "w-[200px]")} sideOffset={9} alignOffset={-5}>
+      <DropdownMenuSubContent className={cn(SUBMENU, "w-[200px]")} sideOffset={9} alignOffset={-5} positionMethod="fixed">
         <DropdownMenuRadioGroup value={theme ?? "system"} onValueChange={(value) => setTheme(value)}>
           {THEMES.map(({ value, label, icon: Icon }) => (
             <MenuPrimitive.RadioItem

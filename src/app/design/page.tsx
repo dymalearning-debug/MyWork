@@ -64,6 +64,7 @@ import {
 } from "./_components/interactive-demos"
 import { BoardBricks } from "./_components/board-bricks"
 import { BookingBricks } from "./_components/booking-bricks"
+import { DashboardBricks } from "./_components/dashboard-bricks"
 import { DriveBricks } from "./_components/drive-bricks"
 import { SidebarPreview, VisibilityBadge } from "./_components/module-previews"
 import { ProfileBricks } from "./_components/profile-bricks"
@@ -888,6 +889,7 @@ export default function DesignPage() {
               <ProfileBricks />
             </Suspense>
             <BookingBricks />
+            <DashboardBricks />
             <BoardBricks />
             {/* The dates of the list are read at the visit ("14:32" today). */}
             <Suspense fallback={<Skeleton className="h-96" />}>

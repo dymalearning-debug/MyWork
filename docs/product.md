@@ -92,7 +92,7 @@ Vue d'ensemble de tout ce qu'utilise l'application, au-delà des grands choix ci
 | `date-fns`, `@date-fns/tz` | Dates et fuseaux horaires des rendez-vous : horaires du propriétaire convertis jour par jour, changements d'heure compris ([booking.md](booking.md)) | Étape 4 |
 | `livekit-server-sdk`, `livekit-client`, `@livekit/components-react` | Visio : jetons d'accès côté serveur, salle dans le navigateur ([booking.md](booking.md)) | Étape 4 |
 | `resend` | Envoi des e-mails des rendez-vous par l'API de Resend ([booking.md](booking.md)) | 2026-10-18 |
-| Extensions PostgreSQL `btree_gist` et `pg_cron` (Supabase) | `btree_gist` : contrainte qui interdit deux rendez-vous qui se chevauchent ; `pg_cron` : tâches de la base chaque nuit (rendez-vous effacés un an après leur date, empreintes IP après un jour) | Étape 4 |
+| Extensions PostgreSQL `btree_gist` et `pg_cron` (Supabase) | `btree_gist` : contrainte qui interdit deux rendez-vous qui se chevauchent ; `pg_cron` : tâches de la base chaque nuit (rendez-vous effacés un an après leur date, empreintes IP après un jour ; pour le tableau de bord, sels des visites de la veille, visites et signaux après 90 jours) | Étape 4 |
 
 ## Roadmap
 
@@ -268,6 +268,9 @@ Journal des choix validés (date : décision).
 - 2026-10-15 : retours du porteur du projet sur « Mes fichiers », après essai : plus de nombre d'éléments à côté du titre ; dans un dossier, fil d'Ariane discret (texte courant, pas de titre en Newsreader) ; « Télécharger » ferme l'aperçu ; pied de page aligné sur le bloc du profil de la barre latérale.
 
 - 2026-10-16 : module Rendez-vous développé, avec la visio (détail dans [booking.md](booking.md), *Précisé pendant le développement*). Choix faits en cours de route, à valider par le porteur du projet : code du lien de l'invité gardé en clair (pour « Copier le lien de l'invité ») ; un rendez-vous reste « À venir » jusqu'à la fermeture de sa salle ; point rouge retiré à l'ouverture du détail ; annulation par l'invité jusqu'au début ; compte à rebours en jours au-delà de 24 heures ; salle de visio assemblée avec les briques de LiveKit plutôt que son écran tout fait ; nouveau token `stage` (fond fixe des vidéos).
+- 2026-10-18 : **tableau de bord**, cadré avec le porteur du projet (détail dans [dashboard.md](dashboard.md)) : quatre blocs, **visites du profil public** (visiteurs uniques sur 7 et 30 jours, détail par onglet et par provenance, comptés une fois par jour, sans cookie), **rendez-vous d'aujourd'hui et de demain**, **signaux d'intérêt** (rendez-vous réservés, « Me contacter », CV et ressources téléchargés) et **rappels** (profil hors ligne, réservations fermées, profil incomplet, stockage). Écartés : raccourcis, bloc Tableaux et Drive. Les statistiques de visites, notées *Plus tard*, sont avancées.
+- 2026-10-19 : maquette du tableau de bord : direction **« Mosaïque »** retenue ([Maquette tableau de bord](https://claude.ai/artifact/2CDdmSAV6Big1aR46qknNK), détail dans [dashboard.md](dashboard.md)), « Rapport » et « Journée » écartées. Retours : rendez-vous **du jour seulement** (plus ceux de demain) ; **provenance des visiteurs retirée**. Le reste est gardé : visiteurs sur 7 et 30 jours, graphique sur 30 jours, détail par onglet, rappels, signaux d'intérêt.
+- 2026-10-19 : tableau de bord **développé** (détail dans [dashboard.md](dashboard.md), *Précisé pendant le développement*). Visites comptées dans notre base, sans service externe ni cookie (empreinte avec un sel du jour, effacé la nuit suivante), données gardées 90 jours. Choix faits en cours de route, à valider : visite envoyée par la page affichée, signaux comptés à chaque fois, libellés « Réservations » et « Ressources », jours de Paris pour les visites.
 
 ## Questions ouvertes
 
