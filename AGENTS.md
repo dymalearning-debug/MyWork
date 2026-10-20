@@ -36,7 +36,7 @@ Point d'entrée pour tout agent (IA ou humain) qui travaille sur ce dépôt. À 
   - Fait aussi (2026-10-18) : **Resend** branché sur le domaine `hellomywork.com` : e-mails de connexion (Supabase, modèles MyWork) et e-mails des rendez-vous (voir [docs/product.md](docs/product.md), *Inventaire technique*).
   - Landing page spécifiée et décisions validées le 2026-10-19 ([docs/landing.md](docs/landing.md)) : ossature de la page en place à `/`, hero (approche « A · Vitrine »), fonctionnalités (approche « B · Alternance ») et outils remplacés (approche « B · Tableau »), tarif (approche « B · Deux formules ») et FAQ (approche « B · Thèmes ») développés le 2026-10-20 : tous les blocs sont faits (« Un seul lien », « Comment ça marche » et « Qui est derrière » retirés).
   - Tableau de bord développé le 2026-10-19 ([docs/dashboard.md](docs/dashboard.md)), maquette « Mosaïque » : rendez-vous du jour, visiteurs du profil public sur 7 et 30 jours (sans cookie, une fois par jour), graphique, détail par onglet, rappels, signaux d'intérêt (réservations, « Me contacter », CV, ressources). Quelques choix faits pendant le développement restent à valider.
-  - Reste à faire : changement d'e-mail et de mot de passe (Resend est prêt). Faire tourner les fonctions Vercel à Dublin, comme prévu par la stack : elles tournent aujourd'hui à Washington (`iad1`, constaté le 2026-10-14).
+  - Reste à faire : changement d'e-mail et de mot de passe (Resend est prêt).
 - Stack technique : **TypeScript, Next.js, Tailwind CSS + shadcn/ui, Supabase, Vercel**. Détail et justification dans `docs/product.md`, section *Stack technique*.
 
 ## Code
@@ -53,7 +53,7 @@ Point d'entrée pour tout agent (IA ou humain) qui travaille sur ce dépôt. À 
 - Tests : `npm test` (Vitest, unitaires) et `npm run test:e2e` (Playwright, sur la base en ligne ; comptes de test supprimés à la fin).
 - **Jamais de base de données locale** (ni `npx supabase start`, ni Docker) : développement et production utilisent le même projet Supabase en ligne, jusqu'à la fin du développement (voir `docs/product.md`, *Décisions*).
 - Dépôt GitHub : https://github.com/dymalearning-debug/MyWork (privé).
-- Déploiement : Vercel, équipe `mywork-8619`, projet `linku` (ancien nom du produit). Chaque push sur `main` part en production (https://hellomywork.com, nom de domaine acheté chez Vercel ; l'ancienne adresse https://linku-nu.vercel.app reste valide) ; chaque pull request reçoit une URL d'aperçu. Les variables d'environnement sont gérées dans Vercel : `vercel env pull .env.local` régénère le fichier local (CLI Vercel installé sur le poste).
+- Déploiement : Vercel, équipe `mywork-8619`, projet `linku` (ancien nom du produit). Fonctions à Dublin (`dub1`, au plus près de la base), réglées dans `vercel.json`. Chaque push sur `main` part en production (https://hellomywork.com, nom de domaine acheté chez Vercel ; l'ancienne adresse https://linku-nu.vercel.app reste valide) ; chaque pull request reçoit une URL d'aperçu. Les variables d'environnement sont gérées dans Vercel : `vercel env pull .env.local` régénère le fichier local (CLI Vercel installé sur le poste).
 
 ## Règles de travail
 

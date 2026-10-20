@@ -197,7 +197,7 @@ Textes (2026-10-20) :
 **Sur la page** (2026-10-20, choisies par le porteur du projet parmi un premier jet de 39) : dix questions en quatre thèmes. *MyWork* : Qu'est-ce que MyWork ? · Quels outils MyWork remplace-t-il ? · Qu'est-ce que le profil public ? *Tarif et abonnement* : Combien coûte MyWork ? · Comment fonctionne l'essai gratuit ? · Puis-je arrêter quand je veux ? *Vos clients* : Mes clients doivent-ils créer un compte pour réserver ? · MyWork se synchronise-t-il avec Google Agenda ou Outlook ? *Vos données* : Combien d'espace de stockage ai-je ? · Où sont hébergées mes données ? Les réponses sont dans `faq.tsx`. Points à confirmer avant le lancement :
 
 - « Puis-je arrêter quand je veux ? » suppose que l'abonnement s'arrête **à la fin de la période déjà payée**, sans remboursement au prorata *(proposé)*.
-- « Où sont hébergées mes données ? » dit « Union européenne (Irlande) » : vrai pour la base et les fichiers, mais les fonctions Vercel tournent encore à Washington. Les passer à Dublin avant le lancement.
+- « Où sont hébergées mes données ? » dit « Union européenne (Irlande) » : vrai pour la base, les fichiers et, depuis le 2026-10-20, les fonctions Vercel (Dublin, `vercel.json`).
 - La ligne « Une autre question ? Écrivez-nous » est **masquée** tant qu'aucune adresse de contact n'existe (`CONTACT_EMAIL` dans `faq.tsx`).
 
 Liste de départ (2026-10-19), gardée en réserve :
