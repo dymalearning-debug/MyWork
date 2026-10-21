@@ -76,7 +76,8 @@ export async function billingOverview({ subscription, state, liveMode }: OwnBill
   const customerId = ownMode ? subscription.customerId : null;
   const end = subscription && hasAccess(state) ? accessEnd(subscription) : null;
   // Before a cancellation, what it would cancel (the confirmation of "Résilier"); after, what it will.
-  const stopsAt = state === "trialing" ? (subscription?.trialEnd ?? end) : end;
+  // A trial stops at once: every booking to come.
+  const stopsAt = state === "trialing" ? new Date() : end;
   const [invoices, bookingsAfterEnd] = await Promise.all([
     customerId ? lastInvoices(customerId) : Promise.resolve([]),
     hasAccess(state) && state !== "past_due" ? bookingsFrom(stopsAt) : Promise.resolve(0),
@@ -118,6 +119,8 @@ export async function portalUrl({ subscription, state, liveMode }: OwnBilling, f
     flowData = { type: "payment_method_update", after_completion: afterCompletion };
   } else if (flow === "cancel" || flow === "switch_plan") {
     if (!subscription.subscriptionId || !hasAccess(state) || state === "canceling") return null;
+    // A trial is cancelled in MyWork, at once (cancelOwnTrial).
+    if (flow === "cancel" && state === "trialing") return null;
     if (flow === "cancel") {
       flowData = {
         type: "subscription_cancel",
@@ -153,6 +156,17 @@ export async function portalUrl({ subscription, state, liveMode }: OwnBilling, f
     console.error(`[billing] portal (${flow}) unavailable`, error);
     return null;
   }
+}
+
+// "Résilier" during the trial: the subscription ends at once at Stripe, without any payment, and the
+// space is paused (docs/billing.md, decision of 2026-10-21). After the trial, the cancellation goes
+// through Stripe's portal and takes effect at the end of the paid period.
+export async function cancelOwnTrial({ subscription, state }: OwnBilling): Promise<boolean> {
+  const stripe = getStripe();
+  if (!stripe || state !== "trialing" || !subscription?.subscriptionId) return false;
+  await stripe.subscriptions.cancel(subscription.subscriptionId);
+  await syncSubscription(subscription.subscriptionId);
+  return true;
 }
 
 // "Reprendre mon abonnement", after a cancellation, while the paid period runs: straight with

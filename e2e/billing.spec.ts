@@ -107,10 +107,13 @@ test.describe("with a subscription", () => {
     // The first "Fermer" is the button of the footer (the cross has the same name).
     await expect(settings.getByRole("button", { name: "Fermer" }).first()).toBeVisible();
 
+    // During the trial, the cancellation stops everything at once, without Stripe's page.
     await settings.getByRole("button", { name: "Résilier" }).click();
     const confirmation = page.getByRole("dialog", { name: "Résilier votre abonnement ?" });
-    await expect(confirmation).toContainText("Votre essai continue jusqu'au");
-    await expect(confirmation).toContainText("vos données seront gardées 90 jours");
+    await expect(confirmation).toContainText("Votre essai s'arrête tout de suite et rien ne vous sera prélevé.");
+    await expect(confirmation).toContainText("votre espace est mis en pause");
+    await expect(confirmation).toContainText("vos données sont gardées 90 jours");
+    await expect(confirmation.getByRole("button", { name: "Résilier maintenant" })).toBeVisible();
     await confirmation.getByRole("button", { name: "Garder mon abonnement" }).click();
     await expect(confirmation).toBeHidden();
   });
@@ -234,7 +237,9 @@ test.describe("the payment page of Stripe", () => {
   );
   test.setTimeout(120_000);
 
-  test("starts the trial with the test card, then the deletion of the account stops it", async ({ page }) => {
+  // Signed up without a subscription, then the trial of the monthly plan with the test card: back
+  // on the dashboard with the welcome notification.
+  async function startTrial(page: Page) {
     const user = await signedInWith(page, "none");
     await page.getByRole("radio", { name: "Formule mensuelle" }).click();
     await page.getByRole("button", { name: "Démarrer mon essai de 7 jours" }).click();
@@ -259,8 +264,26 @@ test.describe("the payment page of Stripe", () => {
 
     await page.waitForURL(/localhost:3000\/app$/, { timeout: 60_000 });
     await expect(page.getByText("Bienvenue dans MyWork")).toBeVisible();
-    await expect(await getSubscription(user.id)).toMatchObject({ status: "trialing", plan: "monthly", card_last4: "4242" });
+    expect(await getSubscription(user.id)).toMatchObject({ status: "trialing", plan: "monthly", card_last4: "4242" });
+    return user;
+  }
 
+  test("a trial cancelled stops at once: the space is paused", async ({ page }) => {
+    const user = await startTrial(page);
+    const settings = await openSettings(page);
+    await settings.getByRole("button", { name: "Abonnement" }).click();
+    await settings.getByRole("button", { name: "Résilier" }).click();
+    await page.getByRole("dialog", { name: "Résilier votre abonnement ?" }).getByRole("button", { name: "Résilier maintenant" }).click();
+
+    await expect(page).toHaveURL(/\/app\/subscribe$/, { timeout: 30_000 });
+    await expect(page.getByRole("heading", { name: "Votre espace est en pause" })).toBeVisible();
+    expect(await getSubscription(user.id)).toMatchObject({ status: "canceled" });
+    await page.goto("/app/boards", { waitUntil: "commit" });
+    await expect(page).toHaveURL(/\/app\/subscribe$/, { timeout: 30_000 });
+  });
+
+  test("the deletion of the account stops the subscription", async ({ page }) => {
+    const user = await startTrial(page);
     const settings = await openSettings(page);
     await settings.getByRole("button", { name: "Supprimer le compte" }).click();
     await page.getByRole("dialog", { name: "Supprimer votre compte ?" }).getByRole("button", { name: "Supprimer définitivement" }).click();

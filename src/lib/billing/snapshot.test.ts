@@ -1,7 +1,7 @@
 import type Stripe from "stripe";
 import { describe, expect, it } from "vitest";
 
-import { ownerOf, planOf, snapshotOf } from "./snapshot";
+import { isCancelledTrial, ownerOf, planOf, snapshotOf } from "./snapshot";
 
 // A Stripe subscription, as Stripe gives it with SUBSCRIPTION_EXPAND (only the fields read here).
 const at = (iso: string) => Math.floor(new Date(iso).getTime() / 1000);
@@ -88,6 +88,13 @@ describe("a Stripe subscription, as the database keeps it", () => {
       }),
     );
     expect(snapshot.unpaid).toEqual({ amount: 500, at: "2026-11-28T10:00:00.000Z", nextAttempt: "2026-12-01T10:00:00.000Z" });
+  });
+
+  it("finds a trial whose cancellation is asked for, which MyWork ends at once", () => {
+    expect(isCancelledTrial(stripeSubscription())).toBe(false);
+    expect(isCancelledTrial(stripeSubscription({ cancel_at_period_end: true }))).toBe(true);
+    expect(isCancelledTrial(stripeSubscription({ cancel_at: at("2026-10-28T10:00:00Z") }))).toBe(true);
+    expect(isCancelledTrial(stripeSubscription({ status: "active", cancel_at_period_end: true }))).toBe(false);
   });
 
   it("finds the plan from the name of the price, or its interval", () => {

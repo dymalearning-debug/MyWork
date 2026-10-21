@@ -15,12 +15,14 @@ import { getCurrentUser } from "@/lib/auth/user";
 import { getOwnBilling } from "@/lib/billing/data";
 import {
   billingOverview,
+  cancelOwnTrial,
   portalUrl,
   resumeOwnSubscription,
   stopSubscriptionForDeletion,
   type BillingOverview,
   type PortalFlow,
 } from "@/lib/billing/portal";
+import { SUBSCRIBE_PATH } from "@/lib/billing/rules";
 import { isValidHandle } from "@/lib/public-profile/handle";
 import { removeAllOwnBoardImages } from "@/lib/boards/data";
 import { removeAllOwnDriveFiles } from "@/lib/drive/data";
@@ -138,6 +140,20 @@ export async function openBillingPortal(flow: PortalFlow): Promise<{ url: string
     console.error(error);
     return { url: null };
   }
+}
+
+// "Résilier maintenant", during the trial: the space is paused at once, so the page goes to
+// "Choisissez votre formule" (docs/billing.md).
+export async function cancelTrial(): Promise<{ ok: false }> {
+  const billing = await getOwnBilling();
+  if (!billing) return { ok: false };
+  try {
+    if (!(await cancelOwnTrial(billing))) return { ok: false };
+  } catch (error) {
+    console.error(error);
+    return { ok: false };
+  }
+  redirect(SUBSCRIBE_PATH);
 }
 
 // "Reprendre mon abonnement". The private space is refreshed: the reminders and the section change.

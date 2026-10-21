@@ -31,7 +31,7 @@ describe("the emails of the subscription", () => {
     expect(email.subject).toBe("Votre essai se termine le 28 octobre");
     expect(email.text).toContain("Plus que 3 jours d'essai");
     expect(email.text).toContain("votre abonnement démarre mercredi 28 octobre. Nous vous prélèverons alors 50 € pour un an.");
-    expect(email.text).toContain("résiliez avant le 28 octobre");
+    expect(email.text).toContain("résiliez avant le 28 octobre dans Paramètres › Abonnement : l'essai s'arrête alors aussitôt.");
     expect(email.html).toContain(`href="${ORIGIN}/app?settings=billing"`);
   });
 
@@ -43,13 +43,6 @@ describe("the emails of the subscription", () => {
     expect(email.text).toContain("Rendez-vous à venir : 3, annulés à cette date");
     expect(email.text).toContain("Vos données : gardées jusqu'au 26 janvier 2028");
     expect(email.text).toContain("fin de la période payée");
-  });
-
-  it("goodbye during the trial: nothing will be taken", () => {
-    const data: BillingEmailData = { ...sample("welcome"), cancelAt: "2026-10-28T10:00:00Z" };
-    const email = renderBillingEmail("goodbye", data, ORIGIN);
-    expect(email.text).toContain("Rien ne vous sera prélevé, et votre accès reste ouvert jusqu'à la fin de l'essai.");
-    expect(email.text).not.toContain("Rendez-vous à venir");
   });
 
   it("ended: the space is paused, the data kept until a date", () => {

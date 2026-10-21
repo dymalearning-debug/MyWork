@@ -46,6 +46,10 @@ export function planOf(price: Stripe.Price | undefined): PlanId | null {
 // The account the subscription belongs to: given to Stripe with the payment page.
 export const ownerOf = (subscription: Stripe.Subscription) => subscription.metadata?.user_id || null;
 
+// A trial with a cancellation asked for (at its end, or on a given day): MyWork ends it at once.
+export const isCancelledTrial = (subscription: Stripe.Subscription) =>
+  subscription.status === "trialing" && (subscription.cancel_at_period_end || !!subscription.cancel_at);
+
 export function snapshotOf(subscription: Stripe.Subscription): SubscriptionSnapshot {
   const item = subscription.items.data[0];
   const periodEnd = item?.current_period_end ?? null;

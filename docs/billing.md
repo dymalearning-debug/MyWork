@@ -32,7 +32,8 @@ Règles :
 |---|---|---|---|
 | Essai (7 jours) | Ouvert | Ouverts | Les 3 derniers jours, un rappel dans le tableau de bord : « Votre essai se termine le … » *(proposé)* |
 | Actif | Ouvert | Ouverts | Rien de particulier |
-| Résiliation demandée (jusqu'à la fin de la période payée) | Ouvert | Ouverts | « Votre abonnement s'arrête le … », bouton « Reprendre mon abonnement » |
+| Résiliation demandée **pendant l'essai** | **Fermé tout de suite** | **Hors ligne tout de suite** | Rien n'a été payé : l'abonnement s'arrête aussitôt, comme à la fin d'un abonnement (ci-dessous), et l'espace est mis en pause. Se réabonner : sans nouvel essai (décision du porteur du projet, 2026-10-21) |
+| Résiliation demandée **après l'essai** (jusqu'à la fin de la période payée) | Ouvert | Ouverts | « Votre abonnement s'arrête le … », bouton « Reprendre mon abonnement » |
 | Paiement refusé (Stripe réessaie pendant environ 2 semaines) | Ouvert | Ouverts | Bandeau en haut de l'espace privé : « Le paiement a échoué. Mettez à jour votre carte. » |
 | Terminé, ou jamais abonné | **Fermé** : seulement « Choisissez votre formule » et les Paramètres (pour pouvoir supprimer son compte) | **Hors ligne** (« Page introuvable »), réservations fermées | « Choisissez votre formule », sans essai s'il y a déjà eu un abonnement |
 
@@ -56,7 +57,7 @@ Ce que la section affiche :
 
 Les boutons :
 
-- **Changer de carte**, **Voir toutes les factures**, **Passer à la formule annuelle** (ou mensuelle), **Résilier** : chacun ouvre la page correspondante du portail de Stripe ;
+- **Changer de carte**, **Voir toutes les factures**, **Passer à la formule annuelle** (ou mensuelle), **Résilier** : chacun ouvre la page correspondante du portail de Stripe ; pendant l'essai, « Résilier » arrête l'abonnement directement dans MyWork (« Résilier maintenant »), sans passer par Stripe ;
 - **Reprendre mon abonnement**, après une résiliation demandée, tant que la période payée court.
 
 Changer de formule *(proposé)* : du mois à l'année, tout de suite, avec le reste du mois en cours déduit ; de l'année au mois, à la fin de l'année payée.
@@ -73,7 +74,7 @@ Pourquoi ne pas tout refaire dans MyWork : la saisie de la carte (avec la valida
 |---|---|---|
 | Bienvenue | À la souscription | Ce qui est inclus, date de fin de l'essai, montant et date du premier prélèvement, comment résilier, trois premiers pas (compléter et mettre en ligne son profil, ouvrir ses créneaux, partager son lien) |
 | Fin de l'essai | 3 jours avant la fin de l'essai | Date et montant du premier prélèvement, lien pour résilier. Promis sur la landing page |
-| Au revoir | Quand l'abonné résilie | Confirmation de la résiliation, date de fin de l'accès, ce qui se passe ensuite (profil hors ligne, rendez-vous annulés, données gardées 90 jours), bouton « Reprendre mon abonnement » |
+| Au revoir | Quand l'abonné résilie après l'essai (pendant l'essai, c'est « Abonnement terminé », envoyé aussitôt) | Confirmation de la résiliation, date de fin de l'accès, ce qui se passe ensuite (profil hors ligne, rendez-vous annulés, données gardées 90 jours), bouton « Reprendre mon abonnement » |
 | Abonnement terminé | Le jour où l'accès se ferme | Accès fermé, données gardées jusqu'au …, bouton pour se réabonner *(proposé)* |
 | Suppression prochaine | 7 jours avant la suppression des données | Dernier rappel, bouton pour se réabonner *(proposé)* |
 
@@ -130,6 +131,7 @@ Ce qui ne relève pas du code, mais conditionne l'ouverture :
 - **Bout en bout** (`e2e/billing.spec.ts`) : les comptes de test reçoivent un abonnement de test écrit dans la base (en essai par défaut ; `createUser({ subscription })` choisit l'état). Compte sans abonnement renvoyé vers « Choisissez votre formule » depuis chaque page ; formule de l'adresse ou de l'inscription ; profil impossible à mettre en ligne et Drive fermé à l'écriture sans abonnement ; abonnement terminé (« Votre espace est en pause », sans nouvel essai) ; section Abonnement (essai, carte, factures, pied « Fermer », confirmation de « Résilier ») ; lien `?settings=billing` des e-mails ; résiliation demandée (rappel, « Reprendre mon abonnement ») ; paiement refusé (bandeau, rappel, accès ouvert) ; mention de l'abonnement dans la suppression du compte ; cartes du tarif de la landing vers `/signup?plan=…`.
 - **Avec le code secret** (`.env.local`, pas sur GitHub) : la fin d'un abonnement met le profil hors ligne, annule les rendez-vous à venir (e-mail de l'invité préparé) et le remet en ligne au retour ; un événement reçu deux fois n'est traité qu'une fois ; un code faux est refusé.
 - **Avec la clé de test de Stripe** (`.env.local`, pas sur GitHub) : la page de paiement de Stripe avec la carte de test `4242 4242 4242 4242`, le retour sur le tableau de bord avec la notification, l'abonnement enregistré, puis la suppression du compte qui arrête l'abonnement chez Stripe.
+- **Résiliation pendant l'essai** (même condition) : essai payé avec la carte de test, « Résilier maintenant », espace aussitôt en pause et abonnement arrêté chez Stripe.
 - **Essayé à la main** le 2026-10-21, en mode test : paiement, retour, Paramètres › Abonnement, changement de carte et résiliation sur le portail puis retour, « Reprendre mon abonnement », bandeau du paiement refusé, thème sombre.
 - **Pas encore automatisé** : le temps qui passe, avec les horloges de test de Stripe (e-mail de fin d'essai, premier prélèvement, paiement refusé puis accès fermé, renouvellement annuel, fin après une résiliation) et la signature du webhook (à essayer avec `stripe listen` et `stripe trigger`).
 
@@ -146,7 +148,8 @@ Ce qui ne relève pas du code, mais conditionne l'ouverture :
 - **Moyens de paiement** : réglés dans Stripe (cette version de son API ne permet plus de les choisir dans le code).
 - **Case des conditions générales** : pas encore demandée, faute de page ; une ligne à ajouter avec les pages légales.
 - **E-mail « Au revoir »** : sans la phrase « Répondez à cet e-mail » tant qu'il n'y a pas d'adresse de contact (décision 16).
-- **Libellés** : « Résilier » ouvre la confirmation de MyWork, puis la page de Stripe ; les boutons vers Stripe portent la flèche ↗ ; un compte sans abonnement voit « Aucun abonnement en cours » dans la section.
+- **Résiliation pendant l'essai** (décision du porteur du projet, 2026-10-21) : l'abonnement est arrêté aussitôt chez Stripe, quel que soit l'endroit où la résiliation est demandée (bouton de MyWork, portail ou tableau de bord de Stripe) : MyWork l'arrête chaque fois qu'il relit chez Stripe un essai avec une résiliation programmée. La confirmation dit que tout s'arrête maintenant, et compte tous les rendez-vous à venir.
+- **Libellés** : « Résilier » ouvre la confirmation de MyWork, puis la page de Stripe (après l'essai) ; les boutons vers Stripe portent la flèche ↗ ; un compte sans abonnement voit « Aucun abonnement en cours » dans la section.
 
 ## Reste à faire
 
@@ -185,6 +188,6 @@ Ce qui ne relève pas du code, mais conditionne l'ouverture :
 11. Cinq e-mails MyWork (bienvenue, fin de l'essai, au revoir, abonnement terminé, suppression prochaine) ; reçus, factures, paiement refusé, carte expirée et rappel du renouvellement annuel envoyés par Stripe.
 12. Rappels du tableau de bord ([dashboard.md](dashboard.md)) : fin de l'essai (3 derniers jours), résiliation demandée et paiement refusé.
 13. Inscription en deux étapes affichées (« Étape 1 sur 2 », « Étape 2 sur 2 ») ; « Choisissez votre formule » montre l'échéancier : 0 € aujourd'hui, le montant à la fin de l'essai.
-14. « Résilier » ouvre d'abord une confirmation dans MyWork (date de fin, rendez-vous annulés, données gardées 90 jours), puis la page de Stripe.
+14. « Résilier » ouvre d'abord une confirmation dans MyWork (date de fin, rendez-vous annulés, données gardées 90 jours), puis la page de Stripe. (Pendant l'essai, la résiliation est immédiate et se fait dans MyWork : décidé par le porteur du projet le 2026-10-21.)
 15. Section Abonnement des Paramètres : rien à enregistrer, le pied de la fenêtre n'a qu'un bouton « Fermer » ; les boutons qui ouvrent Stripe portent une flèche.
 16. E-mail « Au revoir » : « Répondez à cet e-mail » ; il faut donc une adresse de réponse (l'adresse de contact).

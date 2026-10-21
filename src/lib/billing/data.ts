@@ -22,7 +22,7 @@ import {
   type SubscriptionRow,
   type SubscriptionState,
 } from "./rules";
-import { ownerOf, snapshotOf, SUBSCRIPTION_EXPAND, type SubscriptionSnapshot } from "./snapshot";
+import { isCancelledTrial, ownerOf, snapshotOf, SUBSCRIPTION_EXPAND, type SubscriptionSnapshot } from "./snapshot";
 import { isLiveMode, requireStripe } from "./stripe";
 
 // The subscription of the signed-in user, and the access it gives (docs/billing.md, "Accès selon
@@ -114,12 +114,19 @@ type SyncResult = {
 
 // Saves a subscription as Stripe gives it now, then sends the emails its change calls for. After
 // the payment page, a return from the portal and each webhook event (event: handled once).
+// A trial whose cancellation is asked for, wherever (MyWork, Stripe's portal or dashboard), ends at
+// once: nothing has been paid, the space is paused now (docs/billing.md, decision of 2026-10-21).
 // Returns the account it belongs to, or null for a subscription without one (not made by MyWork).
 export async function syncSubscription(
   subscriptionId: string,
   event?: { id: string; type: string },
 ): Promise<{ owner: string; status: SyncResult["status"] } | null> {
-  const subscription = await requireStripe().subscriptions.retrieve(subscriptionId, { expand: SUBSCRIPTION_EXPAND });
+  const stripe = requireStripe();
+  let subscription = await stripe.subscriptions.retrieve(subscriptionId, { expand: SUBSCRIPTION_EXPAND });
+  if (isCancelledTrial(subscription)) {
+    await stripe.subscriptions.cancel(subscription.id);
+    subscription = await stripe.subscriptions.retrieve(subscriptionId, { expand: SUBSCRIPTION_EXPAND });
+  }
   const owner = ownerOf(subscription);
   if (!owner) {
     console.warn(`[billing] ${subscriptionId}: no MyWork account in its metadata.`);

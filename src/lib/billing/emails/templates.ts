@@ -113,7 +113,7 @@ function trialEnding(data: BillingEmailData, origin: string): RenderedEmail {
     ["Date", formatLongDate(end)],
     ...cardRow(data.card),
   ];
-  const cancel = `Pour ne rien payer, résiliez avant le ${formatPlainDate(end, { year: false })} dans Paramètres › Abonnement. Vous gardez l'accès jusqu'à la fin de l'essai.`;
+  const cancel = `Pour ne rien payer, résiliez avant le ${formatPlainDate(end, { year: false })} dans Paramètres › Abonnement : l'essai s'arrête alors aussitôt.`;
   const heading = days === 1 ? "Plus qu'un jour d'essai" : `Plus que ${days} jours d'essai`;
   const body = [
     label("Essai gratuit"),
@@ -130,15 +130,14 @@ function trialEnding(data: BillingEmailData, origin: string): RenderedEmail {
   return { subject, html: layout(subject, body, origin), text };
 }
 
-// When the subscriber cancels: the access stays open until the end of the paid period.
+// When the subscriber cancels after the trial: the access stays open until the end of the paid
+// period. (A trial cancelled ends at once: the email is "Abonnement terminé".)
 function goodbye(data: BillingEmailData, origin: string): RenderedEmail {
   const end = date(data.cancelAt) ?? date(data.currentPeriodEnd) ?? new Date(data.sentAt);
-  const inTrial = !!data.trialEnd && new Date(data.trialEnd).getTime() >= end.getTime() - DAY;
   const link = `${origin}/app?settings=billing`;
   const subject = "Votre abonnement est résilié";
-  const opening = inTrial
-    ? "Votre résiliation est bien enregistrée. Rien ne vous sera prélevé, et votre accès reste ouvert jusqu'à la fin de l'essai."
-    : "Votre résiliation est bien enregistrée. Rien ne vous sera plus prélevé, et votre accès reste ouvert jusqu'à la fin de la période payée.";
+  const opening =
+    "Votre résiliation est bien enregistrée. Rien ne vous sera plus prélevé, et votre accès reste ouvert jusqu'à la fin de la période payée.";
   const details: [string, string][] = [
     ["Fin de l'accès", formatLongDate(end)],
     ["Profil public", "hors ligne à cette date"],

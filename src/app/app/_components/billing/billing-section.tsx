@@ -13,7 +13,7 @@ import { DATA_RETENTION_DAYS, formatAmount, formatPrice, otherPlan, planSummary,
 import type { BillingInvoice, BillingOverview } from "@/lib/billing/portal";
 import { cardExpiry, cardLabel, formatLongDate, formatNumericDate, formatPlainDate, type SubscriptionState } from "@/lib/billing/rules";
 
-import { getBillingOverview, resumeSubscription } from "../../actions";
+import { cancelTrial, getBillingOverview, resumeSubscription } from "../../actions";
 import { PortalButton } from "./portal-button";
 
 // The section "Abonnement" of the Settings (docs/billing.md, "La section Abonnement des
@@ -291,8 +291,9 @@ function Invoices({ overview }: { overview: BillingOverview }) {
   );
 }
 
-// "Résilier" (docs/billing.md, decision 14): what happens at the end, then Stripe's page, where the
-// cancellation is confirmed.
+// "Résilier" (docs/billing.md, decision 14): what the cancellation does, then Stripe's page, where
+// it is confirmed. During the trial, nothing has been paid: it stops at once, here, without Stripe's
+// page, and the space is paused (decision of 2026-10-21).
 function CancelDialog({
   overview,
   open,
@@ -302,14 +303,25 @@ function CancelDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const [cancelling, startCancelling] = useTransition();
+  const trial = overview.state === "trialing";
   const end = date(overview.accessEnd);
   const bookings = overview.bookingsAfterEnd;
-  const opening =
-    overview.state === "trialing"
-      ? `Votre essai continue jusqu'au ${end ? formatLongDate(end) : "bout"} ; rien ne sera prélevé. À cette date :`
-      : `Votre accès reste ouvert jusqu'au ${end ? formatLongDate(end) : "bout de la période payée"}, la fin de la période payée. Rien ne vous sera plus prélevé. À cette date :`;
+  const opening = trial
+    ? "Votre essai s'arrête tout de suite et rien ne vous sera prélevé. Dès maintenant :"
+    : `Votre accès reste ouvert jusqu'au ${end ? formatLongDate(end) : "bout de la période payée"}, la fin de la période payée. Rien ne vous sera plus prélevé. À cette date :`;
+  const bookingsWhen = trial ? "à venir" : `${bookings === 1 ? "prévu" : "prévus"} après le ${end ? formatPlainDate(end, { year: false }) : "terme"}`;
+
+  function cancelNow() {
+    startCancelling(async () => {
+      // On success, the action leads to "Choisissez votre formule".
+      const result = await cancelTrial();
+      if (result && !result.ok) toast.error("L'essai n'a pas pu être arrêté. Réessayez dans un instant.");
+    });
+  }
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(next) => !cancelling && onOpenChange(next)}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <p className="eyebrow text-muted-foreground">Résiliation</p>
@@ -317,29 +329,48 @@ function CancelDialog({
           <DialogDescription render={<div />} className="flex flex-col gap-2">
             <p>{opening}</p>
             <ul className="flex list-disc flex-col gap-1 pl-[18px]">
-              <li>votre profil public passera hors ligne et vos réservations fermeront ;</li>
+              {trial && <li>votre espace est mis en pause : seuls les Paramètres restent ouverts ;</li>}
+              <li>
+                {trial
+                  ? "votre profil public passe hors ligne et vos réservations ferment ;"
+                  : "votre profil public passera hors ligne et vos réservations fermeront ;"}
+              </li>
               {bookings > 0 && (
                 <li>
                   {bookings === 1 ? "votre " : "vos "}
-                  <strong className="font-medium text-foreground">
-                    {bookings} rendez-vous
-                  </strong>{" "}
-                  {bookings === 1 ? "prévu" : "prévus"} après le {end ? formatPlainDate(end, { year: false }) : "terme"}{" "}
-                  {bookings === 1 ? "sera annulé, et votre invité prévenu" : "seront annulés, et vos invités prévenus"} par e-mail ;
+                  <strong className="font-medium text-foreground">{bookings} rendez-vous</strong> {bookingsWhen}{" "}
+                  {trial
+                    ? bookings === 1
+                      ? "est annulé, et votre invité prévenu"
+                      : "sont annulés, et vos invités prévenus"
+                    : bookings === 1
+                      ? "sera annulé, et votre invité prévenu"
+                      : "seront annulés, et vos invités prévenus"}{" "}
+                  par e-mail ;
                 </li>
               )}
-              <li>vos données seront gardées {DATA_RETENTION_DAYS} jours, le temps de vous réabonner.</li>
+              <li>
+                {trial
+                  ? `vos données sont gardées ${DATA_RETENTION_DAYS} jours, le temps de vous réabonner (sans nouvel essai).`
+                  : `vos données seront gardées ${DATA_RETENTION_DAYS} jours, le temps de vous réabonner.`}
+              </li>
             </ul>
-            <p className="text-[13px] leading-[18px]">Vous confirmerez sur la page sécurisée de Stripe.</p>
+            {!trial && <p className="text-[13px] leading-[18px]">Vous confirmerez sur la page sécurisée de Stripe.</p>}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" disabled={cancelling} onClick={() => onOpenChange(false)}>
             Garder mon abonnement
           </Button>
-          <PortalButton flow="cancel" variant="destructive">
-            Continuer
-          </PortalButton>
+          {trial ? (
+            <Button variant="destructive" disabled={cancelling} onClick={cancelNow}>
+              Résilier maintenant
+            </Button>
+          ) : (
+            <PortalButton flow="cancel" variant="destructive">
+              Continuer
+            </PortalButton>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
