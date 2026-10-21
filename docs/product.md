@@ -108,7 +108,7 @@ Chaque étape correspond au périmètre MVP du module (voir [modules.md](modules
 | 3 | Module **Tableaux** (type Trello) | Développé (2026-10-14), décisions à valider |
 | 4 | Module **Rendez-vous** (type Calendly), avec la visio | Développé (2026-10-16), quelques choix à valider |
 | 5 | Module **Drive** (type Google Drive) | Développé (2026-10-15), quelques choix à valider |
-| 6 | **Abonnement et paiement**, ouverture SaaS | Développé en mode test le 2026-10-21 ([billing.md](billing.md)) ; reste la suppression des comptes après 30 et 90 jours, puis l'activation du compte Stripe et ses réglages avant d'ouvrir les inscriptions |
+| 6 | **Abonnement et paiement**, ouverture SaaS | Développé en mode test le 2026-10-21 ([billing.md](billing.md)) ; reste la suppression des comptes après 30 et 90 jours, puis l'activation du compte Stripe et ses réglages avant d'ouvrir les inscriptions ; tout ce que demande l'ouverture : [launch.md](launch.md) |
 | 7 | Module **Visio** (type Zoom) : montée en charge (la visio des rendez-vous arrive à l'étape 4) | À faire |
 | — | **Landing page** (`/`), cible freelances, acquisition par YouTube ([landing.md](landing.md)) | Spécifiée (2026-10-19), ossature, hero, fonctionnalités et outils remplacés, tarif et FAQ développés (2026-10-20) |
 

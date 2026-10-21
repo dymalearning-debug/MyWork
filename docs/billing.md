@@ -115,7 +115,7 @@ Le rappel de fin d'essai de Stripe n'est pas utilisé : il part 7 jours avant la
 
 ## Avant d'ouvrir les inscriptions
 
-Ce qui ne relève pas du code, mais conditionne l'ouverture :
+La liste complète, au-delà de l'abonnement, est dans [launch.md](launch.md). Ce qui ne relève pas du code, mais conditionne l'ouverture :
 
 - **Activation du compte Stripe** (identité, SIRET, IBAN), puis clé réelle en Production.
 - **TVA**, avec un comptable : prix TTC ou HT, mention sur les factures, calcul par Stripe (Stripe Tax) ou non.
