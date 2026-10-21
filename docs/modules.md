@@ -97,7 +97,7 @@ Points d'attention
 
 **Objectif** : monétiser l'ouverture en SaaS.
 
-- Un seul abonnement mensuel peu cher, qui inclut un quota de stockage.
+- Un seul abonnement, tout compris, en deux formules : **5 € par mois** ou **50 € par an** (deux mois offerts), avec 10 Go de stockage ; pris à l'inscription, avec 7 jours d'essai ([landing.md](landing.md), *Tarif*).
 - L'utilisateur gère lui-même son abonnement : moyen de paiement, factures, résiliation.
 - Prestataire : **Stripe** (Checkout pour le paiement, portail client pour la gestion de l'abonnement).
 
