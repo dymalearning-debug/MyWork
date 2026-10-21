@@ -175,6 +175,9 @@ test.describe("profile menu, Mon profil public", () => {
     await offline.click();
     const online = page.getByRole("menuitemcheckbox", { name: "Profil en ligne" });
     await expect(online).toHaveAttribute("aria-checked", "true");
+    // The switch waits for the private space to be refreshed (its notification) before it takes
+    // another click.
+    await expect(page.getByText("Profil mis en ligne")).toBeVisible();
     await expect.poll(async () => (await getProfile(user.id)).is_online).toBe(true);
 
     // A visitor, in another browser, now sees the profile.
