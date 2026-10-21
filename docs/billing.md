@@ -1,7 +1,7 @@
 # Abonnement et paiement
 
 Liste de tout ce qu'il faut mettre en place pour l'étape 6 (voir [product.md](product.md), *Roadmap*), de la landing page jusqu'à la fin d'un abonnement.
-Statut : **à relire par le porteur du projet** (rédigé le 2026-10-21). Rien n'est développé ; le compte Stripe et son mode test sont prêts (voir [product.md](product.md), *Inventaire technique*). Les choix marqués *(proposé)* sont rassemblés à la fin, dans *Décisions à valider*.
+Statut : **développé en mode test le 2026-10-21**, décisions encore à valider par le porteur du projet. Les choix marqués *(proposé)* sont rassemblés à la fin, dans *Décisions à valider* ; ceux faits pendant le développement, dans *Précisé pendant le développement*. Ce qui manque encore : *Reste à faire*. Le compte Stripe et son mode test : voir [product.md](product.md), *Inventaire technique*.
 Maquettes (une seule direction, à valider) : [Maquettes abonnement](https://claude.ai/artifact/8WGUBc6zFS1xap5P7yd3Au) sur claude.ai : inscription, choix de la formule, page de paiement (schéma), retour, rappels, paiement refusé, abonnement terminé, Paramètres › Abonnement et ses états, confirmations, cinq e-mails. Chaque écran a un réglage « thème sombre ».
 
 ## En bref
@@ -95,20 +95,21 @@ Le rappel de fin d'essai de Stripe n'est pas utilisé : il part 7 jours avant la
 - Un **client Stripe** par compte, créé au premier passage sur la page de paiement, relié au compte MyWork.
 - Les prix sont lus par leurs noms fixes (`mywork_monthly`, `mywork_yearly`) ; l'essai de 7 jours est demandé à chaque session de paiement, sauf après un premier abonnement.
 - **Stockage** : 10 Go par abonné. Aujourd'hui, la capacité vaut pour toute l'application (1 Go, offre gratuite de Supabase) : elle devient un quota par utilisateur ([drive.md](drive.md)).
-- Nouvelle variable dans Vercel : le code secret de la fonction de la base (nom fixé au développement).
+- Nouvelle variable dans Vercel : `BILLING_SECRET`, le code secret des fonctions de la base (dans les trois environnements ; seule son empreinte est dans la migration).
 
 ## Réglages dans Stripe
 
 À faire en mode test, puis à refaire en mode réel :
 
 - [x] Produit MyWork et ses deux prix (mode test, 2026-10-21).
-- [ ] **Portail client** : changement de carte, factures, adresse de facturation et numéro de TVA, changement de formule (règles ci-dessus), résiliation à la fin de la période payée avec la question « Pourquoi partez-vous ? », liens vers les conditions générales et la politique de confidentialité.
+- [ ] **Moyens de paiement** (*Settings › Payment methods*) : la carte, avec Apple Pay et Google Pay ; désactiver les autres (Klarna, Satispay, Amazon Pay… sont proposés aujourd'hui par défaut). Cette version de l'API de Stripe ne permet plus de les choisir dans le code.
+- [ ] **Portail client** : changement de carte, factures, adresse de facturation et numéro de TVA, changement de formule (règles ci-dessus : les deux prix dans les produits proposés, passage à la formule mensuelle à la fin de la période), résiliation à la fin de la période payée avec la question « Pourquoi partez-vous ? », liens vers les conditions générales et la politique de confidentialité. En mode test, le réglage par défaut fonctionne déjà (essayé le 2026-10-21 : carte, résiliation, retour dans MyWork).
 - [ ] **Apparence** : logo, icône, couleur, pour la page de paiement, le portail, les factures et les e-mails.
 - [ ] **E-mails clients** (liste ci-dessus).
 - [ ] **Paiements refusés** : nouvelles tentatives automatiques recommandées par Stripe pendant 2 semaines, puis arrêt de l'abonnement *(proposé)*.
 - [ ] **Factures** : numérotation, mentions légales en pied de page (SIRET, mention de TVA).
-- [ ] **Page de paiement** : acceptation des conditions générales obligatoire, libellé `MYWORK` sur les relevés bancaires, adresse de contact.
-- [ ] **Webhook réel** `https://hellomywork.com/api/stripe/webhook`, et son secret dans Vercel (Production).
+- [ ] **Page de paiement** : adresse de la page des conditions générales (*Settings › Public details*), puis la case d'acceptation, une ligne à ajouter dans `src/app/app/subscribe/actions.ts` (`consent_collection`) ; libellé `MYWORK` sur les relevés bancaires ; adresse de contact ; nom public du compte (aujourd'hui « hellomywork sandbox »).
+- [ ] **Webhook réel** `https://hellomywork.com/api/stripe/webhook`, et son secret dans Vercel (Production). Événements : `checkout.session.completed`, `customer.subscription.created`, `.updated`, `.deleted`, `.paused`, `.resumed`, `.trial_will_end`, `invoice.paid`, `invoice.payment_failed`, `invoice.payment_action_required`. Tant que la production tourne avec la clé de test, un webhook de test vers la même adresse fait l'affaire.
 - [ ] Codes promo, quand on en voudra (par exemple pour la chaîne YouTube).
 
 ## Avant d'ouvrir les inscriptions
@@ -125,10 +126,41 @@ Ce qui ne relève pas du code, mais conditionne l'ouverture :
 
 ## Tests
 
-- **Unitaires** : de l'état Stripe à l'accès (tableau ci-dessus), textes et dates des e-mails, formule lue dans l'adresse.
-- **Bout en bout**, avec le mode test de Stripe : inscription depuis la landing avec chaque formule, paiement avec la carte de test, arrivée sur le tableau de bord ; carte refusée ; paiement abandonné puis reconnexion ; compte sans abonnement renvoyé vers « Choisissez votre formule » ; profil public hors ligne sans abonnement ; section Abonnement des Paramètres (essai, carte, boutons vers le portail) ; suppression du compte qui résilie l'abonnement.
-- **Le temps qui passe**, avec les horloges de test de Stripe (elles avancent la date d'un abonnement de test) : e-mail de fin d'essai, premier prélèvement, paiement refusé puis accès fermé, renouvellement annuel, fin après une résiliation.
-- **Webhook** : une signature fausse est refusée ; un événement reçu deux fois n'est traité qu'une fois.
+- **Unitaires** (`src/lib/billing/*.test.ts`) : de l'état Stripe à l'accès (tableau ci-dessus), un seul essai, 90 jours de conservation, prochain prélèvement, dates en français à l'heure de Paris, rappels du tableau de bord, abonnement Stripe tel que la base le garde, textes et dates des quatre e-mails, formule gardée avec le compte à l'inscription.
+- **Bout en bout** (`e2e/billing.spec.ts`) : les comptes de test reçoivent un abonnement de test écrit dans la base (en essai par défaut ; `createUser({ subscription })` choisit l'état). Compte sans abonnement renvoyé vers « Choisissez votre formule » depuis chaque page ; formule de l'adresse ou de l'inscription ; profil impossible à mettre en ligne et Drive fermé à l'écriture sans abonnement ; abonnement terminé (« Votre espace est en pause », sans nouvel essai) ; section Abonnement (essai, carte, factures, pied « Fermer », confirmation de « Résilier ») ; lien `?settings=billing` des e-mails ; résiliation demandée (rappel, « Reprendre mon abonnement ») ; paiement refusé (bandeau, rappel, accès ouvert) ; mention de l'abonnement dans la suppression du compte ; cartes du tarif de la landing vers `/signup?plan=…`.
+- **Avec le code secret** (`.env.local`, pas sur GitHub) : la fin d'un abonnement met le profil hors ligne, annule les rendez-vous à venir (e-mail de l'invité préparé) et le remet en ligne au retour ; un événement reçu deux fois n'est traité qu'une fois ; un code faux est refusé.
+- **Avec la clé de test de Stripe** (`.env.local`, pas sur GitHub) : la page de paiement de Stripe avec la carte de test `4242 4242 4242 4242`, le retour sur le tableau de bord avec la notification, l'abonnement enregistré, puis la suppression du compte qui arrête l'abonnement chez Stripe.
+- **Essayé à la main** le 2026-10-21, en mode test : paiement, retour, Paramètres › Abonnement, changement de carte et résiliation sur le portail puis retour, « Reprendre mon abonnement », bandeau du paiement refusé, thème sombre.
+- **Pas encore automatisé** : le temps qui passe, avec les horloges de test de Stripe (e-mail de fin d'essai, premier prélèvement, paiement refusé puis accès fermé, renouvellement annuel, fin après une résiliation) et la signature du webhook (à essayer avec `stripe listen` et `stripe trigger`).
+
+## Précisé pendant le développement
+
+À valider par le porteur du projet, comme les décisions proposées.
+
+- **Verrou de l'espace privé** : dans le gabarit de ses pages (`src/app/app/(subscribed)/`), qui renvoie vers « Choisissez votre formule » ; dans les actions et les routes de l'espace privé ; et dans la base pour ce que le navigateur écrit lui-même (tableaux, Drive, images) : sans abonnement, rien ne s'y ajoute ni ne s'y modifie. Supprimer reste possible. Les Paramètres (profil, suppression du compte) restent ouverts.
+- **Profil public à la fin de l'abonnement** : mis hors ligne par la base au moment où l'accès se ferme, et remis en ligne au retour s'il l'était ; sans abonnement, il ne peut pas être mis en ligne. Un profil déjà en ligne avant l'arrivée des abonnements (celui du porteur du projet) le reste jusqu'à sa première fin d'abonnement.
+- **Rendez-vous annulés à la fin** : l'invité reçoit l'e-mail d'annulation habituel, sans message ; son bouton mène à la page de son rendez-vous (le profil est hors ligne).
+- **Relire Stripe sans attendre le webhook** : au retour de la page de paiement et du portail (`/app/subscribe/return`, `/app/subscribe/refresh`), l'abonnement est relu chez Stripe. Le webhook reste nécessaire pour ce qui arrive sans l'abonné : fin de l'essai, prélèvements, paiement refusé, fin de la période.
+- **Le webhook relit l'abonnement** chez Stripe à chaque événement, plutôt que de lire l'événement : l'ordre d'arrivée des événements ne compte plus. Un événement sur un abonnement plus ancien que celui enregistré est ignoré.
+- **Mode test et mode réel** : avec la clé réelle, un abonnement de test ne compte plus (décision 8), et son essai non plus : il en faut un réel. La base, elle, ne distingue pas les deux modes pour le profil public.
+- **Moyens de paiement** : réglés dans Stripe (cette version de son API ne permet plus de les choisir dans le code).
+- **Case des conditions générales** : pas encore demandée, faute de page ; une ligne à ajouter avec les pages légales.
+- **E-mail « Au revoir »** : sans la phrase « Répondez à cet e-mail » tant qu'il n'y a pas d'adresse de contact (décision 16).
+- **Libellés** : « Résilier » ouvre la confirmation de MyWork, puis la page de Stripe ; les boutons vers Stripe portent la flèche ↗ ; un compte sans abonnement voit « Aucun abonnement en cours » dans la section.
+
+## Reste à faire
+
+- **Suppression des comptes** : jamais payés après 30 jours, terminés après 90 jours, avec l'e-mail « Suppression prochaine » 7 jours avant. Les fichiers du stockage ne se suppriment que par l'API de Supabase, avec la clé secrète, aujourd'hui réservée aux tests : la façon de faire est à décider. En attendant, rien n'est supprimé.
+- **Quota de 10 Go par abonné** : il reste à 1 Go par compte tant que Supabase est sur l'offre gratuite (1 Go en tout) ; une ligne à changer dans la base avec Supabase Pro.
+- **Webhook de production** et réglages de Stripe (*Réglages dans Stripe*), puis les conditions d'ouverture (*Avant d'ouvrir les inscriptions*).
+- Tests du temps qui passe (horloges de test de Stripe) et du webhook.
+
+## Code
+
+- Pages : `src/app/app/subscribe/` (« Choisissez votre formule », départ vers Stripe, `return/` et `refresh/` pour les retours) ; l'espace privé verrouillé est sous `src/app/app/(subscribed)/` (même adresse `/app/…`) ; section Abonnement, bandeau et notification de bienvenue dans `src/app/app/_components/billing/` ; webhook `src/app/api/stripe/webhook/route.ts`.
+- Règles et données : `src/lib/billing/` (`plans.ts` formules et prix, `rules.ts` états, accès, dates et rappels, `snapshot.ts` lecture d'un abonnement Stripe, `data.ts` lecture, verrou et synchronisation, `portal.ts` section des Paramètres et portail, `stripe.ts` client Stripe, `emails/` les quatre e-mails). Habillage commun des e-mails : `src/lib/emails/parts.ts`.
+- Base : migration `20261021120000_add_subscriptions.sql` (table `subscriptions`, événements déjà traités, verrous, fonctions `save_billing_customer` et `sync_subscription`).
+- En local, pour recevoir les webhooks : `stripe listen --forward-to localhost:3000/api/stripe/webhook` (le CLI prend la clé de test dans `STRIPE_API_KEY`).
 
 ## Hors périmètre (plus tard)
 

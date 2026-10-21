@@ -18,6 +18,7 @@ Statut : **développée** (branche `feat/auth`, 2026-10-11). Écarts avec le cad
 | Non connecté | Une page de l'espace privé (`/app/…`) | Redirigé vers la connexion, puis ramené à la page demandée une fois connecté |
 | Non connecté | Une page d'authentification | Affichée |
 | Connecté | Connexion ou inscription | Redirigé vers l'accueil de l'application |
+| Connecté, sans abonnement en cours | Une page de l'espace privé | Redirigé vers « Choisissez votre formule » (`/app/subscribe`, [billing.md](billing.md)) |
 
 - Restent publiques : les pages d'authentification, le **profil public** `/<identifiant>` (c'est sa raison d'être ; règles d'accès dans [public-profile.md](public-profile.md)) et la landing page `/` ([landing.md](landing.md)).
 - La vitrine `/design` reste accessible sans connexion, en local uniquement.
@@ -97,6 +98,7 @@ Dans les maquettes, l'adresse `ines.robert@exemple.fr` (ou `quentin@exemple.fr`)
     - **Mot de passe oublié** : champ e-mail et bouton « Envoyer le lien ». Après l'envoi, le formulaire laisse place à un message d'information (fond `muted`, filet rouge à gauche) : « Si un compte existe pour cette adresse, un e-mail vient de lui être envoyé. Le lien est valable une heure. »
     - **Nouveau mot de passe** : le rappel de l'adresse du compte, un seul champ avec l'aide « 8 caractères minimum », bouton « Enregistrer et me connecter ».
     - **Vérifiez votre boîte mail** : une enveloppe, l'adresse à laquelle le lien a été envoyé, sa durée de validité, puis un bouton secondaire « Renvoyer l'e-mail ». Sous la carte : « Mauvaise adresse ? Recommencer l'inscription ».
+  - L'inscription est l'**étape 1 sur 2** (« Nouveau compte · Étape 1 sur 2 ») : au-dessus de la carte, la formule choisie sur la landing page (`/signup?plan=monthly` ou `yearly`, l'annuelle sinon) avec un lien « Changer » ; elle est gardée avec le compte. L'étape 2 est « Choisissez votre formule », puis la page de paiement de Stripe ([billing.md](billing.md)).
     - **Lien expiré** : titre « Ce lien n'est plus valide », champ e-mail et bouton « Recevoir un nouveau lien ».
   - Un seul bouton rouge par écran. En clair et en sombre, et lisibles sur mobile.
 - **Coque de l'application**, une fois connecté : une **barre latérale** à gauche, volontairement très simple et non repliable, dans l'esprit de l'application de bureau de Claude. Fond `sidebar`, filet à droite.

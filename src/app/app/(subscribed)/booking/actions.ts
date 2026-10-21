@@ -2,7 +2,7 @@
 
 import { refresh } from "next/cache";
 
-import { getCurrentUser } from "@/lib/auth/user";
+import { getSubscribedUser } from "@/lib/billing/data";
 import { cancelOwnBooking, deleteOwnBooking, markOwnBookingSeen, saveOwnBookingSetup } from "@/lib/booking/data";
 import { sendBookingEmails } from "@/lib/booking/emails/send-email";
 import {
@@ -63,7 +63,7 @@ export async function saveAvailability(input: {
   weekly: WeeklyRange[];
   overrides: DayOverride[];
 }): Promise<{ ok: boolean }> {
-  const user = await getCurrentUser();
+  const user = await getSubscribedUser();
   if (!user || !input || !isSettings(input.settings) || !areValidHours(input.weekly, input.overrides)) return { ok: false };
   const settings: BookingSettings = {
     isOpen: input.settings.isOpen,
@@ -87,7 +87,7 @@ export async function saveAvailability(input: {
 
 // A booking opened in "Mes rendez-vous": its red dot goes away.
 export async function markBookingSeen(id: string) {
-  const user = await getCurrentUser();
+  const user = await getSubscribedUser();
   if (!user || typeof id !== "string" || !isUuid(id)) return;
   try {
     await markOwnBookingSeen(id);
@@ -101,7 +101,7 @@ export async function markBookingSeen(id: string) {
 // "Annuler le rendez-vous", with an optional message for the guest: the slot is free again, the
 // email to the guest is prepared.
 export async function cancelBooking(id: string, message: string): Promise<{ ok: boolean }> {
-  const user = await getCurrentUser();
+  const user = await getSubscribedUser();
   if (!user || typeof id !== "string" || !isUuid(id) || typeof message !== "string" || message.length > CANCEL_MESSAGE_MAX) {
     return { ok: false };
   }
@@ -119,7 +119,7 @@ export async function cancelBooking(id: string, message: string): Promise<{ ok: 
 
 // "Supprimer": a past or cancelled booking, for good, with its guest's data.
 export async function deleteBooking(id: string): Promise<{ ok: boolean }> {
-  const user = await getCurrentUser();
+  const user = await getSubscribedUser();
   if (!user || typeof id !== "string" || !isUuid(id)) return { ok: false };
   try {
     if (!(await deleteOwnBooking(id))) return { ok: false };

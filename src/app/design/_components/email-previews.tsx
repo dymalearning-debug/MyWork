@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises"
 import path from "node:path"
 
+import { renderBillingEmail, SAMPLE_BILLING_EMAILS } from "@/lib/billing/emails/templates"
 import { renderBookingEmail, SAMPLE_EMAILS } from "@/lib/booking/emails/templates"
 
 import { ModuleHeading } from "./showcase"
@@ -47,6 +48,22 @@ export async function EmailPreviews() {
               Objet : {rendered.subject}
               {rendered.withIcs && " · Pièce jointe : rendez-vous.ics"}
             </p>
+            <iframe
+              title={email.label}
+              srcDoc={rendered.html}
+              sandbox=""
+              className="h-[860px] w-full border border-border bg-white"
+            />
+          </div>
+        )
+      })}
+      {/* The four emails of the subscription (src/lib/billing/emails/), sent with Resend. */}
+      {SAMPLE_BILLING_EMAILS.map((email) => {
+        const rendered = renderBillingEmail(email.kind, email.data, "http://localhost:3000")
+        return (
+          <div key={email.kind}>
+            <ModuleHeading module="Abonnement" title={email.label} />
+            <p className="mb-3 text-sm text-muted-foreground">Objet : {rendered.subject}</p>
             <iframe
               title={email.label}
               srcDoc={rendered.html}

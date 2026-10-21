@@ -6,10 +6,11 @@ Statut : **développés** (2026-10-12), directement sur `main`.
 ## En bref
 
 - Une entrée **Paramètres** dans le menu du profil, entre « Mon profil public › » et « Thème › ». Elle ouvre une grande fenêtre de dialogue au milieu de l'écran, comme dans l'application de bureau de Claude : les sections à gauche, la page à droite.
-- Une seule section pour l'instant, **Profil** : prénom, nom, adresse e-mail (non modifiable pour l'instant), adresse du profil public, et le bouton « Supprimer le compte ».
-- Un seul bouton **Enregistrer**, en bas de la fenêtre, pour tout ce qu'elle contient ; **Annuler** ferme sans enregistrer.
+- Deux sections : **Profil** (prénom, nom, adresse e-mail non modifiable pour l'instant, adresse du profil public, bouton « Supprimer le compte ») et **Abonnement** (formule, échéance, carte, factures, boutons vers le portail de Stripe ; détail dans [billing.md](billing.md)).
+- Un seul bouton **Enregistrer**, en bas de la fenêtre, pour tout ce qu'elle contient ; **Annuler** ferme sans enregistrer. La section Abonnement n'a rien à enregistrer : son pied n'a que **Fermer**.
 - Chaque action sur le compte est confirmée par une **notification en bas à droite**, qui dit ce qui a été fait.
-- Plus tard, d'autres sections : abonnement, réglages des modules.
+- Plus tard, d'autres sections : réglages des modules.
+- Une adresse avec `?settings=billing` (liens des e-mails et des rappels de l'abonnement, retour du portail de Stripe) ouvre la fenêtre sur la section Abonnement. Sans abonnement, la fenêtre s'ouvre depuis « Choisissez votre formule » (« Paramètres du compte »), pour pouvoir supprimer son compte.
 
 ## Interface
 
@@ -55,7 +56,7 @@ Maquettes validées le 2026-10-12 : [Maquettes paramètres](https://claude.ai/ar
 ### Supprimer le compte
 
 1. « Supprimer le compte » ouvre une confirmation : étiquette « Action irréversible », « Supprimer votre compte ? », et l'avertissement que toutes les données liées au compte seront supprimées définitivement. Boutons « Annuler » et « Supprimer définitivement ».
-2. Le compte est supprimé avec tout ce qui lui est lié, puis l'appareil est déconnecté.
+2. L'abonnement en cours est arrêté chez Stripe, sans remboursement (la confirmation le dit, sur fond gris) ; s'il ne peut pas l'être, le compte n'est pas supprimé. Puis le compte est supprimé avec tout ce qui lui est lié, et l'appareil est déconnecté ([billing.md](billing.md)).
 3. Retour à la page de connexion, avec la notification « Compte supprimé ».
 
 ## Notifications
@@ -95,5 +96,5 @@ Maquettes validées le 2026-10-12 : [Maquettes paramètres](https://claude.ai/ar
 
 - Changement d'adresse e-mail, confirmé par e-mail (Resend est branché), et changement de mot de passe.
 - Méthodes de connexion (relier ou délier Google).
-- Sections Abonnement et réglages des modules (modules activés, visibles sur le profil).
+- Section des réglages des modules (modules activés, visibles sur le profil).
 - Thème dans les Paramètres (il reste dans le menu du profil).

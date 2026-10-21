@@ -10,7 +10,7 @@ import { useNow } from "@/lib/booking/use-now";
 import { formatTimeLeft } from "@/lib/dashboard/rules";
 import { cn } from "@/lib/utils";
 
-import { JoinButton } from "../../booking/_components/join-button";
+import { JoinButton } from "../../(subscribed)/booking/_components/join-button";
 
 // The tile "Rendez-vous" of the dashboard (docs/dashboard.md, "Rendez-vous du jour"): the number of
 // today's bookings, then each of them, the nearest first. "Rejoindre" once its room is open,

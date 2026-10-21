@@ -152,12 +152,14 @@ test.describe("sign-up", () => {
     await expect(page.getByText("Mot de passe trop court : 8 caractères minimum.")).toBeVisible();
   });
 
+  // Without a subscription yet: the second step, "Choisissez votre formule" (docs/billing.md).
   test("the confirmation link activates the account, signs in and creates the profile", async ({ page }) => {
     const email = testEmail();
     await page.goto(await emailLink("signup", email));
 
-    await expect(page).toHaveURL(/\/app$/);
-    await expect(page.getByRole("button", { name: "Menu du profil" })).toContainText(email);
+    await expect(page).toHaveURL(/\/app\/subscribe$/);
+    await expect(page.getByRole("heading", { name: "Choisissez votre formule" })).toBeVisible();
+    await expect(page.getByText(`Connecté avec ${email}`)).toBeVisible();
 
     const { data: profile } = await adminClient().from("profiles").select("email").eq("email", email).single();
     expect(profile?.email).toBe(email);
@@ -173,8 +175,9 @@ test.describe("sign-up", () => {
   test("a confirmation link can only be used once", async ({ page }) => {
     const link = await emailLink("signup", testEmail());
     await page.goto(link);
-    await expect(page).toHaveURL(/\/app$/);
-    await signOut(page);
+    await expect(page).toHaveURL(/\/app\/subscribe$/);
+    await page.getByRole("button", { name: "Se déconnecter" }).click();
+    await expect(page).toHaveURL(/\/login$/);
 
     await page.goto(link);
     await expect(page).toHaveURL(/\/link-expired\?type=signup$/);

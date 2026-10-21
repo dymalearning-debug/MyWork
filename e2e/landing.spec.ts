@@ -79,12 +79,15 @@ test.describe("landing page", () => {
     await expect(yearly).toContainText("2 mois offerts");
     await expect(block).toContainText("7 jours d'essai gratuit");
 
+    // Each card leads to the sign-up with its plan (docs/billing.md, "Le parcours d'inscription").
     await block.getByRole("link", { name: "Essayer 7 jours, formule mensuelle" }).press("Enter");
-    await expect(page).toHaveURL(/\/signup$/);
+    await expect(page).toHaveURL(/\/signup\?plan=monthly$/);
+    await expect(page.getByRole("region", { name: "Formule choisie" })).toContainText("Mensuelle · 5 € par mois");
 
     await page.goto("/#tarif");
     await page.getByRole("link", { name: "Essayer 7 jours, formule annuelle" }).press("Enter");
-    await expect(page).toHaveURL(/\/signup$/);
+    await expect(page).toHaveURL(/\/signup\?plan=yearly$/);
+    await expect(page.getByRole("region", { name: "Formule choisie" })).toContainText("Annuelle · 50 € par an");
   });
 
   test("the FAQ shows its questions, with the same ones in the structured data", async ({ page }) => {

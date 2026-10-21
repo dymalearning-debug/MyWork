@@ -14,6 +14,7 @@ import {
   SettingsIcon,
   SunIcon,
 } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useEffect, useOptimistic, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -37,7 +38,7 @@ import { publicProfilePath } from "@/lib/public-profile/handle";
 import { cn } from "@/lib/utils";
 
 import { setProfileOnline, signOut } from "../actions";
-import { SettingsDialog } from "./settings-dialog";
+import { SettingsDialog, type SettingsSection } from "./settings-dialog";
 
 const THEMES = [
   { value: "light", label: "Clair", icon: SunIcon },
@@ -57,14 +58,18 @@ const ITEM =
 // without them (docs/settings.md). A click opens the menu just above it, as in the Claude desktop
 // app: the address, "Mon profil public ›", "Paramètres", "Thème ›", "Se déconnecter"
 // (docs/public-profile.md, "Menu du profil"). Submenus open at the right, on hover or click.
+// An address with ?settings=billing (the emails and the reminders of the subscription, the return
+// from Stripe's portal) opens the Settings on the section "Abonnement".
 export function UserMenu({
   email,
   avatarUrl,
   profile,
+  subscribed,
 }: {
   email: string;
   avatarUrl: string | null;
   profile: OwnProfile;
+  subscribed: boolean;
 }) {
   const [signingOut, startSignOut] = useTransition();
   // Held here and not in the submenu, whose content is rebuilt each time the menu opens. The new
@@ -74,8 +79,29 @@ export function UserMenu({
   const [saving, startSaving] = useTransition();
   // The Settings dialog lives outside the menu, which closes when it opens. A new key at each
   // opening starts it again from the saved values.
-  const [settings, setSettings] = useState({ open: false, key: 0 });
+  const [settings, setSettings] = useState<{ open: boolean; key: number; section: SettingsSection }>({
+    open: false,
+    key: 0,
+    section: "profile",
+  });
   const name = displayName(profile, email);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const settingsParam = searchParams.get("settings");
+  const [seenParam, setSeenParam] = useState<string | null>(null);
+  if (settingsParam !== seenParam) {
+    setSeenParam(settingsParam);
+    if (settingsParam === "billing") setSettings((current) => ({ open: true, key: current.key + 1, section: "billing" }));
+  }
+
+  // The address loses its ?settings once the Settings are open.
+  useEffect(() => {
+    if (settingsParam !== "billing") return;
+    const rest = new URLSearchParams(searchParams);
+    rest.delete("settings");
+    router.replace(rest.size ? `${pathname}?${rest}` : pathname, { scroll: false });
+  }, [settingsParam, searchParams, router, pathname]);
 
   // Switched at once, without confirmation; a notification confirms it, as every change of the account.
   function toggleOnline(next: boolean) {
@@ -107,7 +133,7 @@ export function UserMenu({
           <PublicProfileSubmenu handle={profile.handle} online={online} onOnlineChange={toggleOnline} />
           <DropdownMenuItem
             className={ROW}
-            onClick={() => setSettings((current) => ({ open: true, key: current.key + 1 }))}
+            onClick={() => setSettings((current) => ({ open: true, key: current.key + 1, section: "profile" }))}
           >
             <SettingsIcon />
             Paramètres
@@ -131,6 +157,8 @@ export function UserMenu({
         onOpenChange={(open) => setSettings((current) => ({ ...current, open }))}
         email={email}
         profile={{ firstName: profile.firstName, lastName: profile.lastName, handle: profile.handle }}
+        subscribed={subscribed}
+        initialSection={settings.section}
       />
     </>
   );

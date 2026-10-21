@@ -1,5 +1,5 @@
 import { getOwnProfile } from "@/lib/account/profile";
-import { getCurrentUser } from "@/lib/auth/user";
+import { getSubscribedUser } from "@/lib/billing/data";
 import { getOwnBooking } from "@/lib/booking/data";
 import { meetingAccess } from "@/lib/booking/meeting";
 import { isUuid } from "@/lib/booking/rules";
@@ -9,7 +9,7 @@ import { profileDisplayName } from "@/lib/profile/content";
 // "Accès"): signed in, only inside the window of the room.
 export async function POST(_request: Request, { params }: RouteContext<"/app/booking/[id]/meet/token">) {
   const { id } = await params;
-  const user = await getCurrentUser();
+  const user = await getSubscribedUser();
   if (!user) return Response.json({ ok: false, reason: "not_found" }, { status: 401 });
   const booking = isUuid(id) ? await getOwnBooking(id) : null;
   if (!booking) return Response.json({ ok: false, reason: "not_found" }, { status: 404 });

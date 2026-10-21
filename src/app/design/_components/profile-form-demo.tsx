@@ -3,8 +3,8 @@
 import { XIcon } from "lucide-react"
 import { useState } from "react"
 
-import { SkillsField, YearMonthField } from "@/app/app/profile/_components/fields"
-import { SortableList } from "@/app/app/profile/_components/sortable-list"
+import { SkillsField, YearMonthField } from "@/app/app/(subscribed)/profile/_components/fields"
+import { SortableList } from "@/app/app/(subscribed)/profile/_components/sortable-list"
 import { SiteIcon } from "@/components/site-icon"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,7 +12,7 @@ import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { linkText, shortUrl } from "@/lib/profile/links"
 import type { YearMonth } from "@/lib/profile/types"
 
-// Fields of "Mon profil" (src/app/app/profile/_components/), with fictional values: a date (month
+// Fields of "Mon profil" (src/app/app/(subscribed)/profile/_components/), with fictional values: a date (month
 // and year), the skills of an experience, a list of links ordered by drag and drop.
 export function ProfileFormDemo() {
   const [start, setStart] = useState<YearMonth | null>({ year: 2024, month: 3 })

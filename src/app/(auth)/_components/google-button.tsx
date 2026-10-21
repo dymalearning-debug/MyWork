@@ -9,11 +9,12 @@ import { UrlParamInputs } from "./url-params";
 
 // "Continuer avec Google", in a form of its own so that pressing Enter in the email form
 // never leaves for Google. On the login page it also sends the "Rester connecté" choice
-// and the return address; the sign-up page has no such box (default: stay signed in).
+// and the return address; the sign-up page has no such box (default: stay signed in), and sends
+// the plan of its address (docs/billing.md).
 export function GoogleButton({ remember }: { remember?: boolean }) {
   return (
     <form action={loginWithGoogle}>
-      <UrlParamInputs names={["next"]} />
+      <UrlParamInputs names={["next", "plan"]} />
       {remember !== undefined && <input type="hidden" name="remember" value={remember ? "on" : "off"} />}
       <GoogleSubmit />
     </form>

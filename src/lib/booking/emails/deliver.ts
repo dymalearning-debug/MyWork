@@ -1,3 +1,5 @@
+import { EMAIL_SENDER, isTestAddress, type OutgoingEmail } from "@/lib/emails/parts";
+
 import { buildIcs } from "../ics";
 import { renderBookingEmail, type BookingEmailData, type BookingEmailTemplate } from "./templates";
 
@@ -5,7 +7,8 @@ import { renderBookingEmail, type BookingEmailData, type BookingEmailTemplate } 
 // "E-mails"). Pure logic: the queue and Resend are passed in, so that the unit tests can replace
 // them. The real ones are wired in ./send-email.ts.
 
-export const BOOKING_EMAIL_SENDER = "MyWork <noreply@hellomywork.com>";
+export const BOOKING_EMAIL_SENDER = EMAIL_SENDER;
+export { isTestAddress };
 
 export type QueuedEmail = {
   id: string;
@@ -15,14 +18,7 @@ export type QueuedEmail = {
   data: BookingEmailData[BookingEmailTemplate];
 };
 
-export type OutgoingEmail = {
-  from: string;
-  to: string;
-  subject: string;
-  html: string;
-  text: string;
-  attachments?: { filename: string; content: string; contentType: string }[];
-};
+export type { OutgoingEmail };
 
 export type EmailResult = { status: "sent" | "failed" | "abandoned"; error?: string };
 
@@ -31,16 +27,6 @@ export type DeliveryDeps = {
   send: (email: OutgoingEmail, idempotencyKey: string) => Promise<{ error: string | null }>;
   finish: (id: string, result: EmailResult) => Promise<void>;
 };
-
-// Addresses reserved for tests and examples (RFC 2606 and 6761): never sent, so that the
-// automatic tests do not harm the reputation of the domain.
-export function isTestAddress(address: string) {
-  const domain = address.trim().toLowerCase().split("@")[1] ?? "";
-  if (!domain) return true;
-  return (
-    /(^|\.)example\.(com|net|org)$/.test(domain) || /\.(test|example|invalid|localhost)$/.test(domain)
-  );
-}
 
 export function buildBookingEmail(email: QueuedEmail, origin: string): OutgoingEmail {
   const rendered = renderBookingEmail(email.template, email.data, origin);

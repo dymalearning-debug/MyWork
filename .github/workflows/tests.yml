@@ -36,6 +36,8 @@ jobs:
       LIVEKIT_URL: ${{ secrets.LIVEKIT_URL }}
       LIVEKIT_API_KEY: ${{ secrets.LIVEKIT_API_KEY }}
       LIVEKIT_API_SECRET: ${{ secrets.LIVEKIT_API_SECRET }}
+      # Subscriptions (docs/billing.md): without it, the tests of the end of a subscription are skipped.
+      BILLING_SECRET: ${{ secrets.BILLING_SECRET }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

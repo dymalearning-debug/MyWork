@@ -12,6 +12,15 @@ import {
 } from "@/lib/account/settings";
 import { ACCOUNT_DELETED_NOTICE, LOGIN_PATH } from "@/lib/auth/paths";
 import { getCurrentUser } from "@/lib/auth/user";
+import { getOwnBilling } from "@/lib/billing/data";
+import {
+  billingOverview,
+  portalUrl,
+  resumeOwnSubscription,
+  stopSubscriptionForDeletion,
+  type BillingOverview,
+  type PortalFlow,
+} from "@/lib/billing/portal";
 import { isValidHandle } from "@/lib/public-profile/handle";
 import { removeAllOwnBoardImages } from "@/lib/boards/data";
 import { removeAllOwnDriveFiles } from "@/lib/drive/data";
@@ -84,11 +93,14 @@ export async function checkHandle(handle: string): Promise<HandleCheck | null> {
 // then this device is signed out and the login page announces the deletion. The deleted user's
 // session is no longer known to Supabase: the sign-out still clears it from this browser.
 // The images of the profile and of the boards, and the files of the Drive, go first: the storage is
-// not emptied by the cascade of the database.
+// not emptied by the cascade of the database. The subscription stops at Stripe before anything,
+// without refund (docs/billing.md): if it cannot, the account is kept.
 export async function deleteAccount(): Promise<{ ok: false }> {
-  const user = await getCurrentUser();
-  if (!user) return { ok: false };
+  const billing = await getOwnBilling();
+  if (!billing) return { ok: false };
+  const { user } = billing;
   try {
+    if (!(await stopSubscriptionForDeletion(billing))) return { ok: false };
     await removeAllOwnImages(user.id);
     await removeAllOwnBoardImages(user.id);
     await removeAllOwnDriveFiles(user.id);
@@ -100,4 +112,44 @@ export async function deleteAccount(): Promise<{ ok: false }> {
   const supabase = await createClient();
   await supabase.auth.signOut({ scope: "local" });
   redirect(`${LOGIN_PATH}?notice=${ACCOUNT_DELETED_NOTICE}`);
+}
+
+// ——— Subscription (docs/billing.md, "La section Abonnement des Paramètres") ———
+
+// What the section shows, read when it opens. null: not signed in, or the reading failed.
+export async function getBillingOverview(): Promise<BillingOverview | null> {
+  const billing = await getOwnBilling();
+  if (!billing) return null;
+  try {
+    return await billingOverview(billing);
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+// The address of the page of Stripe's portal a button opens. null: not available.
+export async function openBillingPortal(flow: PortalFlow): Promise<{ url: string | null }> {
+  const billing = await getOwnBilling();
+  if (!billing || !["payment_method", "invoices", "switch_plan", "cancel"].includes(flow)) return { url: null };
+  try {
+    return { url: await portalUrl(billing, flow) };
+  } catch (error) {
+    console.error(error);
+    return { url: null };
+  }
+}
+
+// "Reprendre mon abonnement". The private space is refreshed: the reminders and the section change.
+export async function resumeSubscription(): Promise<{ ok: boolean }> {
+  const billing = await getOwnBilling();
+  if (!billing) return { ok: false };
+  try {
+    if (!(await resumeOwnSubscription(billing))) return { ok: false };
+  } catch (error) {
+    console.error(error);
+    return { ok: false };
+  }
+  refresh();
+  return { ok: true };
 }

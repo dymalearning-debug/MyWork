@@ -188,7 +188,7 @@ Pour les agents qui développeront le module.
   - écartée : l'impression par le navigateur du visiteur, au rendu variable et peu pratique sur mobile.
 - Icônes des liens : lucide-react (version 1) ne fournit plus de logos de marques. Prendre Simple Icons, ou quelques SVG dans `src/components/`.
 - Partir des maquettes de la vitrine (`ProfilePreview`, `ExperienceTimeline` dans `src/app/design/_components/module-previews.tsx`) en les déplaçant dans le code du module (voir [design-system.md](design-system.md)).
-- Renommer « CV » dans les commentaires du code (`src/app/app/profile/page.tsx`, `src/app/[handle]/page.tsx`) et dans la vitrine `/design`.
+- Renommer « CV » dans les commentaires du code (`src/app/app/(subscribed)/profile/page.tsx`, `src/app/[handle]/page.tsx`) et dans la vitrine `/design`.
 
 ## Tests
 
@@ -224,7 +224,7 @@ Fait le 2026-10-13, dans l'ordre proposé : base de données et stockage, « Mon
 
 - Base : migrations `20261013120000_add_profile_module.sql` (colonnes, tables, fonctions `profile_content`, `get_public_profile_content`, `get_public_profile_contact`, `get_own_profile_content`, `save_own_profile`, compartiment `profile-images`) et `20261013130000_fix_profile_month_checks.sql`. Les utilisateurs lisent leurs lignes, mais n'écrivent que par `save_own_profile`, qui remplace tout le profil d'un coup et vérifie les plafonds.
 - Règles partagées (types, dates, tri, liens, nettoyage, validation, texte de la notification) : `src/lib/profile/`, avec leurs tests unitaires.
-- « Mon profil » : `src/app/app/profile/` ; page publique : `src/app/[handle]/(profile)/` et `src/app/[handle]/_components/` ; CV : `src/app/[handle]/cv/` (page A4, `cv/pdf`) et `src/app/app/profile/cv/png`.
+- « Mon profil » : `src/app/app/(subscribed)/profile/` ; page publique : `src/app/[handle]/(profile)/` et `src/app/[handle]/_components/` ; CV : `src/app/[handle]/cv/` (page A4, `cv/pdf`) et `src/app/app/(subscribed)/profile/cv/png`.
 - Export : le navigateur sans écran ouvre la page du CV avec les cookies du visiteur (le propriétaire d'un profil hors ligne obtient son aperçu), sans JavaScript, sur une adresse du déploiement lui-même (jamais une adresse tirée de la requête). Chromium et les fichiers de l'image de partage sont déclarés dans `next.config.ts` (`outputFileTracingIncludes`).
 - Tests : `e2e/profile.spec.ts` (bout en bout) et `src/lib/profile/*.test.ts` (unitaires).
 - La page du CV contient l'e-mail et le téléphone en clair, comme le PDF : c'est un CV. Elle n'est pas indexée et aucun lien de la page publique n'y mène (seulement au PDF).

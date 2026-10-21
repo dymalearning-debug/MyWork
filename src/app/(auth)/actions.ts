@@ -16,6 +16,8 @@ import {
 import { getRequestOrigin } from "@/lib/auth/origin";
 import { emailLinkTarget, HOME_PATH, LOGIN_PATH, safeNextPath } from "@/lib/auth/paths";
 import { getCurrentUser } from "@/lib/auth/user";
+import { parsePlan } from "@/lib/billing/plans";
+import { SUBSCRIBE_PATH } from "@/lib/billing/rules";
 import { createClient } from "@/lib/supabase/server";
 import { REMEMBER_COOKIE, REMEMBER_COOKIE_OPTIONS } from "@/lib/supabase/session-cookies";
 
@@ -53,7 +55,9 @@ export async function loginWithGoogle(formData: FormData) {
   await rememberChoice(remember);
 
   const callback = new URL(`${await getRequestOrigin()}/auth/callback`);
-  const next = safeNextPath(formData.get("next"));
+  // From the sign-up page, with a plan: straight to "Choisissez votre formule", that plan chosen.
+  const plan = parsePlan(formData.get("plan"));
+  const next = safeNextPath(formData.get("next")) ?? (plan && `${SUBSCRIBE_PATH}?plan=${plan}`);
   if (next) callback.searchParams.set("next", next);
 
   const supabase = await createClient({ remember });
@@ -65,12 +69,16 @@ export async function loginWithGoogle(formData: FormData) {
   redirect(data.url);
 }
 
+// The plan chosen on the page is kept with the account: it is chosen again on "Choisissez votre
+// formule", after the confirmation of the address (docs/billing.md, "Le parcours d'inscription").
 export async function signup(_prev: FormState, formData: FormData): Promise<FormState> {
   const supabase = await createClient();
+  const plan = parsePlan(formData.get("plan"));
   return signUpWithEmail(
     supabase.auth,
     { email: normalizeEmail(formData.get("email")), password: text(formData, "password") },
     await emailLink(),
+    plan ? { plan } : undefined,
   );
 }
 

@@ -4,7 +4,9 @@ import { Suspense } from "react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { PROFILE_PATH } from "@/lib/auth/paths";
-import { requireUser } from "@/lib/auth/user";
+import { requireSubscriber } from "@/lib/billing/data";
+import { formatPrice } from "@/lib/billing/plans";
+import { BILLING_SETTINGS_PATH, billingReminders, formatPlainDate, nextCharge } from "@/lib/billing/rules";
 import { getOwnBookingsBetween, getOwnTimeZone } from "@/lib/booking/data";
 import { formatDay } from "@/lib/booking/format";
 import { AVAILABILITY_PATH } from "@/lib/booking/rules";
@@ -14,13 +16,14 @@ import { reminders } from "@/lib/dashboard/rules";
 import { DRIVE_PATH } from "@/lib/drive/rules";
 import { getOwnProfileContent } from "@/lib/profile/data";
 
-import { DashboardMosaic } from "./_components/dashboard/dashboard-mosaic";
+import { WelcomeToast } from "../_components/billing/welcome-toast";
+import { DashboardMosaic } from "../_components/dashboard/dashboard-mosaic";
 
 export const metadata: Metadata = { title: "Tableau de bord · MyWork" };
 
 // Home of the private space, reached after login (docs/dashboard.md): today's bookings, the visits
 // of the public profile, the reminders and the signals of interest, in a grid of tiles
-// (maquette « Mosaïque »).
+// (maquette « Mosaïque »). The reminders of the subscription come first (docs/billing.md).
 export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-8 px-8 py-14 sm:px-16">
@@ -38,7 +41,7 @@ const startOfDay = (day: Day, timeZone: string) => {
 };
 
 async function DashboardContent() {
-  await requireUser();
+  const billing = await requireSubscriber();
   const timeZone = await getOwnTimeZone();
   const now = new Date();
   const today = localDay(now, timeZone);
@@ -50,21 +53,35 @@ async function DashboardContent() {
     getOwnBookingsBetween(startOfDay(today, timeZone), tomorrow),
     getOwnBookingsBetween(tomorrow, new Date(tomorrow.getTime() + 366 * 86_400_000), 1),
   ]);
+  const { subscription, state } = billing;
+  const charge = subscription ? nextCharge(subscription, state) : null;
   return (
     <>
       <Header today={today} />
+      {charge && (
+        <WelcomeToast
+          description={
+            state === "trialing"
+              ? `Votre essai court jusqu'au ${formatPlainDate(charge.at, { year: false })}. Premier prélèvement ce jour-là : ${formatPrice(charge.amount)}.`
+              : `Votre abonnement est actif. Prochain prélèvement le ${formatPlainDate(charge.at)} : ${formatPrice(charge.amount)}.`
+          }
+        />
+      )}
       <DashboardMosaic
         dashboard={dashboard}
-        reminders={reminders(
-          {
-            isOnline: dashboard.isOnline,
-            bookingOpen: dashboard.bookingOpen,
-            profile,
-            storageUsed: dashboard.storageUsed,
-            storageCapacity: dashboard.storageCapacity,
-          },
-          { profile: PROFILE_PATH, availability: AVAILABILITY_PATH, drive: DRIVE_PATH },
-        )}
+        reminders={[
+          ...billingReminders(subscription, state, now, BILLING_SETTINGS_PATH),
+          ...reminders(
+            {
+              isOnline: dashboard.isOnline,
+              bookingOpen: dashboard.bookingOpen,
+              profile,
+              storageUsed: dashboard.storageUsed,
+              storageCapacity: dashboard.storageCapacity,
+            },
+            { profile: PROFILE_PATH, availability: AVAILABILITY_PATH, drive: DRIVE_PATH },
+          ),
+        ]}
         bookings={bookings}
         next={next[0] ?? null}
         timeZone={timeZone}

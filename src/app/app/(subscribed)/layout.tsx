@@ -6,12 +6,18 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getOwnProfile } from "@/lib/account/profile";
 import { HOME_PATH } from "@/lib/auth/paths";
 import { requireUser } from "@/lib/auth/user";
+import { requireSubscriber } from "@/lib/billing/data";
+import { unpaidText } from "@/lib/billing/rules";
 import { hasUnseenBookings } from "@/lib/booking/data";
 
-import { SidebarLinks, SidebarNav } from "./_components/sidebar-nav";
-import { UserMenu } from "./_components/user-menu";
+import { PaymentBanner } from "../_components/billing/payment-banner";
+import { SidebarLinks, SidebarNav } from "../_components/sidebar-nav";
+import { UserMenu } from "../_components/user-menu";
 
 // Shell of the private space: a very simple sidebar, not collapsible (docs/auth.md, "Interface").
+// Only with a subscription that opens it (docs/billing.md, "Accès selon l'état de l'abonnement"):
+// otherwise "Choisissez votre formule" (/app/subscribe, outside this shell). After a refused payment,
+// a banner at the top, while Stripe tries again.
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-svh flex-1">
@@ -31,7 +37,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </Suspense>
         </div>
       </aside>
-      <main className="min-w-0 flex-1 bg-spotlight">{children}</main>
+      <main className="min-w-0 flex-1 bg-spotlight">
+        <Suspense fallback={null}>
+          <SubscriptionGate />
+        </Suspense>
+        {children}
+      </main>
     </div>
   );
 }
@@ -46,10 +57,16 @@ async function CurrentSidebarNav() {
   return <SidebarNav bookingDot={bookingDot} />;
 }
 
+async function SubscriptionGate() {
+  const { subscription, state } = await requireSubscriber();
+  if (state !== "past_due" || !subscription) return null;
+  return <PaymentBanner text={unpaidText(subscription)} />;
+}
+
 async function CurrentUserMenu() {
   const user = await requireUser();
   const profile = await getOwnProfile(user.id);
-  return <UserMenu email={user.email} avatarUrl={profile.photoUrl} profile={profile} />;
+  return <UserMenu email={user.email} avatarUrl={profile.photoUrl} profile={profile} subscribed />;
 }
 
 function UserMenuSkeleton() {

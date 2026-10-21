@@ -2,7 +2,7 @@
 
 import { refresh } from "next/cache";
 
-import { getCurrentUser } from "@/lib/auth/user";
+import { getSubscribedUser } from "@/lib/billing/data";
 import { normalizeProfileContent, validateProfileContent } from "@/lib/profile/content";
 import { removeUnusedImages, saveOwnProfileContent } from "@/lib/profile/data";
 import type { ProfileContent } from "@/lib/profile/types";
@@ -13,7 +13,7 @@ export type SaveProfileContentResult = { ok: true } | { ok: false; error: "inval
 // The values are cleaned and checked again here, then by the database. The private space is
 // refreshed, so that the sidebar and the Settings show the new name and photo.
 export async function saveProfile(input: ProfileContent): Promise<SaveProfileContentResult> {
-  const user = await getCurrentUser();
+  const user = await getSubscribedUser();
   if (!user) return { ok: false, error: "failed" };
 
   let content: ProfileContent;

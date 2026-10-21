@@ -2,7 +2,7 @@
 
 import { BookingFlow } from "@/app/[handle]/booking/_components/booking-flow"
 import { GuestTicket } from "@/app/[handle]/booking/_components/guest-ticket"
-import { BookingList } from "@/app/app/booking/_components/booking-list"
+import { BookingList } from "@/app/app/(subscribed)/booking/_components/booking-list"
 import { DEFAULT_WEEKLY } from "@/lib/booking/rules"
 import type { OwnBooking } from "@/lib/booking/types"
 

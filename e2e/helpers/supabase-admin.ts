@@ -30,12 +30,21 @@ export function isTestEmail(email: string | undefined) {
 
 // `name`: the name Google would give (full_name), from which the public handle and the first and
 // last name are built. `metadata`: other account data Google could give (given_name, family_name).
+// `subscription`: the state of its test subscription (by default in its trial), "none" for an
+// account that never subscribed (docs/billing.md, "Tests").
 export async function createUser({
   confirmed = true,
   email = testEmail(),
   name,
   metadata,
-}: { confirmed?: boolean; email?: string; name?: string; metadata?: Record<string, string> } = {}) {
+  subscription = "trialing",
+}: {
+  confirmed?: boolean;
+  email?: string;
+  name?: string;
+  metadata?: Record<string, string>;
+  subscription?: TestSubscription;
+} = {}) {
   const { data, error } = await adminClient().auth.admin.createUser({
     email,
     password: TEST_PASSWORD,
@@ -43,7 +52,54 @@ export async function createUser({
     user_metadata: name || metadata ? { ...(name && { full_name: name }), ...metadata } : undefined,
   });
   if (error) throw error;
+  if (subscription !== "none") await setSubscription(data.user.id, subscription);
   return { id: data.user.id, email, password: TEST_PASSWORD };
+}
+
+// The test subscriptions, written straight into the database as Stripe's test mode would leave
+// them, without Stripe (no customer: the buttons to Stripe's portal answer that it is unavailable).
+// Every account needs one to open the private space: there is no free access.
+export type TestSubscription = "trialing" | "active" | "canceling" | "past_due" | "ended" | "none";
+
+const DAY = 86_400_000;
+
+export async function setSubscription(id: string, state: TestSubscription, changes: Record<string, unknown> = {}) {
+  const admin = adminClient();
+  if (state === "none") {
+    const { error } = await admin.from("subscriptions").delete().eq("user_id", id);
+    if (error) throw error;
+    return;
+  }
+  const now = Date.now();
+  const iso = (days: number) => new Date(now + days * DAY).toISOString();
+  const row = {
+    user_id: id,
+    livemode: false,
+    plan: "yearly",
+    status: { trialing: "trialing", active: "active", canceling: "active", past_due: "past_due", ended: "canceled" }[state],
+    subscription_created_at: iso(state === "trialing" ? 0 : -30),
+    trial_end: state === "trialing" ? iso(7) : null,
+    current_period_end: state === "trialing" ? iso(7) : iso(335),
+    cancel_at: state === "canceling" ? iso(335) : null,
+    ended_at: state === "ended" ? iso(0) : null,
+    trial_used: true,
+    card_brand: "visa",
+    card_last4: "4242",
+    card_exp_month: 8,
+    card_exp_year: 2030,
+    unpaid_amount: state === "past_due" ? 5000 : null,
+    unpaid_at: state === "past_due" ? iso(-1) : null,
+    next_payment_attempt: state === "past_due" ? iso(2) : null,
+    ...changes,
+  };
+  const { error } = await admin.from("subscriptions").upsert(row);
+  if (error) throw error;
+}
+
+export async function getSubscription(id: string) {
+  const { data, error } = await adminClient().from("subscriptions").select("*").eq("user_id", id).maybeSingle();
+  if (error) throw error;
+  return data as Record<string, unknown> | null;
 }
 
 // Profile of a test account: its handle, whether it is online, its first and last name.

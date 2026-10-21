@@ -270,7 +270,7 @@ Pour les agents qui développeront le module.
 - **Compte LiveKit Cloud** : créé le 2026-10-16, offre gratuite. Projet **MyWork**, identifiant `p_55iutdslog4`, adresse `wss://mywork-2u2z4y18.livekit.cloud`, région de données **Union européenne (Francfort)** (impossible à changer ensuite), observabilité des agents désactivée (pas d'agents IA). Une clé d'accès existe déjà (*Settings › API keys*) ; ses trois valeurs sont rangées dans Vercel par le porteur du projet et récupérées dans `.env.local` (`vercel env pull`, 2026-10-16). Modèle dans `.env.example`.
 - **E-mails** : modèles en HTML dans `src/lib/booking/emails/templates.ts` ; mise en forme et envoi dans `deliver.ts` (logique pure, tests unitaires) ; branchement à la file et à Resend (bibliothèque `resend`, envoi après la réponse avec `after()`, clé d'idempotence par e-mail) dans `send-email.ts` ; fonctions de la base `claim_booking_emails` et `finish_booking_email` (migration `20261018120000_send_booking_emails.sql`). Le `.ics` est fabriqué à la main (format texte simple), sans bibliothèque *(proposé)*.
 - **Tâche planifiée** (suppression au bout d'un an) : `pg_cron` dans Supabase *(proposé)*, plutôt qu'une tâche Vercel.
-- Code du module : `src/app/app/booking/` (liste, disponibilités, salle du propriétaire), `src/app/[handle]/booking/` (onglet, page du rendez-vous, salle de l'invité), règles partagées dans `src/lib/booking/`. Lien « Mes rendez-vous » dans `src/app/app/_components/sidebar-nav.tsx` ; onglet et bouton « Prendre rendez-vous » dans `profile-header.tsx`.
+- Code du module : `src/app/app/(subscribed)/booking/` (liste, disponibilités, salle du propriétaire), `src/app/[handle]/booking/` (onglet, page du rendez-vous, salle de l'invité), règles partagées dans `src/lib/booking/`. Lien « Mes rendez-vous » dans `src/app/app/_components/sidebar-nav.tsx` ; onglet et bouton « Prendre rendez-vous » dans `profile-header.tsx`.
 - Reporter dans `docs/product.md`, *Inventaire technique* : LiveKit Cloud, les bibliothèques retenues, la tâche planifiée.
 
 ## Tests
@@ -308,7 +308,7 @@ Choix faits en cours de route, **à valider** par le porteur du projet (marqués
 **Où est le code**
 
 - Règles, calcul des créneaux, dates, `.ics`, e-mails : `src/lib/booking/` (`slots.ts` est la fonction pure ; `rules.ts` les valeurs ; `emails/templates.ts` les quatre modèles ; `emails/send-email.ts` le module d'envoi qui n'envoie rien ; `meeting.ts` le jeton LiveKit).
-- Espace privé : `src/app/app/booking/` (`(pages)/` pour la liste et « Disponibilités », `[id]/meet/` pour la salle du propriétaire et son jeton). Public : `src/app/[handle]/booking/` (onglet, `[code]/` page de l'invité, `[code]/ics`, `[code]/meet/` et son jeton). La salle elle-même : `src/components/meeting/`.
+- Espace privé : `src/app/app/(subscribed)/booking/` (`(pages)/` pour la liste et « Disponibilités », `[id]/meet/` pour la salle du propriétaire et son jeton). Public : `src/app/[handle]/booking/` (onglet, `[code]/` page de l'invité, `[code]/ics`, `[code]/meet/` et son jeton). La salle elle-même : `src/components/meeting/`.
 - Vitrine `/design` : les vrais composants (semainier, billet, liste) et les quatre e-mails, avec des données fictives.
 
 **Données**

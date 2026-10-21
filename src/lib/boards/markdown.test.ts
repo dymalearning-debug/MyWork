@@ -2,7 +2,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { MarkdownView } from "@/app/app/boards/_components/markdown-view";
+import { MarkdownView } from "@/app/app/(subscribed)/boards/_components/markdown-view";
 
 import { descriptionKeyAction, insertLink, newLine, toggleBullets, toggleWrap, type TextEdit } from "./markdown";
 

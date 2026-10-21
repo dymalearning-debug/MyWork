@@ -107,7 +107,8 @@ export function missingText(missing: string[]) {
 export const STORAGE_WARNING_RATIO = 0.8;
 
 export type Reminder = {
-  id: "offline" | "booking" | "profile" | "storage";
+  // trial, canceling, past_due: the subscription (src/lib/billing/rules.ts).
+  id: "offline" | "booking" | "profile" | "storage" | "trial" | "canceling" | "past_due";
   title: string;
   detail: string;
   href: string;

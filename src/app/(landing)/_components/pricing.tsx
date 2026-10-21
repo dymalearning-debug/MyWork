@@ -140,7 +140,7 @@ function PlanCard({ plan }: { plan: Plan }) {
       </div>
       <div className="mt-auto flex flex-col gap-3">
         <Link
-          href="/signup"
+          href={`/signup?plan=${plan.id}`}
           aria-label={plan.label}
           className={cn(buttonVariants({ size: "lg", variant: plan.best ? "default" : "outline" }), "w-full")}
         >

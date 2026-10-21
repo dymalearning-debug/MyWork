@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckIcon, CircleAlertIcon, CircleHelpIcon, LoaderCircleIcon, UserIcon } from "lucide-react";
+import { CheckIcon, CircleAlertIcon, CircleHelpIcon, CreditCardIcon, LoaderCircleIcon, UserIcon } from "lucide-react";
 import { useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
 import { toast } from "sonner";
 
@@ -29,10 +29,15 @@ import { isValidHandle } from "@/lib/public-profile/handle";
 import { cn } from "@/lib/utils";
 
 import { checkHandle, deleteAccount, saveProfileSettings } from "../actions";
+import { BillingSection } from "./billing/billing-section";
 
-// Sections of the Settings, in the menu at the left of the dialog. Subscription and module
-// settings will be added here.
-const SECTIONS = [{ id: "profile", label: "Profil", icon: UserIcon }] as const;
+// Sections of the Settings, in the menu at the left of the dialog. Module settings will be added here.
+const SECTIONS = [
+  { id: "profile", label: "Profil", icon: UserIcon },
+  { id: "billing", label: "Abonnement", icon: CreditCardIcon },
+] as const;
+
+export type SettingsSection = (typeof SECTIONS)[number]["id"];
 
 const FORM_ID = "settings-profile";
 
@@ -62,19 +67,25 @@ function useSiteHost() {
 
 // Settings dialog (docs/settings.md), opened from the profile menu: a large dialog with the
 // sections at the left and one "Enregistrer" for everything it holds. Mounted again at each
-// opening, so that it always starts from the saved values.
+// opening, so that it always starts from the saved values. The section "Abonnement"
+// (docs/billing.md) has nothing to save: its footer only closes. subscribed: the account has a
+// subscription running, which the deletion of the account stops.
 export function SettingsDialog({
   open,
   onOpenChange,
   email,
   profile,
+  subscribed,
+  initialSection = "profile",
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   email: string;
   profile: ProfileSettings;
+  subscribed: boolean;
+  initialSection?: SettingsSection;
 }) {
-  const [section, setSection] = useState<(typeof SECTIONS)[number]["id"]>("profile");
+  const [section, setSection] = useState<SettingsSection>(initialSection);
   const [values, setValues] = useState(profile);
   const [handleStatus, setHandleStatus] = useState<HandleStatus>("idle");
   const [confirmClose, setConfirmClose] = useState(false);
@@ -169,8 +180,10 @@ export function SettingsDialog({
             ))}
           </nav>
 
+          {/* Kept while another section shows: its changes wait to be saved. */}
           <form
             id={FORM_ID}
+            hidden={section !== "profile"}
             noValidate
             onSubmit={(event) => {
               event.preventDefault();
@@ -277,6 +290,13 @@ export function SettingsDialog({
               </Button>
             </div>
           </form>
+
+          {section === "billing" && (
+            <div className="flex min-w-0 flex-1 flex-col overflow-y-auto px-12 pt-10 pb-8">
+              <h3 className="pb-6 font-heading text-2xl font-semibold">Abonnement</h3>
+              <BillingSection />
+            </div>
+          )}
         </div>
 
         <div className="flex flex-wrap items-center gap-3 border-t border-border bg-muted/50 px-5 py-3.5">
@@ -286,14 +306,22 @@ export function SettingsDialog({
               Modifications non enregistrées
             </p>
           )}
-          <div className="ml-auto flex flex-wrap gap-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Annuler
-            </Button>
-            <Button type="submit" form={FORM_ID} disabled={!canSave}>
-              Enregistrer
-            </Button>
-          </div>
+          {section === "billing" ? (
+            <div className="ml-auto flex">
+              <Button type="button" variant="outline" onClick={requestClose}>
+                Fermer
+              </Button>
+            </div>
+          ) : (
+            <div className="ml-auto flex flex-wrap gap-2">
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                Annuler
+              </Button>
+              <Button type="submit" form={FORM_ID} disabled={!canSave}>
+                Enregistrer
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Nested dialogs: they open above the Settings. */}
@@ -333,6 +361,12 @@ export function SettingsDialog({
                 votre page publique et tout ce que vous avez créé dans MyWork. Vous serez ensuite
                 déconnecté.
               </DialogDescription>
+              {subscribed && (
+                <p className="bg-muted px-3.5 py-3 text-sm shadow-[inset_2px_0_0_var(--primary)]">
+                  Votre abonnement sera arrêté immédiatement, sans remboursement de la période en cours. Vos
+                  factures restent conservées par Stripe pendant 10 ans, comme la loi l&apos;exige.
+                </p>
+              )}
             </DialogHeader>
             <DialogFooter>
               <Button variant="outline" disabled={deleting} onClick={() => setConfirmDelete(false)}>

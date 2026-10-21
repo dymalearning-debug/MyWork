@@ -1,11 +1,24 @@
+import {
+  button,
+  CANCELLED,
+  INK,
+  escape,
+  fallbackLink,
+  firstName,
+  label,
+  layout,
+  paragraph,
+  quote,
+  rows,
+  title,
+  type RenderedEmail as BaseRenderedEmail,
+} from "@/lib/emails/parts";
+
 import { formatDate, formatShortDate, formatTime, formatTimeRange, timeZoneLabel } from "../format";
 import { meetingWindow } from "../rules";
 
-// The four emails of the module (docs/booking.md, "E-mails"), prepared but not sent yet. Same
-// template as the authentication emails (supabase/templates/, docs/auth.md, "E-mails"): the subject
-// above, a white card, the logo, a label, a title in Georgia, details in rows, a red button, the
-// link in plain text. Fixed colors: mail clients ignore CSS variables; the red of "Annulé" is
-// #a3261f (from `destructive`). Mockups: planches "E-mail — …".
+// The four emails of the module (docs/booking.md, "E-mails"), in the template of MyWork's emails
+// (src/lib/emails/parts.ts). Mockups: planches "E-mail — …".
 
 export type BookingEmailTemplate = "guest_confirmation" | "owner_new_booking" | "guest_cancelled" | "owner_cancelled";
 
@@ -35,87 +48,7 @@ export type BookingEmailData = {
   owner_cancelled: OwnerCancelledData;
 };
 
-export type RenderedEmail = { subject: string; html: string; text: string; withIcs: boolean };
-
-const INK = "#0e0d0c";
-const MUTED = "#656360";
-const BORDER = "#e2e1df";
-const PAPER = "#f6f5f4";
-const RED = "#cd171e";
-const CANCELLED = "#a3261f";
-
-const escape = (text: string) =>
-  text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-
-const firstName = (name: string) => name.trim().split(/\s+/)[0] ?? name;
-
-// ——— Pieces of the template ———
-
-const label = (text: string, color = MUTED) =>
-  `<p style="margin:0 0 20px;font-size:11px;line-height:16px;font-weight:bold;letter-spacing:0.16em;text-transform:uppercase;color:${color};">${escape(text)}</p>`;
-
-const title = (text: string) =>
-  `<h1 style="margin:0 0 20px;font-family:Georgia,'Times New Roman',serif;font-size:30px;line-height:38px;font-weight:normal;color:${INK};">${escape(text)}</h1>`;
-
-const paragraph = (html: string, { small = false } = {}) =>
-  `<p style="margin:0 0 20px;font-size:${small ? 13 : 15}px;line-height:${small ? 20 : 23}px;color:${small ? MUTED : INK};">${html}</p>`;
-
-function rows(items: [string, string][]) {
-  const cells = items
-    .map(
-      ([key, value]) =>
-        `<tr><td style="padding:10px 0;border-bottom:1px solid ${BORDER};font-size:14px;line-height:20px;color:${MUTED};">${escape(key)}</td><td align="right" style="padding:10px 0;border-bottom:1px solid ${BORDER};font-size:14px;line-height:20px;color:${INK};">${escape(value)}</td></tr>`,
-    )
-    .join("");
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;border-top:1px solid ${BORDER};">${cells}</table>`;
-}
-
-function quote(heading: string, text: string, { italic = false } = {}) {
-  const style = italic
-    ? `font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:17px;line-height:26px;`
-    : "font-size:15px;line-height:23px;";
-  return `${label(heading)}<p style="margin:-12px 0 24px;${style}color:${INK};background:${PAPER};padding:14px 16px;white-space:pre-line;">${escape(text)}</p>`;
-}
-
-function button(text: string, href: string) {
-  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;"><tr><td style="background:${RED};"><a href="${escape(href)}" style="display:inline-block;padding:14px 22px;font-size:12px;line-height:16px;font-weight:bold;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;color:#fcfcfc;">${escape(text)}</a></td></tr></table>`;
-}
-
-const fallbackLink = (href: string) =>
-  `<p style="margin:0;font-size:12px;line-height:18px;color:${MUTED};word-break:break-all;">Si le bouton ne fonctionne pas : <span style="color:${INK};">${escape(href)}</span></p>`;
-
-function layout(subject: string, body: string, origin: string) {
-  return `<!doctype html>
-<html lang="fr">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light">
-<title>${escape(subject)}</title>
-</head>
-<body style="margin:0;padding:0;background:${PAPER};color:${INK};font-family:Helvetica,Arial,sans-serif;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAPER};">
-  <tr>
-    <td align="center" style="padding:40px 16px;">
-      <table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:560px;">
-        <tr>
-          <td style="background:#ffffff;border:1px solid ${BORDER};padding:40px 40px 36px;">
-            <img src="${escape(origin)}/brand/mywork-logo-1200.png" width="112" alt="MyWork" style="display:block;width:112px;height:auto;border:0;">
-            <div style="height:1px;background:${BORDER};margin:24px 0;line-height:1px;font-size:1px;">&nbsp;</div>
-            ${body}
-          </td>
-        </tr>
-        <tr>
-          <td align="center" style="padding-top:20px;font-size:11px;line-height:16px;font-weight:bold;letter-spacing:0.16em;text-transform:uppercase;color:${MUTED};">MyWork — L'espace tout-en-un des freelances</td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-</table>
-</body>
-</html>
-`;
-}
+export type RenderedEmail = BaseRenderedEmail & { withIcs: boolean };
 
 // ——— The four emails ———
 

@@ -1,5 +1,5 @@
-import { CardFace } from "@/app/app/boards/_components/card-tile"
-import { MarkdownView } from "@/app/app/boards/_components/markdown-view"
+import { CardFace } from "@/app/app/(subscribed)/boards/_components/card-tile"
+import { MarkdownView } from "@/app/app/(subscribed)/boards/_components/markdown-view"
 import type { Card } from "@/lib/boards/types"
 
 import { ModuleHeading } from "./showcase"

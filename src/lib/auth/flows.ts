@@ -96,11 +96,13 @@ export async function signInWithEmail(
 }
 
 // An address that already has an account gets the same "check your inbox" screen:
-// Supabase does not reveal which addresses are registered.
+// Supabase does not reveal which addresses are registered. `metadata`: kept with the account
+// (user_metadata), such as the plan chosen on the sign-up page (docs/billing.md).
 export async function signUpWithEmail(
   auth: AuthApi,
   { email, password }: Credentials,
   emailRedirectTo: string,
+  metadata?: Record<string, string>,
 ): Promise<FormState> {
   const fieldErrors: FieldErrors = {
     email: validateEmail(email),
@@ -108,7 +110,7 @@ export async function signUpWithEmail(
   };
   if (fieldErrors.email || fieldErrors.password) return { email, fieldErrors };
 
-  const { error } = await auth.signUp({ email, password, options: { emailRedirectTo } });
+  const { error } = await auth.signUp({ email, password, options: { emailRedirectTo, ...(metadata && { data: metadata }) } });
   if (error) {
     if (error.code === "weak_password") return { email, fieldErrors: { password: MESSAGES.weakPassword } };
     return { email, error: translateAuthError(error) };

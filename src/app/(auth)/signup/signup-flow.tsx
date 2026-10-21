@@ -1,7 +1,7 @@
 "use client";
 
 import { MailIcon } from "lucide-react";
-import { useActionState } from "react";
+import { Suspense, useActionState } from "react";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,11 +10,15 @@ import type { FormState } from "@/lib/auth/flows";
 import { AuthCard, AuthFooter, AuthHeader, AuthLink, OrSeparator } from "../_components/auth-shell";
 import { FieldError, FieldHint, FormMessage, PasswordInput, SubmitButton } from "../_components/form-parts";
 import { GoogleButton } from "../_components/google-button";
+import { UrlParamInputs } from "../_components/url-params";
 import { signup } from "../actions";
 import { ResendConfirmation } from "../resend-confirmation";
+import { PlanRecap, PlanRecapSkeleton } from "./plan-recap";
 
 // Sign-up form, then the "Vérifiez votre boîte mail" screen. The address stays in the page's
-// state (never in the URL) for the "Renvoyer l'e-mail" button.
+// state (never in the URL) for the "Renvoyer l'e-mail" button. Step 1 of 2: the plan of the
+// address (?plan=, from the landing page) is recalled above and kept with the account; step 2 is
+// "Choisissez votre formule" (docs/billing.md, "Le parcours d'inscription").
 export function SignupFlow() {
   const [state, action] = useActionState(signup, {} as FormState);
 
@@ -23,14 +27,18 @@ export function SignupFlow() {
   const errors = state.fieldErrors ?? {};
   return (
     <>
-      <AuthHeader eyebrow="Nouveau compte" title="Créer un compte">
+      <AuthHeader eyebrow="Nouveau compte · Étape 1 sur 2" title="Créer un compte">
         CV, rendez-vous, tâches et fichiers, dans un seul espace.
       </AuthHeader>
+      <Suspense fallback={<PlanRecapSkeleton />}>
+        <PlanRecap />
+      </Suspense>
       <AuthCard>
         <GoogleButton />
         <OrSeparator />
 
         <form action={action} noValidate className="flex flex-col gap-6">
+          <UrlParamInputs names={["plan"]} />
           {state.error && <FormMessage tone="error">{state.error}</FormMessage>}
 
           <div className="flex flex-col gap-5">
@@ -68,7 +76,11 @@ export function SignupFlow() {
             </div>
 
             <SubmitButton>Créer mon compte</SubmitButton>
-            <p className="text-center text-xs text-muted-foreground">Un e-mail de confirmation vous sera envoyé.</p>
+            <p className="text-center text-xs leading-[18px] text-muted-foreground">
+              Un e-mail de confirmation vous sera envoyé.
+              <br />
+              Ensuite : votre formule et votre carte, sur la page de paiement sécurisée de Stripe.
+            </p>
           </div>
         </form>
       </AuthCard>

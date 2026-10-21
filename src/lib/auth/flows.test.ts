@@ -99,6 +99,16 @@ describe("signUpWithEmail", () => {
     });
   });
 
+  it("keeps the chosen plan with the account", async () => {
+    const auth = fakeAuth();
+    await signUpWithEmail(asApi(auth), { email: "a@b.fr", password: "12345678" }, LINK, { plan: "monthly" });
+    expect(auth.signUp).toHaveBeenCalledWith({
+      email: "a@b.fr",
+      password: "12345678",
+      options: { emailRedirectTo: LINK, data: { plan: "monthly" } },
+    });
+  });
+
   it("requires 8 characters, with no other rule", async () => {
     const auth = fakeAuth();
     const result = await signUpWithEmail(asApi(auth), { email: "a@b.fr", password: "1234567" }, LINK);

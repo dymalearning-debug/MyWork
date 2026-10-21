@@ -65,7 +65,8 @@ Une courte liste de rappels, qui disparaissent une fois réglés :
 - profil **hors ligne** : « Votre profil n'est visible par personne », avec l'interrupteur ;
 - **réservations fermées** (lien vers « Disponibilités ») ;
 - **profil incomplet** : un pourcentage et ce qui manque (les trois premiers éléments), idée notée *Plus tard* dans [profile.md](profile.md). Dix éléments, 10 % chacun : photo, titre, localisation, présentation, coordonnées (e-mail ou téléphone), liens, expériences, formation, compétences, langues ;
-- **stockage** au-delà de 80 % ([drive.md](drive.md), *Indicateur de stockage*).
+- **stockage** au-delà de 80 % ([drive.md](drive.md), *Indicateur de stockage*) ;
+- **abonnement**, en tête de liste ([billing.md](billing.md)) : fin de l'essai (les 3 derniers jours), résiliation demandée (date de fin), paiement refusé (« Carte à changer ») ; chacun ouvre Paramètres › Abonnement.
 
 ### Écartés (2026-10-18)
 

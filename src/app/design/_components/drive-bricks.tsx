@@ -3,9 +3,9 @@
 import { DndContext } from "@dnd-kit/core"
 
 import { ResourcesTab } from "@/app/[handle]/_components/resources-tab"
-import { DriveContext, type DriveContextValue } from "@/app/app/drive/_components/drive-context"
-import { ItemList } from "@/app/app/drive/_components/items"
-import { StorageMeter } from "@/app/app/drive/_components/storage-meter"
+import { DriveContext, type DriveContextValue } from "@/app/app/(subscribed)/drive/_components/drive-context"
+import { ItemList } from "@/app/app/(subscribed)/drive/_components/items"
+import { StorageMeter } from "@/app/app/(subscribed)/drive/_components/storage-meter"
 import type { DriveItem, PublicResource } from "@/lib/drive/types"
 
 import { ModuleHeading } from "./showcase"

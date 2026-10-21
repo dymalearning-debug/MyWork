@@ -124,7 +124,7 @@ Pour les agents qui développeront le module.
 - Lire d'abord les guides Next.js 16 concernés dans `node_modules/next/dist/docs/01-app/` : formulaires et Server Actions, routes dynamiques, et les guides de cache (`cacheComponents` est activé).
 - Bibliothèques *(proposé)* : **dnd-kit**, déjà utilisé par le module Profil, pour les tableaux, les listes, les cartes et la checklist (souris et clavier). Pour la description, une zone de texte Markdown et un rendu limité aux éléments permis (**react-markdown**), plutôt qu'un éditeur visuel complet (Tiptap) : plus simple, plus léger, et la mise en forme voulue est minime.
 - Glisser-déposer **optimiste** : la carte bouge tout de suite, l'enregistrement suit ; en cas d'échec (liste pleine, réseau), elle revient à sa place avec un message.
-- Code du module : `src/app/app/boards/` (pages et composants), règles partagées (plafonds, positions, Markdown permis, raccourcis) dans `src/lib/boards/`. Lien « Mes tableaux » à ajouter dans `src/app/app/_components/sidebar-nav.tsx`.
+- Code du module : `src/app/app/(subscribed)/boards/` (pages et composants), règles partagées (plafonds, positions, Markdown permis, raccourcis) dans `src/lib/boards/`. Lien « Mes tableaux » à ajouter dans `src/app/app/_components/sidebar-nav.tsx`.
 - Reporter `board-images`, `react-markdown` et tout autre choix dans `docs/product.md`, *Inventaire technique*.
 
 ## Tests
