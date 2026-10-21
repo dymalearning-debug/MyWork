@@ -107,7 +107,7 @@ Chaque étape correspond au périmètre MVP du module (voir [modules.md](modules
 | 3 | Module **Tableaux** (type Trello) | Développé (2026-10-14), décisions à valider |
 | 4 | Module **Rendez-vous** (type Calendly), avec la visio | Développé (2026-10-16), quelques choix à valider |
 | 5 | Module **Drive** (type Google Drive) | Développé (2026-10-15), quelques choix à valider |
-| 6 | **Abonnement et paiement**, ouverture SaaS | En cours (2026-10-21 : compte Stripe, mode test prêt) |
+| 6 | **Abonnement et paiement**, ouverture SaaS | En cours (2026-10-21 : compte Stripe, mode test prêt ; liste de ce qu'il faut mettre en place à relire, [billing.md](billing.md)) |
 | 7 | Module **Visio** (type Zoom) : montée en charge (la visio des rendez-vous arrive à l'étape 4) | À faire |
 | — | **Landing page** (`/`), cible freelances, acquisition par YouTube ([landing.md](landing.md)) | Spécifiée (2026-10-19), ossature, hero, fonctionnalités et outils remplacés, tarif et FAQ développés (2026-10-20) |
 
@@ -273,6 +273,7 @@ Journal des choix validés (date : décision).
 - 2026-10-19 : maquette du tableau de bord : direction **« Mosaïque »** retenue ([Maquette tableau de bord](https://claude.ai/artifact/2CDdmSAV6Big1aR46qknNK), détail dans [dashboard.md](dashboard.md)), « Rapport » et « Journée » écartées. Retours : rendez-vous **du jour seulement** (plus ceux de demain) ; **provenance des visiteurs retirée**. Le reste est gardé : visiteurs sur 7 et 30 jours, graphique sur 30 jours, détail par onglet, rappels, signaux d'intérêt.
 - 2026-10-19 : tableau de bord **développé** (détail dans [dashboard.md](dashboard.md), *Précisé pendant le développement*). Visites comptées dans notre base, sans service externe ni cookie (empreinte avec un sel du jour, effacé la nuit suivante), données gardées 90 jours. Choix faits en cours de route, à valider : visite envoyée par la page affichée, signaux comptés à chaque fois, libellés « Réservations » et « Ressources », jours de Paris pour les visites.
 - 2026-10-21 : **Stripe** préparé pour l'étape 6 (détail dans *Inventaire technique*). Choix faits en cours de route, à valider par le porteur du projet : page de paiement **hébergée par Stripe** (redirection, donc pas de clé publique) ; **clés de test en local et sur les aperçus, clé réelle en production seulement** ; chaque abonnement marqué test ou réel dans la base, partagée entre le local et la production ; prix désignés par des noms fixes plutôt que par leurs identifiants, qui changent d'un mode à l'autre ; clés rangées à la main dans Vercel plutôt que par l'intégration Stripe du Marketplace Vercel (elle remplace les clés de test par les réelles au passage en production et ne gère pas le secret du webhook).
+- 2026-10-21 : **pas d'accès offert** pour le compte du porteur du projet : il passe par la page de paiement comme tout abonné, avec une carte de test tant que le mode réel n'est pas ouvert ([billing.md](billing.md)).
 
 ## Questions ouvertes
 

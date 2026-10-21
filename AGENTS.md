@@ -21,6 +21,7 @@ Point d'entrée pour tout agent (IA ou humain) qui travaille sur ce dépôt. À 
 | [docs/landing.md](docs/landing.md) | Landing page (`/`) : contenu de chaque bloc, FAQ, chiffrage du modèle économique, référencement et IA, pages légales, tests, décisions à valider | Avant de travailler sur la landing page, le prix ou les pages légales |
 | [docs/dashboard.md](docs/dashboard.md) | Tableau de bord (`/app`, l'accueil) : maquette, blocs (rendez-vous du jour, visites du profil, signaux, rappels), données, tests ; complété au fil des modules | Avant de travailler sur le tableau de bord |
 | [docs/settings.md](docs/settings.md) | Paramètres : fenêtre, page Profil (nom, adresse du profil public), suppression du compte, notifications, données, tests | Avant de travailler sur les Paramètres, le compte ou les notifications |
+| [docs/billing.md](docs/billing.md) | Abonnement et paiement (Stripe, étape 6) : inscription avec abonnement, accès selon l'état, section « Abonnement » des Paramètres, e-mails, réglages Stripe, conditions d'ouverture, tests, décisions à valider | Avant de travailler sur l'abonnement, le paiement ou l'inscription |
 | [docs/design-system.md](docs/design-system.md) | Identité visuelle : où trouver tokens, composants, vitrine `/design` et logos ; règles d'usage | Avant de créer ou modifier un écran ou un composant |
 
 ## État actuel
