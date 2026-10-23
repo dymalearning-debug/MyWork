@@ -12,7 +12,7 @@ import {
 } from "@/lib/account/settings";
 import { ACCOUNT_DELETED_NOTICE, LOGIN_PATH } from "@/lib/auth/paths";
 import { getCurrentUser } from "@/lib/auth/user";
-import { getOwnBilling } from "@/lib/billing/data";
+import { getOwnBilling, getSubscribedUser } from "@/lib/billing/data";
 import {
   billingOverview,
   cancelOwnTrial,
@@ -41,7 +41,7 @@ export async function signOut() {
 // The public pages read the database on each visit. The private space is refreshed, so that the
 // profile menu, rebuilt each time it opens, shows the saved state.
 export async function setProfileOnline(online: boolean): Promise<{ ok: boolean }> {
-  const user = await getCurrentUser();
+  const user = await getSubscribedUser();
   if (!user || typeof online !== "boolean") return { ok: false };
   try {
     await setOwnProfileOnline(user.id, online);

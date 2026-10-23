@@ -7,6 +7,7 @@ import { sendBookingEmails } from "@/lib/booking/emails/send-email";
 import { bookPublicSlot, cancelPublicBooking } from "@/lib/booking/public";
 import { CANCEL_MESSAGE_MAX, guestBookingPath, guestFormErrors, type GuestForm } from "@/lib/booking/rules";
 import { isKnownTimeZone } from "@/lib/booking/time";
+import { requestIp } from "@/lib/dashboard/rules";
 
 // Server Actions of the public side (docs/booking.md): booking a slot, cancelling from the guest's
 // link. Open to anyone; the database checks every rule again.
@@ -34,8 +35,7 @@ export async function bookSlot(
   const slotStart = new Date(String(input.slotStart));
   if (Number.isNaN(slotStart.getTime())) return { status: "invalid" };
 
-  const requestHeaders = await headers();
-  const ip = requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() || requestHeaders.get("x-real-ip") || null;
+  const ip = requestIp(await headers());
   try {
     const result = await bookPublicSlot(handle, {
       slotStart: slotStart.toISOString(),

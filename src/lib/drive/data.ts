@@ -134,9 +134,11 @@ export async function removeStaleUploads(userId: string) {
     .limit(100);
   if (error || data.length === 0) return;
   const ids = data.map((row) => row.id as string);
-  await supabase.storage
+  const { error: removeError } = await supabase.storage
     .from(DRIVE_FILES_BUCKET)
     .remove(ids.flatMap((id) => [`${userId}/${id}`, thumbnailPath(userId, id)]));
+  // The rows stay until their files are gone: otherwise nothing would find those files any more.
+  if (removeError) return;
   await supabase.from("drive_items").delete().in("id", ids);
 }
 

@@ -188,7 +188,7 @@ export async function resumeOwnSubscription({ subscription, state }: OwnBilling)
 // events of the end (webhook) do not send "Abonnement terminé" to a deleted account. false: the
 // subscription could not be stopped, the account must not be deleted.
 // A subscription of the other Stripe mode (a test one, with the real keys) costs nothing: left as is.
-export async function stopSubscriptionForDeletion({ subscription, liveMode }: OwnBilling): Promise<boolean> {
+export async function stopSubscriptionForDeletion({ user, subscription, liveMode }: OwnBilling): Promise<boolean> {
   if (!subscription?.subscriptionId || subscription.livemode !== liveMode) return true;
   const stripe = getStripe();
   if (!stripe) return !hasAccessInStripe(subscription.status);
@@ -196,7 +196,13 @@ export async function stopSubscriptionForDeletion({ subscription, liveMode }: Ow
     const current = await stripe.subscriptions.retrieve(subscription.subscriptionId);
     if (!hasAccessInStripe(current.status)) return true;
     await stripe.subscriptions.update(current.id, { metadata: { user_id: "" } });
-    await stripe.subscriptions.cancel(current.id);
+    try {
+      await stripe.subscriptions.cancel(current.id);
+    } catch (error) {
+      // The account is kept: its subscription must stay linked to it, or the webhook would ignore it.
+      await stripe.subscriptions.update(current.id, { metadata: { user_id: user.id } });
+      throw error;
+    }
     return true;
   } catch (error) {
     console.error("[billing] subscription not stopped before the deletion", error);

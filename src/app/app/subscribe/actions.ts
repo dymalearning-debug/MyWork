@@ -1,15 +1,31 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import type Stripe from "stripe";
 
 import { getRequestOrigin } from "@/lib/auth/origin";
 import { HOME_PATH, LOGIN_PATH } from "@/lib/auth/paths";
-import { getOwnBilling, saveBillingCustomer } from "@/lib/billing/data";
+import { getOwnBilling, saveBillingCustomer, syncSubscription } from "@/lib/billing/data";
 import { isPlanId, TRIAL_DAYS } from "@/lib/billing/plans";
 import { canStartTrial, hasAccess, SUBSCRIBE_PATH } from "@/lib/billing/rules";
 import { getStripe, priceIds } from "@/lib/billing/stripe";
 
 export type CheckoutState = { error?: "unavailable" | "failed" };
+
+// A payment finished in another tab, whose return was not reached yet, has already made the
+// subscription: it is saved, and true. Otherwise the payment pages left open for the customer are
+// closed, so that two of them can never both be paid.
+async function settleEarlierPayments(stripe: Stripe, customerId: string): Promise<boolean> {
+  const { data: subscriptions } = await stripe.subscriptions.list({ customer: customerId, status: "all", limit: 10 });
+  const running = subscriptions.find((s) => s.status === "trialing" || s.status === "active" || s.status === "past_due");
+  if (running) {
+    await syncSubscription(running.id);
+    return true;
+  }
+  const { data: open } = await stripe.checkout.sessions.list({ customer: customerId, status: "open", limit: 10 });
+  await Promise.all(open.map((session) => stripe.checkout.sessions.expire(session.id)));
+  return false;
+}
 
 // "Démarrer mon essai de 7 jours" (docs/billing.md, "Le parcours d'inscription"): opens Stripe's
 // payment page (Checkout) for the chosen plan. The Stripe customer of the account is created the
@@ -26,9 +42,20 @@ export async function startCheckout(_prev: CheckoutState, formData: FormData): P
   if (!stripe) return { error: "unavailable" };
 
   const { user, subscription, liveMode } = billing;
+  const knownCustomer = subscription?.livemode === liveMode ? subscription.customerId : null;
+  if (knownCustomer) {
+    let subscribed: boolean;
+    try {
+      subscribed = await settleEarlierPayments(stripe, knownCustomer);
+    } catch (error) {
+      console.error("[billing] earlier payments not checked", error);
+      return { error: "failed" };
+    }
+    if (subscribed) redirect(HOME_PATH);
+  }
   let url: string | null;
   try {
-    let customerId = subscription?.livemode === liveMode ? subscription.customerId : null;
+    let customerId = knownCustomer;
     if (!customerId) {
       const customer = await stripe.customers.create(
         { email: user.email, metadata: { user_id: user.id } },
