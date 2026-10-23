@@ -169,6 +169,8 @@ Le fournisseur Google est réglé **dans le tableau de bord Supabase** (Authenti
 
 Ces réglages sont versionnés dans `supabase/config.toml` et appliqués au projet en ligne avec `npx supabase config push`, qui affiche les différences et demande confirmation. La clé Resend y est lue depuis la variable `RESEND_API_KEY` : lancer la commande avec les variables de `.env.local` chargées (dans Git Bash : `set -a; . ./.env.local; set +a`).
 
+Le fichier sert aux deux projets : ses réglages sont ceux de la production, et le bloc `[remotes.development]` remplace l'adresse du site et les adresses de retour pour **MyWork Dev** (`localhost` et les aperçus). `config push` s'applique au projet auquel le dossier est relié (MyWork Dev par défaut, voir [AGENTS.md](../AGENTS.md)).
+
 `config push` envoie **tout** le fichier, pas seulement les lignes modifiées. Avant le premier envoi, le fichier (encore aux valeurs par défaut de l'installation) est donc aligné sur les réglages en ligne, pour ne rien écraser par accident ; les changements ci-dessus sont ajoutés ensuite.
 
 ## Technique

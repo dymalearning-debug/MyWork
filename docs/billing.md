@@ -96,7 +96,7 @@ Le rappel de fin d'essai de Stripe n'est pas utilisé : il part 7 jours avant la
 - Un **client Stripe** par compte, créé au premier passage sur la page de paiement, relié au compte MyWork.
 - Les prix sont lus par leurs noms fixes (`mywork_monthly`, `mywork_yearly`) ; l'essai de 7 jours est demandé à chaque session de paiement, sauf après un premier abonnement.
 - **Stockage** : 10 Go par abonné. Aujourd'hui, la capacité vaut pour toute l'application (1 Go, offre gratuite de Supabase) : elle devient un quota par utilisateur ([drive.md](drive.md)).
-- Nouvelle variable dans Vercel : `BILLING_SECRET`, le code secret des fonctions de la base (dans les trois environnements ; seule son empreinte est dans la migration).
+- Nouvelle variable dans Vercel : `BILLING_SECRET`, le code secret des fonctions de la base (dans les trois environnements ; seule son empreinte est dans la base, table `private.secret_hashes`, avec un code différent en production depuis le 2026-10-23).
 
 ## Réglages dans Stripe
 

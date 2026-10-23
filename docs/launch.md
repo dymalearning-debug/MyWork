@@ -53,11 +53,32 @@ Coût fixe au départ : **environ 46 $ par mois**, puis environ 116 $ quand l'us
 
 Aujourd'hui, **une seule base** sert au poste de développement, aux aperçus de Vercel, aux tests automatiques de GitHub et à la production (décision provisoire, [product.md](product.md)). Les tests créent et suppriment des comptes dans la base de production, et un développement peut abîmer de vraies données. Avec de vrais utilisateurs, ce n'est plus acceptable.
 
-- **Un second projet Supabase** pour le développement, les aperçus et les tests (gratuit) ; la production garde le projet actuel *(développement, avec vous pour créer le projet)*.
-- Mêmes migrations appliquées aux deux ; réglages d'authentification et fournisseur Google refaits sur le nouveau projet.
-- **Variables par environnement** dans Vercel : Development et Preview vers la base de développement, Production vers la base actuelle ; secrets de GitHub vers la base de développement.
-- **Nettoyer la base de production** : comptes de test restants, abonnements du mode test.
-- Les codes secrets de la base (`BILLING_SECRET`, `BOOKING_EMAILS_SECRET`) : les garder ou en changer pour la production, à décider à ce moment-là.
+Fait le 2026-10-23 :
+
+- **Second projet Supabase**, **MyWork Dev** (`othjqrfcmbvzfexkvjml`, Irlande), pour le développement, les aperçus et les tests, dans une organisation à part pour rester gratuit ; la production garde le projet **MyWork**.
+- Mêmes migrations ; mêmes réglages d'authentification, sauf les adresses de retour (bloc `[remotes.development]` de `supabase/config.toml`) ; fournisseur Google réglé avec le même client Google (adresse de retour de MyWork Dev ajoutée dans Google Cloud).
+- **Codes secrets propres à chaque base** : leurs empreintes sont dans la table `private.secret_hashes` de chaque projet, plus dans les migrations (migration `20261023120000_secrets_per_database.sql`). MyWork Dev garde les codes actuels ; la production en reçoit de nouveaux.
+- Le webhook de Stripe supporte deux bases sur le même compte de test : un événement d'un compte de l'autre base est ignoré (« compte inconnu »), sans erreur.
+
+La bascule, dans cet ordre *(développement, avec votre accord)* :
+
+| Où | Variable | Production | Preview | Development |
+|---|---|---|---|---|
+| Vercel | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | MyWork (inchangé) | **MyWork Dev** | **MyWork Dev** |
+| Vercel | `SUPABASE_SECRET_KEY` | — | — | **MyWork Dev** |
+| Vercel | `BILLING_SECRET`, `BOOKING_EMAILS_SECRET` | **nouveaux codes** | inchangés | inchangés |
+| Vercel | `LIVEKIT_*`, `RESEND_API_KEY`, `STRIPE_SECRET_KEY` (test) | inchangés, mêmes valeurs partout | | |
+| Vercel | `STRIPE_WEBHOOK_SECRET` | **à créer** : webhook du mode test vers `https://hellomywork.com/api/stripe/webhook` | — | `stripe listen` (inchangé) |
+| GitHub | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY` | **MyWork Dev** | | |
+| GitHub | `BILLING_SECRET`, `LIVEKIT_*` | inchangés | | |
+
+1. Migration `20261023120000` envoyée sur la production (sans effet : elle reprend les codes actuels), puis empreintes des nouveaux codes ajoutées dans `private.secret_hashes` : anciens et nouveaux codes valent alors tous les deux.
+2. Variables de Vercel et secrets de GitHub changés comme ci-dessus ; webhook de test de la production créé chez Stripe.
+3. Nouveau déploiement de la production (le prochain push sur `main`), puis anciennes empreintes retirées de la production.
+4. `localhost` et les aperçus retirés des adresses de retour de la production (`supabase/config.toml`, puis `config push` sur la production).
+5. `vercel env pull .env.local` sur le poste ; tests de bout en bout et connexion Google sur MyWork Dev ; vérification de la production (connexion, page publique).
+
+Ensuite : **nettoyer la base de production** (comptes de test restants, abonnements du mode test), après accord sur la liste.
 
 ## 4. Stripe en mode réel
 

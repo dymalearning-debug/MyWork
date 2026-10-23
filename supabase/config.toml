@@ -164,12 +164,11 @@ site_url = "https://hellomywork.com"
 # The public URL that Auth serves on. Defaults to the API external URL with `/auth/v1` appended.
 # external_url = ""
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-# MyWork: email links come back to the site the request came from (local, Vercel preview or production).
+# MyWork: email links come back to the site the request came from. Production only; the local site
+# and the Vercel previews use the project "MyWork Dev" ([remotes.development] at the end).
 additional_redirect_urls = [
-  "http://localhost:3000/**",
   "https://hellomywork.com/**",
   "https://linku-nu.vercel.app/**",
-  "https://*-mywork-8619.vercel.app/**",
 ]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
@@ -436,3 +435,17 @@ enabled = true
 # formatted with uppercase keywords, indent 2, max width 180, trailing commas,
 # and column/key alignment. Set to "null" to emit raw, unformatted SQL.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":180,\"commaStyle\":\"trailing\"}"
+
+# ——— MyWork: one file, two projects (docs/launch.md, "Séparer le développement de la production") ———
+# The settings above are those of the production project "MyWork" (ulufanywmrporutivwgc). The block
+# below overrides them for the development project "MyWork Dev" (local, Vercel previews, tests),
+# applied when the CLI is linked to it: `npx supabase link --project-ref othjqrfcmbvzfexkvjml`.
+[remotes.development]
+project_id = "othjqrfcmbvzfexkvjml"
+
+[remotes.development.auth]
+site_url = "http://localhost:3000"
+additional_redirect_urls = [
+  "http://localhost:3000/**",
+  "https://*-mywork-8619.vercel.app/**",
+]
