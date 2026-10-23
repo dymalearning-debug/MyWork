@@ -184,7 +184,7 @@ Pour les agents qui développeront la fonctionnalité.
   - `/auth/callback` : retour de Google (échange du code contre une session) ;
   - `/auth/confirm` : liens des e-mails. L'application y ajoute `type=signup` ou `type=recovery` pour savoir où aller ensuite. Deux formes acceptées : un `code` (e-mails par défaut de Supabase, à ouvrir dans le même navigateur) ou un `token_hash` (modèles MyWork et tests, valable dans n'importe quel navigateur).
 - Ces noms sont interdits comme identifiants du profil public (mots réservés, voir [public-profile.md](public-profile.md)).
-- Développement et production partagent le même projet Supabase : les liens des e-mails ramènent vers le site d'où vient la demande (local, aperçu ou production), grâce à l'adresse de redirection transmise par l'application, et non vers l'URL du site.
+- Les liens des e-mails ramènent vers le site d'où vient la demande, grâce à l'adresse de redirection transmise par l'application, et non vers l'URL du site : local ou aperçu pour **MyWork Dev**, `hellomywork.com` pour la production (deux projets Supabase depuis le 2026-10-23).
 - Formulaires : Server Actions, validation côté serveur. Le paramètre de retour (`next`) n'accepte que des chemins internes, jamais un autre site.
 - Rester connecté : la préférence est gardée dans un petit cookie. Quand elle est désactivée, les cookies de session Supabase sont écrits sans date d'expiration.
 - Base de données : première migration dans `supabase/migrations/` : table `profiles`, politiques RLS, déclencheurs (création à l'inscription, mise à jour de l'e-mail).

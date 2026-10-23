@@ -60,7 +60,7 @@ Fait le 2026-10-23 :
 - **Codes secrets propres à chaque base** : leurs empreintes sont dans la table `private.secret_hashes` de chaque projet, plus dans les migrations (migration `20261023120000_secrets_per_database.sql`). MyWork Dev garde les codes actuels ; la production en reçoit de nouveaux.
 - Le webhook de Stripe supporte deux bases sur le même compte de test : un événement d'un compte de l'autre base est ignoré (« compte inconnu »), sans erreur.
 
-La bascule, dans cet ordre *(développement, avec votre accord)* :
+**Bascule faite le 2026-10-23**, dans l'ordre ci-dessous. Vérifié : production déployée avec ses nouveaux codes (webhook de test signé accepté, abonnement synchronisé après le retrait des anciennes empreintes), tests de GitHub sur MyWork Dev.
 
 | Où | Variable | Production | Preview | Development |
 |---|---|---|---|---|
@@ -68,7 +68,7 @@ La bascule, dans cet ordre *(développement, avec votre accord)* :
 | Vercel | `SUPABASE_SECRET_KEY` | — | — | **MyWork Dev** |
 | Vercel | `BILLING_SECRET`, `BOOKING_EMAILS_SECRET` | **nouveaux codes** | inchangés | inchangés |
 | Vercel | `LIVEKIT_*`, `RESEND_API_KEY`, `STRIPE_SECRET_KEY` (test) | inchangés, mêmes valeurs partout | | |
-| Vercel | `STRIPE_WEBHOOK_SECRET` | **à créer** : webhook du mode test vers `https://hellomywork.com/api/stripe/webhook` | — | `stripe listen` (inchangé) |
+| Vercel | `STRIPE_WEBHOOK_SECRET` | webhook du mode test `we_1UTegDLaybyIrcihK0ua7xNP` vers `https://hellomywork.com/api/stripe/webhook` (à remplacer par le webhook réel à l'activation de Stripe) | — | `stripe listen` (inchangé) |
 | GitHub | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY` | **MyWork Dev** | | |
 | GitHub | `BILLING_SECRET`, `LIVEKIT_*` | inchangés | | |
 
