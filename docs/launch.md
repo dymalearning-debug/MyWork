@@ -78,7 +78,7 @@ Fait le 2026-10-23 :
 4. `localhost` et les aperçus retirés des adresses de retour de la production (`supabase/config.toml`, puis `config push` sur la production).
 5. `vercel env pull .env.local` sur le poste ; tests de bout en bout et connexion Google sur MyWork Dev ; vérification de la production (connexion, page publique).
 
-Ensuite : **nettoyer la base de production** (comptes de test restants, abonnements du mode test), après accord sur la liste.
+Base de production vérifiée le 2026-10-23 : aucun compte de test restant, seulement les deux comptes du porteur du projet (`dyma.learning@gmail.com`, abonnement de test résilié ; `quentin@dyma.fr`), gardés tels quels.
 
 ## 4. Stripe en mode réel
 
