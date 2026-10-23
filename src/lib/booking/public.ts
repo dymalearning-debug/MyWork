@@ -64,9 +64,12 @@ export type BookInput = {
 };
 
 // A booking, always as an anonymous visitor: the profile must be online and bookings open (no
-// booking from the owner's preview). The database checks every rule again.
+// booking from the owner's preview). The database checks every rule again, and asks for the
+// secret of the module, so that only this server books (never a direct call to the API).
 export async function bookPublicSlot(handle: string, input: BookInput): Promise<BookResult> {
   if (!isValidHandle(handle)) return { status: "closed" };
+  const secret = process.env.BOOKING_EMAILS_SECRET;
+  if (!secret) throw new Error("Missing BOOKING_EMAILS_SECRET (see .env.example).");
   const { data, error } = await anonymousClient().rpc("book_public_slot", {
     profile_handle: handle,
     slot_start: input.slotStart,
@@ -78,6 +81,7 @@ export async function bookPublicSlot(handle: string, input: BookInput): Promise<
     guest_time_zone: input.timeZone,
     // A fingerprint of the address, never the address itself (limit of 10 bookings an hour).
     ip_hash: input.ip ? createHash("sha256").update(`mywork-booking:${input.ip}`).digest("hex") : null,
+    secret,
   });
   if (error) throw new Error(`Booking failed: ${error.message}`);
   return data as BookResult;

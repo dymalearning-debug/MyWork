@@ -7,7 +7,7 @@ import { getRequestOrigin } from "@/lib/auth/origin";
 import { HOME_PATH, LOGIN_PATH } from "@/lib/auth/paths";
 import { getOwnBilling, saveBillingCustomer, syncSubscription } from "@/lib/billing/data";
 import { isPlanId, TRIAL_DAYS } from "@/lib/billing/plans";
-import { canStartTrial, hasAccess, SUBSCRIBE_PATH } from "@/lib/billing/rules";
+import { canStartTrial, hasAccess, isPaymentBlocked, SUBSCRIBE_PATH } from "@/lib/billing/rules";
 import { getStripe, priceIds } from "@/lib/billing/stripe";
 
 export type CheckoutState = { error?: "unavailable" | "failed" };
@@ -39,9 +39,8 @@ export async function startCheckout(_prev: CheckoutState, formData: FormData): P
   const plan = formData.get("plan");
   if (!isPlanId(plan)) return { error: "failed" };
   const stripe = getStripe();
-  if (!stripe) return { error: "unavailable" };
-
   const { user, subscription, liveMode } = billing;
+  if (!stripe || isPaymentBlocked(process.env.VERCEL_ENV, liveMode)) return { error: "unavailable" };
   const knownCustomer = subscription?.livemode === liveMode ? subscription.customerId : null;
   if (knownCustomer) {
     let subscribed: boolean;

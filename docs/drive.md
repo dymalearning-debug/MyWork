@@ -195,7 +195,7 @@ Le type se déduit de l'extension et du type déclaré par le navigateur à l'en
   - « Images des tableaux : 20 Mo »
   - puis « La capacité est celle de l'offre gratuite de Supabase, partagée par toute l'application. »
 - Couleurs : la barre en encre ; en `warning` au-delà de 80 % ; en `destructive` à 100 %, avec « Stockage plein ».
-- **Capacité atteinte** : les envois qui la dépasseraient sont refusés (« Stockage plein — Supprimez des fichiers pour en ajouter d'autres »). La base vérifie elle aussi, pas seulement l'interface. Les images du profil et des tableaux ne sont pas bloquées au MVP *(proposé)*.
+- **Capacité atteinte** : les envois qui la dépasseraient sont refusés (« Stockage plein — Supprimez des fichiers pour en ajouter d'autres »). La base vérifie elle aussi, pas seulement l'interface. Depuis l'audit de sécurité du 2026-10-23, le stockage vérifie aussi la place au moment d'écrire chaque fichier, **images du profil et des tableaux comprises** : la taille annoncée par le navigateur ne suffit plus à faire entrer un fichier plus gros, et **10 fichiers au plus** peuvent être en cours d'envoi en même temps (« Trop d'envois en cours — Attendez la fin des envois en cours. »).
 
 ## Données
 
@@ -272,7 +272,7 @@ Choix pris le 2026-10-15 sans le porteur du projet, à sa demande, puis validés
 5. **Un clic** ouvre un dossier ou l'aperçu d'un fichier ; la sélection passe par une case à cocher ; sélection multiple avec barre d'actions.
 6. **Aperçu** des images et des PDF gardé au MVP, comme prévu dans [modules.md](modules.md).
 7. **Plafonds** : 50 Mo par fichier, 10 niveaux de dossiers, noms de 120 caractères, noms uniques dans un dossier (doublons numérotés à l'envoi), exécutables refusés.
-8. **Capacité** de 1 Go (offre gratuite de Supabase), comptant tous les fichiers de l'utilisateur ; seuls les envois du Drive sont bloqués une fois pleine.
+8. **Capacité** de 1 Go (offre gratuite de Supabase), comptant tous les fichiers de l'utilisateur ; une fois pleine, tous les envois sont bloqués, images du profil et des tableaux comprises (audit de sécurité du 2026-10-23 : avant, seuls ceux du Drive l'étaient, et l'espace compté était par erreur celui de tous les comptes réunis).
 9. **Recherche et filtre dans le dossier affiché** seulement ; filtre « Type » à un seul choix, en neuf catégories.
 10. **Tri** par défaut sur le nom, dossiers toujours en tête.
 11. **Pagination** de 50 éléments ; recherche, filtre, tri et page dans l'adresse ; liste ou grille retenue par appareil, liste par défaut.

@@ -505,6 +505,23 @@ test.describe("Rendez-vous", () => {
     expect(Object.keys(availability.busy[0]).sort()).toEqual(["end", "start"]);
     expect(JSON.stringify(availability)).not.toContain("Marc");
 
+    // Only the server books: a direct call to the API, without the secret of the module, is refused.
+    for (const secret of [null, "wrong"]) {
+      const { error: bookError } = await anonymous().rpc("book_public_slot", {
+        profile_handle: handle,
+        slot_start: slots[2],
+        guest_name: "Robot",
+        guest_email: "robot@exemple.test",
+        guest_role: "",
+        guest_company: "",
+        guest_message: "Spam",
+        guest_time_zone: "Europe/Paris",
+        ip_hash: null,
+        secret,
+      });
+      expect(bookError?.message).toBe("forbidden");
+    }
+
     // Another user sees nothing of these bookings, and cannot cancel or delete them.
     const otherClient = await signedInClient(other.user);
     const { data: seen } = await otherClient.from("bookings").select("id");

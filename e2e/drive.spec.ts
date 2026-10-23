@@ -428,7 +428,7 @@ test.describe("Drive", () => {
     await visitor.close();
   });
 
-  test("shows the storage used, and the database refuses a file beyond the capacity", async ({ page }) => {
+  test("shows the storage used, and the database limits the files being uploaded", async ({ page }) => {
     const user = await createUser();
     const client = await signedInClient(user);
     await signIn(page, user);
@@ -449,15 +449,14 @@ test.describe("Drive", () => {
       await expect(page.getByText(label, { exact: true }).filter({ visible: true }).last()).toBeVisible();
     }
 
-    // The database checks too: a file larger than the room left is refused.
-    const { error } = await client
-      .from("drive_items")
-      .insert({ kind: "file", name: "Énorme.bin", category: "other", size: 50 * 1024 * 1024 })
-      .select("id");
-    expect(error).toBeNull();
-    const many = Array.from({ length: 21 }, (_, index) => ({ kind: "file", name: `Gros ${index}.bin`, category: "other", size: 50 * 1024 * 1024 }));
-    const { error: fullError } = await client.from("drive_items").insert(many);
-    expect(fullError?.message).toContain("drive_storage_full");
+    // The database checks too: 10 files being uploaded at most, so that the size announced by the
+    // browser cannot let much more than the capacity in (the room itself is checked by the storage).
+    const pending = (from: number, count: number) =>
+      Array.from({ length: count }, (_, index) => ({ kind: "file", name: `Gros ${from + index}.bin`, category: "other", size: 0 }));
+    expect((await client.from("drive_items").insert(pending(0, 10))).error).toBeNull();
+    const { error: tooManyError } = await client.from("drive_items").insert(pending(10, 1));
+    expect(tooManyError?.message).toContain("drive_too_many_uploads");
+    expect((await client.rpc("has_storage_room")).data).toBe(true);
   });
 
   test("each user only reaches their own items; visitors never get a private file", async () => {

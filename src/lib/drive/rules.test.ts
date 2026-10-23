@@ -80,6 +80,7 @@ describe("pagination", () => {
 describe("errors of the database", () => {
   it("names the rule broken", () => {
     expect(problemOf({ message: "drive_storage_full" })).toBe("storage_full");
+    expect(problemOf({ message: "drive_too_many_uploads" })).toBe("too_many_uploads");
     expect(problemOf({ message: "drive_depth_limit_reached" })).toBe("depth");
     expect(problemOf({ message: "drive_move_into_itself" })).toBe("into_itself");
     expect(problemOf({ code: "23505", message: 'duplicate key value violates unique constraint "drive_items_name_key"' })).toBe(

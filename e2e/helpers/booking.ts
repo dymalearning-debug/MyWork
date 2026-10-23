@@ -89,6 +89,7 @@ export async function book(
     guest_message: guest.message ?? "Audit de notre parcours d'inscription.",
     guest_time_zone: guest.timeZone ?? "Europe/Paris",
     ip_hash: guest.ipHash ?? null,
+    secret: process.env.BOOKING_EMAILS_SECRET,
   });
   if (error) throw error;
   return data as { status: string; code?: string; emailIds?: string[] };

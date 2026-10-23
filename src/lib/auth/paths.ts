@@ -40,6 +40,8 @@ export function safeNextPath(next: unknown): string | null {
     // Resolving against a dummy origin catches tricks such as "/%2F%2Fevil.com" or "/\tevil.com".
     const url = new URL(next, "http://mywork.invalid");
     if (url.origin !== "http://mywork.invalid") return null;
+    // The resolved path is checked again: "/.//evil.com" becomes "//evil.com", another site.
+    if (url.pathname.startsWith("//")) return null;
     return `${url.pathname}${url.search}${url.hash}`;
   } catch {
     return null;

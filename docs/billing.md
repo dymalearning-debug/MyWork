@@ -117,7 +117,7 @@ Le rappel de fin d'essai de Stripe n'est pas utilisé : il part 7 jours avant la
 
 La liste complète, au-delà de l'abonnement, est dans [launch.md](launch.md). Ce qui ne relève pas du code, mais conditionne l'ouverture :
 
-- **Activation du compte Stripe** (identité, SIRET, IBAN), puis clé réelle en Production.
+- **Activation du compte Stripe** (identité, SIRET, IBAN), puis clé réelle en Production. D'ici là, **le paiement est indisponible en production** (garde-fou du 2026-10-23) : avec la clé de test, n'importe qui pourrait s'abonner avec une carte de test et obtenir l'accès gratuitement. « Choisissez votre formule » répond « Le paiement n'est pas disponible pour le moment ». Le local, les aperçus et les tests gardent le mode test.
 - **TVA**, avec un comptable : prix TTC ou HT, mention sur les factures, calcul par Stripe (Stripe Tax) ou non.
 - **Pages légales** : mentions légales, politique de confidentialité (Stripe parmi les prestataires), conditions générales d'utilisation et de vente (essai, renouvellement, résiliation, droit de rétractation, médiateur de la consommation), à faire relire ([landing.md](landing.md)). Stripe les vérifie aussi avant d'autoriser les vrais paiements.
 - **Adresse de contact**, par exemple `contact@hellomywork.com` : sur les reçus, les factures, la FAQ.

@@ -225,7 +225,7 @@ Envoyés par **Resend** depuis le 2026-10-18, depuis `MyWork <noreply@hellomywor
 - **File d'envoi** : la base enregistre chaque e-mail dans une table (`booking_emails`) avec son destinataire, son modèle, ses données et son état, dans la même opération que la réservation ou l'annulation. Juste après la réponse au visiteur, le module d'envoi (`send-email.ts`) prend ces e-mails, les met en forme, joint le `.ics` et les confie à Resend.
 - **États** : `pending` (préparé), `sending` (pris par le serveur), puis `sent`, `failed` (avec l'erreur) ou `abandoned` (jamais envoyé : adresse réservée aux tests, ou e-mail préparé avant Resend). Chaque e-mail n'est pris qu'une fois, et seulement dans l'heure qui suit. Pas de nouvel essai automatique après un échec *(proposé)* : le détail se lit dans Resend, *Emails*, et dans les journaux de Vercel.
 - **Sécurité** : la file reste fermée à l'API. Le serveur la lit par deux fonctions de la base qui demandent le **code secret d'envoi** (`BOOKING_EMAILS_SECRET`, dans Vercel seulement ; la base n'en garde que l'empreinte) : l'application n'a pas besoin de la clé secrète Supabase. Changer ce code : le changer dans Vercel et mettre son empreinte SHA-256 dans une nouvelle migration.
-- Sans `RESEND_API_KEY` ou sans `BOOKING_EMAILS_SECRET` (tests sur GitHub), rien ne part et les e-mails restent `pending`.
+- Sans `RESEND_API_KEY` (tests sur GitHub) ou sans `BOOKING_EMAILS_SECRET`, rien ne part et les e-mails restent `pending`. Sans `BOOKING_EMAILS_SECRET`, aucune réservation n'est possible non plus ; GitHub l'a, pour les tests.
 - Les adresses réservées aux tests (`example.com`, `.test`, `.invalid`…) ne reçoivent jamais rien, pour ne pas nuire à la réputation du domaine.
 - En plus des e-mails : la page de confirmation (lien et `.ics`) pour l'invité ; un **point rouge** sur « Mes rendez-vous » dans la barre latérale tant qu'il y a des réservations non consultées *(proposé)*.
 - **Rappels** (24 h et 1 h avant) : plus tard, avec Resend *(proposé)*.
@@ -236,6 +236,7 @@ Envoyés par **Resend** depuis le 2026-10-18, depuis `MyWork <noreply@hellomywor
   - un champ piège invisible (« honeypot ») qui écarte les robots simples ;
   - **3 rendez-vous à venir au plus par adresse e-mail** chez un même propriétaire ;
   - **10 réservations par heure au plus** depuis une même adresse IP.
+- La base n'accepte une réservation **que du serveur de MyWork** : la fonction demande le code secret du module (`BOOKING_EMAILS_SECRET`), comme l'envoi des e-mails. Un appel direct à l'API avec la clé publique, qui contournait les trois protections ci-dessus, est refusé (audit de sécurité du 2026-10-23).
 - L'e-mail n'est pas vérifié : un faux rendez-vous peut passer. Le propriétaire l'annule ; c'est accepté au MVP. Resend rend une vérification possible (plus tard) ; un CAPTCHA (Cloudflare Turnstile) viendra avec le SaaS, si besoin.
 
 ## RGPD

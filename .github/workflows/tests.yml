@@ -38,6 +38,8 @@ jobs:
       LIVEKIT_API_SECRET: ${{ secrets.LIVEKIT_API_SECRET }}
       # Subscriptions (docs/billing.md): without it, the tests of the end of a subscription are skipped.
       BILLING_SECRET: ${{ secrets.BILLING_SECRET }}
+      # Bookings (docs/booking.md): the database only accepts the bookings that come with it.
+      BOOKING_EMAILS_SECRET: ${{ secrets.BOOKING_EMAILS_SECRET }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

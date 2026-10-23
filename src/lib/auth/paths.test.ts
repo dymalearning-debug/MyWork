@@ -12,6 +12,9 @@ describe("safeNextPath", () => {
     for (const next of [
       "https://evil.com",
       "//evil.com",
+      "/.//evil.com",
+      "/%2e//evil.com",
+      "/app/../..//evil.com",
       "/\\evil.com",
       "\\\\evil.com",
       "evil.com",

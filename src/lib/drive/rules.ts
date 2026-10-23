@@ -160,10 +160,11 @@ export function cleanName(value: string) {
 
 // ——— Errors of the database ———
 
-export type DriveProblem = "storage_full" | "depth" | "into_itself" | "name_taken" | "executable" | "not_folder";
+export type DriveProblem = "storage_full" | "too_many_uploads" | "depth" | "into_itself" | "name_taken" | "executable" | "not_folder";
 
 export const PROBLEM_MESSAGES: Record<DriveProblem, string> = {
   storage_full: "Stockage plein — Supprimez des fichiers pour en ajouter d’autres.",
+  too_many_uploads: "Trop d’envois en cours — Attendez la fin des envois en cours.",
   depth: `${MAX_FOLDER_DEPTH} niveaux de dossiers au plus.`,
   into_itself: "Un dossier ne peut pas aller dans l’un de ses propres sous-dossiers.",
   name_taken: "Un élément porte déjà ce nom dans ce dossier.",
@@ -175,6 +176,7 @@ export const PROBLEM_MESSAGES: Record<DriveProblem, string> = {
 export function problemOf(error: { message?: string; code?: string } | null | undefined): DriveProblem | null {
   const message = error?.message ?? "";
   if (message.includes("drive_storage_full")) return "storage_full";
+  if (message.includes("drive_too_many_uploads")) return "too_many_uploads";
   if (message.includes("drive_depth_limit_reached")) return "depth";
   if (message.includes("drive_move_into_itself")) return "into_itself";
   if (message.includes("drive_parent_not_folder")) return "not_folder";

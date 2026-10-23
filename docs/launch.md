@@ -71,6 +71,7 @@ Fait le 2026-10-23 :
 | Vercel | `STRIPE_WEBHOOK_SECRET` | webhook du mode test `we_1UTegDLaybyIrcihK0ua7xNP` vers `https://hellomywork.com/api/stripe/webhook` (à remplacer par le webhook réel à l'activation de Stripe) | — | `stripe listen` (inchangé) |
 | GitHub | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY` | **MyWork Dev** | | |
 | GitHub | `BILLING_SECRET`, `LIVEKIT_*` | inchangés | | |
+| GitHub | `BOOKING_EMAILS_SECRET` (depuis l'audit du 2026-10-23 : les réservations le demandent) | code de MyWork Dev | | |
 
 1. Migration `20261023120000` envoyée sur la production (sans effet : elle reprend les codes actuels), puis empreintes des nouveaux codes ajoutées dans `private.secret_hashes` : anciens et nouveaux codes valent alors tous les deux.
 2. Variables de Vercel et secrets de GitHub changés comme ci-dessus ; webhook de test de la production créé chez Stripe.
@@ -117,6 +118,16 @@ Avant l'ouverture *(développement)* :
 Souhaitable, pas bloquant : mesure d'audience sans cookie (Vercel Web Analytics, [landing.md](landing.md)), relance des inscriptions abandonnées, suivi des erreurs (Sentry ou équivalent).
 
 ## 6. Sécurité et surveillance
+
+**Audit de sécurité du 2026-10-23** : code, base (advisors Supabase, droits et politiques réels de la production) et historique Git. Aucune fuite entre comptes, aucun secret dans le dépôt. Corrigé le jour même :
+
+- Next.js 16.4.0 → **16.4.3** (deux failles critiques d'exécution de code à distance) ;
+- réservations acceptées **par le serveur seulement** ([booking.md](booking.md), *Protection contre les abus*) ;
+- **quota de stockage** vérifié à l'écriture de chaque fichier, et calculé par compte (il additionnait par erreur les fichiers de tous les comptes) ([drive.md](drive.md), *Indicateur de stockage*) ;
+- **paiement indisponible en production** tant que Stripe est en mode test ([billing.md](billing.md), *Avant d'ouvrir les inscriptions*) ;
+- redirection après connexion vers un autre site (`?next=/.//…`) refusée.
+
+Reste de l'audit, moins grave, à traiter avant ou après l'ouverture : captcha et limites de débit sur la connexion et l'inscription (la limite de 30 e-mails par heure vaut pour tout le site) ; e-mails de réservation envoyables à n'importe quelle adresse ; export du CV sans limite ; statistiques du tableau de bord falsifiables ; photo et images de projet acceptant toute adresse `https` ; en-têtes de sécurité (CSP) ; ancien mot de passe non redemandé ; abonnements de test à purger le jour J (la base ne distingue pas les deux modes).
 
 - **Supabase** *(développement, avec vous)* : protection contre les mots de passe divulgués (offre Pro), limites de connexion et d'inscription par adresse IP revues, sauvegardes vérifiées (une restauration d'essai).
 - **Vercel** *(développement)* : aperçus protégés par connexion ; pare-feu de Vercel en cas d'abus.

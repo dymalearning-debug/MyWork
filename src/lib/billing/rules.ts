@@ -79,6 +79,13 @@ export const hasAccess = (state: SubscriptionState) =>
 export const canStartTrial = (subscription: Subscription | null, liveMode: boolean) =>
   !(subscription && subscription.livemode === liveMode && subscription.trialUsed);
 
+// The production never opens a payment page of the test mode: anyone could subscribe there with a
+// test card (4242…) and get the access for free. Until the live key is in place (docs/launch.md,
+// "Stripe en mode réel"), the payment is unavailable in production; local development, previews and
+// tests keep the test mode. vercelEnv: VERCEL_ENV, given by Vercel.
+export const isPaymentBlocked = (vercelEnv: string | undefined, liveMode: boolean) =>
+  vercelEnv === "production" && !liveMode;
+
 // The day the access closes, after a cancellation.
 export const accessEnd = (subscription: Subscription) => subscription.cancelAt ?? subscription.currentPeriodEnd;
 

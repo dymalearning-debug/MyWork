@@ -10,6 +10,7 @@ import {
   formatDaysLeft,
   formatLongDate,
   formatNumericDate,
+  isPaymentBlocked,
   formatPlainDate,
   fromRow,
   hasAccess,
@@ -98,6 +99,16 @@ describe("from Stripe's state to the access", () => {
     const active = subscription({ status: "active", plan: "monthly", currentPeriodEnd: new Date("2027-01-28T10:00:00Z") });
     expect(nextCharge(active, "active")).toEqual({ amount: 500, at: new Date("2027-01-28T10:00:00Z") });
     expect(nextCharge(subscription({ cancelAt: new Date("2026-10-28") }), "canceling")).toBeNull();
+  });
+});
+
+describe("the payment in production", () => {
+  it("is blocked in production while Stripe is in test mode, never elsewhere", () => {
+    expect(isPaymentBlocked("production", false)).toBe(true);
+    expect(isPaymentBlocked("production", true)).toBe(false);
+    for (const vercelEnv of ["preview", "development", undefined]) {
+      expect(isPaymentBlocked(vercelEnv, false), String(vercelEnv)).toBe(false);
+    }
   });
 });
 
